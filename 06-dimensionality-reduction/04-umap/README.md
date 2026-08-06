@@ -30,10 +30,8 @@ in one figure. Both are neighbour-graph methods that ship with scikit-learn, bot
 make the same argument about local versus global structure, and Isomap has a
 `transform` the way UMAP does. What is missing is the `min_dist` dial, which has no
 scikit-learn equivalent, and the stochastic layout — Isomap is deterministic.
-
-Install `umap-learn` and re-run the notebook and every cell produces the UMAP
-version instead. I would rather tell you which method produced 0.9499 than let you
-assume.
+Install `umap-learn`, re-run, and every cell produces the UMAP version instead. I
+would rather tell you which method produced 0.9499 than let you assume.
 
 ## The measurement that matters
 
@@ -53,8 +51,8 @@ locally.
 Two caveats worth more than the table. This is one dataset at one setting —
 `n_neighbors=15` against `perplexity=30` is one point on two different curves. And
 "more global structure than t-SNE" is a comparison to a method that discards nearly
-all of it. Clearing that bar does not make the map a distance-preserving
-projection. If you need distances, use PCA.
+all of it; clearing that bar does not make the map a distance-preserving projection.
+If you need distances, use PCA.
 
 ## Three maps of the same beans
 
@@ -70,8 +68,7 @@ projection. If you need distances, use PCA.
 
 Six times faster than t-SNE at 3,000 rows. The gap you see quoted is larger because
 most of the reported speed-up only appears at tens of thousands of rows, where
-t-SNE's all-pairs normalisation starts to hurt. Compare your own timings before
-repeating anyone's.
+t-SNE's all-pairs normalisation starts to hurt.
 
 ## The dials
 
@@ -88,11 +85,9 @@ changes how a plot looks without changing what the algorithm concluded.
 
 Because `umap-learn` was absent, this figure shows one dial across three settings
 (5, 15, 50) for two methods, Isomap on the top row and `SpectralEmbedding` on the
-bottom, rather than a `n_neighbors` × `min_dist` grid. Widening the neighbourhood
-merges groups that a narrow one kept apart, for both methods. A reader shown one
-panel would count a different number of clusters depending on which panel you
-picked.
-
+bottom, rather than an `n_neighbors` × `min_dist` grid. Widening the neighbourhood
+merges groups a narrow one kept apart, for both methods. A reader shown one panel
+would count a different number of clusters depending on which panel you picked.
 **Try three settings of `n_neighbors` before you believe any of them.**
 
 ## Where the long distances go
@@ -101,10 +96,9 @@ picked.
 
 Each panel plots distance in the original 16 features against distance in the map.
 A tight diagonal cloud means the long distances survived; a shapeless one means they
-did not. PCA 0.952, t-SNE 0.852, Isomap 0.950.
-
-Spearman rather than Pearson, because no method here promises to preserve distances
-on a linear scale — only their ordering.
+did not. PCA 0.952, t-SNE 0.852, Isomap 0.950. Spearman rather than Pearson, because
+no method here promises to preserve distances on a linear scale — only their
+ordering.
 
 ## It has a transform, so it can go in a pipeline
 
@@ -120,7 +114,7 @@ on a linear scale — only their ordering.
 This is the practical difference, and it is bigger than the speed. Fit on 398
 training rows of Breast Cancer, `transform` the 171 held-out rows, then ask each
 held-out point what class its nearest training neighbour in the map belongs to:
-**90.6%** agree. The test rows never influenced the map.
+**90.6%** agree, and the test rows never influenced the map.
 
 Being allowed in a pipeline is not the same as earning a place in it:
 
@@ -146,18 +140,17 @@ known.
 | Radius, cluster 2 | 0.59 | 0.41 |
 | Gap ratio (0→2 over 0→1) | 4.99 | **5.02** |
 
-Here the fallback changes the story, and I am not going to paper over it. Isomap
-runs classical MDS on geodesic distances, so it is explicitly a global method, and
-it reproduced the seven-fold difference in cluster spread and the five-fold gap
-ratio almost exactly. UMAP would not: its per-point distance rescaling is precisely
-what destroys cluster size, which is why the standard warning exists. Run this cell
-with `umap-learn` installed and expect the radii to flatten out.
+Here the fallback changes the story and I am not going to paper over it. Isomap runs
+classical MDS on geodesic distances, so it is explicitly a global method, and it
+reproduced the seven-fold difference in cluster spread and the five-fold gap ratio
+almost exactly. UMAP would not: its per-point distance rescaling is precisely what
+destroys cluster size, which is why the standard warning exists. Run this cell with
+`umap-learn` installed and expect the radii to flatten out.
 
-Seed stability read **1.000** by construction — Isomap is deterministic. UMAP is
-not. Set `random_state` and say what you set it to.
-
-What does not change either way: **empty space still means nothing**, because gaps
-come from the repulsion term rather than from the data.
+Seed stability read **1.000** by construction — Isomap is deterministic and UMAP is
+not, so set `random_state` and say what you set it to. What does not change either
+way: **empty space still means nothing**, because gaps come from the repulsion term
+rather than from the data.
 
 ## Cheat sheet
 

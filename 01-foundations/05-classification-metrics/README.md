@@ -16,27 +16,23 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 
 ## The number that should scare you
 
-One array of out-of-fold scores. One model. I evaluated it twice — once on all
-10,000 rows at 1% positives, once on a balanced subset — and averaged 20 draws of
-the balanced version.
+One array of out-of-fold scores, one model, evaluated twice: on all 10,000 rows at
+1% positives, and on a balanced subset averaged over 20 draws.
 
 | | ROC-AUC | PR-AUC | PR baseline |
 |---|---|---|---|
 | 1% positives | **0.9699** | **0.5708** | 0.0100 |
 | 50% positives, 20 draws | **0.9699** ± 0.0045 | **0.9728** ± 0.0046 | 0.5000 |
 
-ROC-AUC did not move at all. PR-AUC moved by 0.4020. Same model, same predictions,
-same ranking — only how many negatives were in the room changed. If you report
-ROC-AUC on a rare-positive problem you are reporting a number that is blind to the
-thing making your problem hard.
+ROC-AUC did not move at all. PR-AUC moved by 0.4020. Same predictions, same
+ranking — only how many negatives were in the room changed. Report ROC-AUC on a
+rare-positive problem and you report a number blind to what makes it hard.
 
 ## Accuracy on a 1% problem
 
 ![Accuracy lies](figures/fig-01-accuracy-lies.png)
 
-10,000 Dry Bean rows, subsampled to 100 SIRA positives — a 1.00% positive rate.
-
-| Model | Accuracy | Precision | Recall | F1 |
+| 10,000 Dry Bean rows, 100 SIRA positives (1.00%) | Accuracy | Precision | Recall | F1 |
 |---|---|---|---|---|
 | Always predict negative | **0.990** | 0.0000 | 0.00 | 0.0000 |
 | Gradient boosting at 0.5 | 0.993 | 0.7344 | 0.47 | 0.5732 |
@@ -46,9 +42,8 @@ The grey model has no parameters and never looks at a feature. Accuracy pays it
 The other three columns separate the two immediately, because they ignore the pile
 of true negatives that accuracy is mostly counting.
 
-Two details. Precision is *undefined* when a model flags nothing — the printed
-0.0000 is scikit-learn's `zero_division=0` convention, not a measurement. And the
-real model catching 47 of 100 positives is not something to be proud of either.
+Precision is *undefined* when a model flags nothing — the printed 0.0000 is
+scikit-learn's `zero_division=0` convention, not a measurement.
 
 ## The confusion matrix is the only primitive
 
@@ -59,41 +54,26 @@ real model catching 47 of 100 positives is not something to be proud of either.
 | **Truly negative** | TN 9,883 | FP 17 |
 | **Truly positive** | FN 53 | TP 47 |
 
-Every metric in the notebook is arithmetic on those four counts, and the hand
-computation reproduces scikit-learn to six decimals:
-
-| | Value |
-|---|---|
-| accuracy | 0.993000 |
-| precision | 0.734375 |
-| recall | 0.470000 |
-| f1 | 0.573171 |
-| specificity | 0.998283 |
-| false positive rate | **0.001717** |
-
-A false positive rate of 0.0017 sounds excellent. It is 17 false alarms against 47
-real catches. Rates hide counts, and your on-call engineer works in counts.
+Every metric here is arithmetic on those four counts, and computing them by hand
+reproduces scikit-learn to six decimals: accuracy 0.993000, precision 0.734375,
+recall 0.470000, f1 0.573171, specificity 0.998283, false positive rate 0.001717.
+That last one sounds excellent. It is 17 false alarms against 47 real catches.
+Rates hide counts, and on-call works in counts.
 
 ## Threshold is a choice, not a property
 
 ![Threshold tradeoff](figures/fig-03-threshold-tradeoff.png)
 
-Same model, same scores, same ranking. Only the line through them moves.
-
-| Threshold | Rows flagged | Precision | Recall | F1 |
+| Same model, same scores, same ranking | Flagged | Precision | Recall | F1 |
 |---|---|---|---|---|
-| 0.02 | 98 | 0.5816 | 0.57 | 0.5758 |
-| 0.05 | 89 | 0.6180 | 0.55 | 0.5820 |
-| 0.10 | 84 | 0.6548 | 0.55 | 0.5978 |
-| 0.25 | 74 | 0.7027 | 0.52 | 0.5977 |
-| 0.50 | 64 | 0.7344 | 0.47 | 0.5732 |
+| threshold 0.02 | 98 | 0.5816 | 0.57 | 0.5758 |
+| threshold 0.10 | 84 | 0.6548 | 0.55 | 0.5978 |
+| threshold 0.50 | 64 | 0.7344 | 0.47 | 0.5732 |
 
 The best-F1 threshold is **0.1662**, giving precision 0.7051, recall 0.5500 and
 F1 **0.6180** — 0.0448 above what the default 0.5 delivers, from changing one
-number and retraining nothing.
-
-So "this model has precision 0.73" is an incomplete sentence. The complete one
-names a threshold.
+number and retraining nothing. So "this model has precision 0.73" is an incomplete
+sentence. The complete one names a threshold.
 
 ## ROC against precision-recall
 
@@ -101,22 +81,19 @@ names a threshold.
 
 The lead table above is this figure. Both ROC axes divide within a class, so
 neither moves when prevalence changes. Precision's denominator mixes TP and FP, so
-it depends directly on how many negatives exist to generate false positives from.
-PR-AUC is also scored against a moving floor: the baseline is the positive rate,
-0.0100 here against 0.5000 balanced.
+it depends on how many negatives exist to generate false positives from. PR-AUC is
+also scored against a moving floor: its baseline is the positive rate, 0.0100 here
+against 0.5000 balanced.
 
 ROC-AUC has a reading with no curve in it. Enumerating all **990,000**
-positive-negative pairs gives **0.969935**, matching scikit-learn's 0.969935
-exactly: it is the probability a random positive outranks a random negative.
-
-Report both. ROC-AUC to compare rankings across models, PR-AUC to judge whether the
-ranking is any use at the rate your positives actually occur.
+positive-negative pairs gives **0.969935**, matching scikit-learn exactly: it is
+the probability a random positive outranks a random negative. Report both — ROC-AUC
+to compare rankings, PR-AUC to judge whether the ranking is any use at the rate
+your positives actually occur.
 
 ## Macro, micro and weighted
 
-Full Dry Bean, seven varieties, logistic regression, out-of-fold:
-
-| | Precision | Recall | F1 |
+| Full Dry Bean, 7 varieties, logistic regression | Precision | Recall | F1 |
 |---|---|---|---|
 | macro | 0.9362 | 0.9341 | 0.9351 |
 | micro | 0.9234 | 0.9234 | 0.9234 |
@@ -129,18 +106,17 @@ for one class and a false negative for another, so ΣFP = ΣFN and all three for
 reduce to the fraction of rows that were right. Micro-F1 next to accuracy prints
 one number twice.
 
-Macro sits 0.0117 F1 *above* micro here, which is the interesting direction: the
+Macro sits 0.0117 F1 *above* micro, which is the interesting direction: the
 smallest class is the easiest. BOMBAY, 522 rows, scores a perfect 1.000 precision
-and 1.000 recall. The hardest class is SIRA at 0.866 F1 with 2,636 rows. Rarity and
-difficulty are separate things.
+and 1.000 recall, while the hardest class is SIRA at 0.866 F1 with 2,636 rows.
+Rarity and difficulty are separate things.
 
 ## Choosing the threshold from what mistakes cost
 
 ![Cost threshold](figures/fig-05-cost-threshold.png)
 
-Breast Cancer, 569 rows, 212 malignant (37.3%), ROC-AUC 0.9953, PR-AUC 0.9942. The
-theory says the cost-optimal threshold is c_FP / (c_FP + c_FN). I swept it instead
-and measured.
+Breast Cancer, 569 rows, 212 malignant (37.3%), ROC-AUC 0.9953, PR-AUC 0.9942.
+Theory puts the cost-optimal threshold at c_FP / (c_FP + c_FN). I swept and measured.
 
 | Cost of a miss | Theory threshold | Measured best | Cost at best | Cost at 0.50 | Excess at 0.50 |
 |---|---|---|---|---|---|
@@ -151,17 +127,15 @@ and measured.
 Theory and measurement land close, which quietly confirms the logistic model's
 probabilities mean roughly what they say. The last column is the price of the
 default: when a missed malignancy costs 20 times a false alarm, keeping 0.5 costs
-**2.6× the achievable minimum**. Nothing about the model was wrong. One number was.
-
-Pick that number on validation data. It is a fitted parameter like any other.
+**2.6× the achievable minimum**. Nothing about the model was wrong. One number was,
+and it is a fitted parameter like any other, so pick it on validation data.
 
 ## Cheat sheet
 
 | | |
 |---|---|
 | **Accuracy** | Fine when classes are balanced and mistakes cost the same. Otherwise compare it against the majority-class rate first |
-| **Precision** | Of what I flagged, how much was real. Undefined when nothing is flagged |
-| **Recall** | Of what was real, how much I caught. Also called sensitivity or TPR |
+| **Precision / recall** | Of what I flagged, how much was real; of what was real, how much I caught. Precision is undefined when nothing is flagged |
 | **F1** | Harmonic mean of the two. A default when costs are unknown, a mistake when they are known |
 | **ROC-AUC** | Probability a random positive outranks a random negative. Threshold-free and prevalence-free |
 | **PR-AUC** | Baseline is the positive rate, so read it against that baseline, not against 1.0 |

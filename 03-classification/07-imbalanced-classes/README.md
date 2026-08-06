@@ -48,11 +48,9 @@ the cut.
 A model that has never once said "positive" is **0.0092** behind a real one on
 accuracy. Every other column separates them properly. Average precision has the
 base rate as its floor, not one half, which is why the do-nothing model scores
-0.017 rather than looking respectable.
-
-I avoid ROC-AUC here. With one positive per 60 rows the false positive rate has an
-enormous denominator, so a model can drown you in false alarms and still post
-0.963.
+0.017 rather than looking respectable. I avoid ROC-AUC here: with one positive per
+60 rows the false positive rate has an enormous denominator, so a model can drown
+you in false alarms and still post 0.963.
 
 ## Imbalance is not the problem — imbalance plus overlap is
 
@@ -79,8 +77,7 @@ resampler invents a separation the features do not contain.
 | SMOTE | 7,092 | 50.0% | 3,546 |
 
 Oversampling reports 3,546 positive rows and 60 distinct ones. SMOTE's rows are all
-distinct, but every one is a convex combination of the same 60, so the information
-content sits closer to the small number.
+distinct, but every one is a convex combination of the same 60.
 
 Across 25 folds, F1 at a fixed 0.5 cut spans **0.5076** between best and worst
 method. Average precision spans **0.2518**, and most of that gap is undersampling
@@ -107,8 +104,8 @@ The measured version:
 
 The tuned cut averages **0.3381** across folds (sd 0.0630, range 0.2616 to 0.5569).
 The base rate itself is 0.0166 — free, needs no data, and reproduces the resamplers
-almost exactly. Tuning is worth doing when you have positives to spare, and it
-wobbles a lot when you do not.
+almost exactly. Tuning is worth doing when you have positives to spare and wobbles
+a lot when you do not.
 
 A threshold is also a dial. "Catch ninety percent of the fraud" is a request you
 satisfy by reading a number off the recall curve. No resampling ratio takes that
@@ -150,10 +147,8 @@ exist.
 
 The random forest reaches a perfect 1.000 on leaked oversampling. A tree can put a
 duplicated row in its own leaf; a linear model cannot. The more flexible the model,
-the more the leak pays out.
-
-Class weights and thresholds cannot make this mistake, because they never create a
-row.
+the more the leak pays out. Class weights and thresholds cannot make this mistake,
+because they never create a row.
 
 ## Cheat sheet
 

@@ -21,17 +21,14 @@ is no signal, so cross-validating a logistic regression on it can only return 0.
 Selecting the 100 columns most correlated with the label *before* the
 cross-validation loop returned **0.8200** — **+0.3200 accuracy over chance,
 manufactured out of nothing.** The same selector inside a `Pipeline` returns 0.5650.
-
-Everything else here is about *where* to cut the folds. This is about what you are
-allowed to do before cutting, and it is the expensive mistake.
+Everything else here is about *where* to cut the folds. This is about what you may
+do before cutting, and it is the expensive mistake.
 
 ## One split is a sample of size one
 
 ![One split is one sample](figures/fig-01-one-split-is-one-sample.png)
 
-Same 900-row Dry Bean slice, same decision tree, only the random seed changing.
-
-| | mean | sd | range |
+| Same slice, same tree, only the seed changing | mean | sd | range |
 |---|---|---|---|
 | Single 80/20 split, 200 seeds | 0.8792 | 0.0226 | 0.1000 |
 | 5-fold mean, 60 shuffles | 0.8805 | **0.0074** | 0.0333 |
@@ -52,11 +49,11 @@ luckiest and unluckiest seed. Two honest people would disagree and both be right
 `k = 2` is the clear loser at 0.8522, because each model only sees half the data.
 Above that the mean barely moves and the cost grows linearly in k.
 
-The fold sd column is the one people misread. It **rises** with k, from 0.0189 to
-0.0514, because each test fold is smaller and its score is noisier — a property of
-fold size, not evidence that large k is unreliable. Those k scores are also
-correlated, since any two training sets share about (k−2)/(k−1) of their rows, so
-sd/√k is not a valid standard error. Treat the spread as a smell test.
+The fold sd column is the one people misread. It **rises** with k, 0.0189 to
+0.0514, because each test fold is smaller and noisier — a property of fold size,
+not evidence that large k is unreliable. Those scores are also correlated, since
+any two training sets share about (k−2)/(k−1) of their rows, so sd/√k is not a
+valid standard error. Treat the spread as a smell test.
 
 ## Choosing a splitter
 
@@ -70,10 +67,9 @@ recall from a fold holding one example of a class is computed from nothing.
 ![Dependence](figures/fig-03-dependence.png)
 
 **Group when rows repeat.** Bike Sharing is hourly: 17,379 rows, 730 days, 23.8
-rows per day, so 24 rows share one day's weather and demand level. Same k-nearest
-neighbours pipeline, three ways:
+rows per day, so 24 rows share one day's weather and demand level.
 
-| Splitter | Mean R² | The question it answers |
+| Same k-NN pipeline, three ways | Mean R² | The question it answers |
 |---|---|---|
 | `KFold`, shuffled | **0.6441** | Can you fill in a missing hour from a day you already saw? |
 | `GroupKFold` by day | 0.6029 | Can you handle a day you have never seen? |
@@ -87,9 +83,7 @@ on a fifth of the history, fold 5 on nearly all of it.
 
 ## LeaveOneOut, and repeated CV
 
-On Breast Cancer, with logistic regression:
-
-| Scheme | Fits | Mean | Fold sd |
+| Breast Cancer, logistic regression | Fits | Mean | Fold sd |
 |---|---|---|---|
 | 5-fold | 5 | 0.9789 | 0.0142 |
 | 10-fold | 10 | 0.9772 | 0.0193 |
@@ -108,7 +102,7 @@ Averaging the ten runs cuts the spread from 0.0061 to 0.0019.
 
 ![Leakage](figures/fig-04-leakage.png)
 
-Pure noise, 200 rows, 1000 columns, balanced coin-flip labels. Honest score is 0.5.
+Pure noise, 200 rows, 1000 columns, balanced labels. The honest score is 0.5.
 
 | Columns kept | Selector outside the loop | Selector in a `Pipeline` | Inflation |
 |---|---|---|---|
