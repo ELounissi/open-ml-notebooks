@@ -37,11 +37,10 @@ notebook tries — the ResNet-18 weights did load, and I use them for one pictur
 experiment itself is self-contained so it never stops running: Fashion-MNIST split
 into a **source task** (T-shirt, trouser, pullover, dress, coat — 30,000 training
 images) and a **target task** (sandal, shirt, sneaker, bag, boot). No garment appears
-in both, so whatever transfers is not memorised labels.
-
-The source model reached **0.9206** on its own five classes in **21 seconds**.
-Everything below inherits from it, and every target run gets the same budget: **400
-updates, batch 64, same seed**.
+in both, so whatever transfers is not memorised labels. The source model reached
+**0.9206** on its own five classes in **21 seconds**; everything below inherits from
+it, and every target run gets the same budget of **400 updates, batch 64, same
+seed**.
 
 ## Where to cut
 

@@ -69,9 +69,9 @@ One sandal, eight hand-designed kernels, same operation throughout.
 | emboss | 1.0 | 0.204 | **1.348** |
 
 The weight-sum column splits the table into two families. Sum to one and average
-brightness is preserved, so the output still looks like the garment. Sum to zero and
-the kernel cancels on flat regions, responding only where something changes — mean
-within 0.002 of zero for all three.
+brightness is preserved (mean 0.203 to 0.205 throughout), so the output still looks
+like the garment. Sum to zero and the kernel cancels on flat regions, responding only
+where something changes — mean within 0.002 of zero for all three.
 
 ## From scratch, checked against torch
 

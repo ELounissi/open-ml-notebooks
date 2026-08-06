@@ -29,10 +29,8 @@ I built the two extremes by hand first. A model that orders every case correctly
 lies about every number: **AUC 1.0000, ECE 0.6109**, labelling everything positive at
 the 0.5 threshold so accuracy lands on the base rate of 0.3000. Then a model that
 ranks at chance and tells the truth on average: **AUC 0.5000, ECE 0.0000**. No single
-number catches both failures.
-
-On real data I took a logistic regression on breast cancer and divided its logits by
-a temperature $T$, which cannot move the order.
+number catches both failures. On real data I took a logistic regression on breast
+cancer and divided its logits by a temperature $T$, which cannot move the order.
 
 | Variant | AUC | ECE | Brier |
 |---|---|---|---|
@@ -53,18 +51,11 @@ observed frequency, $\sum_b (n_b/n)\,|\bar{y}_b - \bar{p}_b|$, and nothing else 
 going on. I wrote it twice, as a loop and vectorised, and checked both against
 `toolkit.evaluate` — all three returned **0.0184214056**.
 
-The bin populations are what most reliability plots hide:
-
-| Mean predicted | Observed | Gap | Cases |
-|---|---|---|---|
-| 0.150 | 0.000 | −0.150 | 22 |
-| 0.664 | 0.818 | +0.154 | 11 |
-| 0.985 | 0.990 | +0.005 | 296 |
-
-**79.3% of the data sits in the two end bins.** A bin holding 11 cases and a bin
-holding 296 look identical on the diagram and should not. ECE is also not a proper
-scoring rule — predicting the base rate for everything scores near zero, as above —
-so quote Brier or log loss beside it.
+The bin populations are what most reliability plots hide. Here **79.3% of the data
+sat in the two end bins**: the largest held 296 cases at a gap of +0.005, while the
+bin with the worst gap on the plot, +0.154, held 11. Those two dots look identical
+and should not. ECE is also not a proper scoring rule — predicting the base rate for
+everything scores near zero, as above — so quote Brier or log loss beside it.
 
 ## Each model family fails in its own shape
 
@@ -86,13 +77,13 @@ regression.
 
 **The SVM margin is not a probability.** `decision_function` returned a signed
 distance in [−2.765, 2.592]. Min-max squashing and a plain sigmoid both hold the AUC
-at exactly 0.9953 and both stay badly calibrated, at ECE 0.1927 and 0.1753. Neither
+at exactly 0.9953 and both stay badly calibrated, at ECE 0.1927 and 0.1753 — neither
 looked at a label.
 
-**Naive Bayes is over-confident by the widest margin here.** It multiplies
-correlated features as if they were independent, so the same evidence gets counted
-repeatedly: **95.6% of its predictions came out above 0.99 confidence** at a mean
-confidence of **0.9919**, against an overall accuracy of **0.9385**.
+**Naive Bayes is over-confident by the widest margin here.** It counts correlated
+features repeatedly, as if they were independent: **95.6% of its predictions came out
+above 0.99 confidence** at a mean confidence of **0.9919**, against an overall
+accuracy of **0.9385**.
 
 ## Platt scaling against isotonic regression
 
@@ -122,21 +113,15 @@ varieties that get confused most, and split 1730 train / 2597 calibration pool /
 1855 test — uncalibrated Brier 0.0775, ECE 0.0736. Then I held the base model fixed
 and grew only the calibration set.
 
-| Calibration rows | Platt Brier | Isotonic Brier | Winner |
-|---|---|---|---|
-| 25 | **0.0678** | 0.0720 | Platt |
-| 50 | **0.0613** | 0.0666 | Platt |
-| 100 | **0.0602** | 0.0637 | Platt |
-| 200 | **0.0583** | 0.0613 | Platt |
-| 400 | **0.0582** | 0.0592 | Platt |
-| 800 | 0.0580 | **0.0579** | isotonic |
-| 1600 | 0.0576 | **0.0571** | isotonic |
-| 2500 | 0.0577 | **0.0571** | isotonic |
+| Calibration rows | 25 | 50 | 100 | 200 | 400 | 800 | 1600 | 2500 |
+|---|---|---|---|---|---|---|---|---|
+| Platt Brier | **0.0678** | **0.0613** | **0.0602** | **0.0583** | **0.0582** | 0.0580 | 0.0576 | 0.0577 |
+| Isotonic Brier | 0.0720 | 0.0666 | 0.0637 | 0.0613 | 0.0592 | **0.0579** | **0.0571** | **0.0571** |
 
 **The crossover fell at about 800 calibration rows.** Read the margins as well as
-the winner column: at 25 rows Platt wins by 0.0042, at 2500 isotonic wins by 0.0006.
-Choosing Platt when isotonic was right costs seven times less than the reverse.
-Sigmoid is the safer default and the crossover is a long way up.
+the winner: at 25 rows Platt wins by 0.0042, at 2500 isotonic wins by 0.0006.
+Choosing Platt when isotonic was right costs seven times less than the reverse, so
+sigmoid is the safer default and the crossover is a long way up.
 
 ## Fit the calibrator on data the model has not seen
 
@@ -156,12 +141,12 @@ means near-certain, because on those rows it was.
 Both methods came out worse than doing nothing when fitted on the training rows,
 isotonic hardest at **3.8× the uncalibrated ECE** plus a 0.0409 AUC loss. Sigmoid on
 held-out rows, at 0.0344, still failed to beat leaving this model alone.
-Cross-fitting is the version to reach for: best Brier and best AUC of the six, and
-no data set aside permanently.
+Cross-fitting is the one to reach for: best Brier and best AUC of the six, and no
+data set aside permanently.
 
 The danger scales with overfitting. Repeated with naive Bayes, which fits its
 training rows about as well as anything else (0.9035 train against 0.9121 test), the
-two rows land at ECE 0.0176 and 0.0187. Barely a difference. Rather than reason
+two rows land at ECE 0.0176 and 0.0187 — barely a difference. Rather than reason
 about that per model, always use held-out data.
 
 ## Cheat sheet

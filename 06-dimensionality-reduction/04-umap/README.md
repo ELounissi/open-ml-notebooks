@@ -130,20 +130,18 @@ Being allowed in a pipeline is not the same as earning a place in one.
 | Isomap to 2D | 0.9561 | 0.4 s |
 
 Squeezing 30 features into 2 costs **0.0211** accuracy, and the neighbour-graph
-reduction finishes **0.0017 behind plain PCA** while taking several times as long.
-The reducer was refit inside every fold, on that fold's training rows only — which is
-only writable because it has a `transform`.
+reduction finishes **0.0017 behind plain PCA** while taking several times as long. The
+reducer was refit inside every fold, on that fold's training rows only — a loop you
+can only write because it has a `transform`.
 
 ## What is still true about UMAP
 
-Seed stability read **1.000** here, and the cell prints a note saying that is
-Isomap being deterministic rather than a layout earning its steadiness. A UMAP layout
-moves when the seed moves, so set `random_state` and say what you set it to.
-
-Cluster size, exact between-cluster distance and empty space remain artefacts in a
-UMAP plot, for the reason section 5 of the notebook works through: a loss defined on
-neighbour relationships cannot see scale. The fallback keeps them because its loss is
-defined on distances. Do not carry the Isomap result across.
+Seed stability read **1.000** here, and the cell prints a note saying that is Isomap
+being deterministic rather than a layout earning its steadiness. A UMAP layout moves
+when the seed moves, so set `random_state` and say what you set it to. Cluster size,
+exact between-cluster distance and empty space remain artefacts in a UMAP plot,
+because a loss defined on neighbour relationships cannot see scale. The fallback keeps
+them because its loss is defined on distances. Do not carry that result across.
 
 ## Cheat sheet
 
