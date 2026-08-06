@@ -1,0 +1,7 @@
+file        : bike_sharing_dataset.zip
+retrieved   : 2026-08-06
+size        : 0.28 MB
+url         : https://archive.ics.uci.edu/static/public/275/bike+sharing+dataset.zip
+licence     : CC BY 4.0
+source page : https://archive.ics.uci.edu/dataset/275/bike+sharing+dataset
+

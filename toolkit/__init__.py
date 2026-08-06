@@ -1,8 +1,9 @@
 """Shared helpers for open-ml-notebooks.
 
-Three modules, deliberately small:
+Four modules, deliberately small:
 
-    style     one chart theme, so 44 notebooks look like one book
+    style     one chart theme, so every notebook looks like the same book
+    datasets  the house datasets, loaded the same way everywhere
     data      cached downloads with the provenance rule enforced
     evaluate  scoring with uncertainty attached
 
@@ -16,5 +17,5 @@ Notebooks pick these up by walking up to the repo root:
 Author: Elyes Lounissi
 """
 
-__all__ = ["style", "data", "evaluate"]
+__all__ = ["style", "datasets", "data", "evaluate"]
 __author__ = "Elyes Lounissi"

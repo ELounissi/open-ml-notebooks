@@ -1,0 +1,7 @@
+file        : dry_bean_dataset.zip
+retrieved   : 2026-08-06
+size        : 4.74 MB
+url         : https://archive.ics.uci.edu/static/public/602/dry+bean+dataset.zip
+licence     : CC BY 4.0
+source page : https://archive.ics.uci.edu/dataset/602/dry+bean+dataset
+

@@ -1,9 +1,0 @@
-dataset    : USGS catalogued explosions vs earthquakes, contiguous US, 2015-2025
-built      : 2026-08-06 by data/fetch/usgs_blasts_vs_quakes.py
-service    : https://earthquake.usgs.gov/fdsnws/event/1/
-licence    : public domain (work of the U.S. Geological Survey)
-citation   : U.S. Geological Survey, Earthquake Hazards Program, Advanced National Seismic System (ANSS) Comprehensive Catalog.
-rows       : 26,762  (13,381 explosions, 13,381 earthquakes)
-size       : 4.72 MB
-sampling   : all explosions kept; earthquakes drawn at random from the same
-             calendar month, equal count, seed 20260806

@@ -1,94 +1,90 @@
 # open-ml-notebooks
 
-**Machine learning, deep learning, and reinforcement learning explained through
-experiments that could have failed.**
+### Learn machine learning by reading the code
 
-Forty-four self-contained Jupyter notebooks. Each one asks a single question about
-a method, answers it on an openly licensed dataset, and ends with a verdict —
-including the parts where the evidence did not cooperate.
+A free, open book of **86 Jupyter notebooks** covering machine learning, deep
+learning, and reinforcement learning — one method per notebook, explained in
+plain language, implemented from scratch, then done properly with the library.
 
-Every notebook ships executed. Open one on GitHub and the charts are already
-there, along with the numbers that produced them.
+Every notebook ships **already executed**. Open one on GitHub and the charts,
+numbers, and outputs are right there. Nothing to install to start reading.
 
-By [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/).
+**Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)**
 
-![Explosions sit in knots. Earthquakes trace faults.](01-foundations/01-01-three-splits-three-truths/figures/fig-01-where.png)
+![A straight line cannot see two commutes](02-regression/01-linear-regression/figures/fig-04-where-it-loses.png)
 
----
-
-## Why another machine learning repository
-
-Most collections teach you to run a model. Almost none teach you to distrust the
-number it prints. That is the gap this one aims at.
-
-**The question comes before the dataset.** I do not start with Titanic and look
-for something to predict. I start with something I genuinely do not know the
-answer to, then find open data that can settle it. If the answer was never in
-doubt, it is not an experiment and it is not in here.
-
-**Results are allowed to disappoint.** In the first project I predicted that the
-block-size sweep would flatten out. It did not, which means one of my claims is
-weaker than I wanted, and the notebook says so in the section where it matters
-rather than in a footnote.
-
-**Every figure was opened and read.** A chart that does not clearly support or
-clearly refute the question gets the experiment redesigned, not the caption
-reworded. One chart was cut from project 01-01 for exactly this reason, and the
-notebook explains why.
-
-**Nothing is copied.** Prior work for each project is searched, read, and recorded
-in [`ORIGINALITY.md`](ORIGINALITY.md), including the work that comes closest to
-mine and the parts where I am reproducing rather than extending.
-
-The rules I hold myself to are written down in [`STYLE.md`](STYLE.md), covering
-prose, charts, code, and datasets.
+*From [Linear regression](02-regression/01-linear-regression/): why the simplest
+model fails on cyclical data, and the one-line fix that takes it from 0.39 to 0.68.*
 
 ---
 
-## Start here
+## Why this book
 
-**[01-01 — Three splits, three different truths](01-foundations/01-01-three-splits-three-truths/)**
+Most tutorials show you which function to call. Few show you what the method is
+actually doing, and almost none tell you **when it is the wrong choice**.
 
-Can a model tell a quarry blast from an earthquake using nothing but the USGS
-catalogue row? Yes. But the same model and the same data report a balanced
-accuracy of **0.98 or 0.86** depending only on how the folds are arranged, and
-the split most people reach for by reflex — a time-based one — protects against
-almost nothing here.
+Every notebook here answers four questions:
 
-![Location collapses. The clock does not.](01-foundations/01-01-three-splits-three-truths/figures/fig-06-reversal.png)
+1. **What does this method actually do?** In words first, with a picture.
+2. **What is the maths?** Written out, only what you need.
+3. **Can I build it myself?** A minimal NumPy version, so nothing is magic.
+4. **When does it win, and when does it lose?** Measured, not asserted.
 
-Under a random split, location looks like the informative feature. Under a
-spatially blocked split, location is the weakest and time of day is the
-strongest. Same data, same model, opposite conclusions.
+That fourth question is the one that matters and the one usually missing.
 
----
+## The idea that ties it together
 
-## The map
+Every notebook uses the **same five datasets**. That is deliberate. When a
+support vector machine scores 0.93 in chapter three and a random forest scores
+0.94 in chapter four, the numbers are directly comparable, because the question
+was identical.
 
-Nine parts, forty-four projects. Full detail, including the question and dataset
-for each, is in [`ROADMAP.md`](ROADMAP.md).
-
-| Part | What it covers | Projects | Shipped |
+| Dataset | Task | Size | Why this one |
 |---|---|---|---|
-| [1 — Foundations](01-foundations/) | Evaluation, leakage, bias and variance, learning curves, metrics | 4 | 1 |
-| 2 — Supervised, classical | Regularization, calibration, k-NN, trees, forests, boosting, SVMs, imbalance | 8 | 0 |
-| 3 — Unsupervised | k-means, density clustering, mixtures, PCA, embeddings, anomalies | 6 | 0 |
-| 4 — Deep learning core | Backprop from scratch, optimizers, regularization, CNNs, transfer, sequences, transformers | 7 | 0 |
-| 5 — Generative | Autoencoders, VAEs, GANs, diffusion, normalizing flows | 5 | 0 |
-| 6 — Self-supervised | Contrastive learning, masked modelling, pretext tasks, tabular self-supervision | 4 | 0 |
-| 7 — Graphs and structure | Graph neural networks, link prediction, sequence labelling | 3 | 0 |
-| 8 — Reinforcement learning | Bandits, dynamic programming, Q-learning, DQN, policy gradients | 5 | 0 |
-| 9 — Beyond the model | Conformal prediction, explainability, fairness | 2 | 0 |
+| California Housing | regression | 20,640 × 8 | Ships with scikit-learn — chapter one runs with no download |
+| Breast Cancer Wisconsin | binary classification | 569 × 30 | Small enough that every method trains instantly |
+| **UCI Dry Bean** | 7-class classification | 13,611 × 16 | Published 2020, barely used in tutorials, and pleasantly unbalanced |
+| UCI Bike Sharing | regression + time series | 17,379 × 16 | One dataset that serves both tabular and sequence chapters |
+| Fashion-MNIST | image classification | 70,000 images | MNIST's shape, several times harder, so CNNs stay interesting |
 
-Projects are built in the order given at the end of `ROADMAP.md`, not in numerical
-order.
+At the end, [**the scoreboard**](CURRICULUM.md) puts every method against every
+dataset in one table and explains the pattern — why gradient boosting usually
+takes tabular data, why k-nearest neighbours falls apart as columns multiply, why
+a linear model beats a neural network when rows are few.
 
 ---
 
-## Running it
+## Contents
 
-Everything runs on a laptop CPU in minutes. A GPU makes the deep learning parts
-faster and is never required.
+Full table of contents with all 86 notebooks: **[CURRICULUM.md](CURRICULUM.md)**
+
+| Part | Covers |
+|---|---|
+| **1 — [Foundations](01-foundations/)** | The workflow, train/validation/test, overfitting, cross-validation, metrics, scaling, encoding, missing data, tuning |
+| **2 — [Regression](02-regression/)** | Linear, gradient descent, polynomial, Ridge, Lasso, Elastic Net, Huber, RANSAC, quantile, GLMs |
+| **3 — [Classification](03-classification/)** | Logistic regression, k-NN, Naive Bayes, LDA/QDA, SVM and kernels, decision trees, imbalance, calibration |
+| **4 — [Ensembles](04-ensembles/)** | Bagging, Random Forest, Extra Trees, AdaBoost, Gradient Boosting, XGBoost, LightGBM, CatBoost, stacking |
+| **5 — [Unsupervised](05-unsupervised/)** | k-Means, choosing k, hierarchical, DBSCAN, HDBSCAN, Gaussian mixtures, anomaly detection, Apriori |
+| **6 — [Dimensionality reduction](06-dimensionality-reduction/)** | PCA, Kernel PCA, ICA, NMF, t-SNE, UMAP, feature selection |
+| **7 — [Neural networks](07-neural-networks/)** | Perceptron, MLP and backprop in NumPy, PyTorch, activations, optimisers, regularisation |
+| **8 — [Computer vision](08-computer-vision/)** | Convolution, CNNs, LeNet/VGG/ResNet, augmentation, transfer learning, segmentation, detection |
+| **9 — [Sequences and language](09-sequences-and-language/)** | TF-IDF, embeddings, RNN, LSTM, GRU, seq2seq, attention, Transformers, time series |
+| **10 — [Generative models](10-generative-models/)** | Autoencoders, VAEs, GANs, diffusion |
+| **11 — [Reinforcement learning](11-reinforcement-learning/)** | Bandits, MDPs, Q-learning, SARSA, DQN, policy gradients, actor-critic, PPO |
+| **12 — [Putting it together](12-putting-it-together/)** | The scoreboard, SHAP and LIME, pipelines, deployment, common mistakes |
+
+### Available now
+
+- **[02-01 — Linear regression](02-regression/01-linear-regression/)** — the normal
+  equation derived, a 30-line NumPy implementation matched against scikit-learn to
+  12 decimal places, standardised coefficients, residual diagnostics, and a worked
+  example of the method failing and being rescued by feature encoding
+
+New notebooks land in batches. Watch or star the repo to get them.
+
+---
+
+## Getting started
 
 ```bash
 git clone https://github.com/ELounissi/open-ml-notebooks
@@ -98,37 +94,43 @@ pip install -r requirements.txt
 jupyter lab
 ```
 
-Small datasets are committed, so notebooks run with no network. Larger ones have a
-rebuild script under [`data/fetch/`](data/fetch/). Sources and licences for
-everything are in [`data/README.md`](data/README.md).
+Everything runs on a **laptop CPU in minutes**. A GPU speeds up the deep learning
+chapters and is never required. Small datasets are committed, so most notebooks
+run offline immediately.
 
-A GitHub Action re-executes every notebook on a clean machine each month, so a
-notebook that only worked because of leftover kernel state gets caught.
+**Complete beginner?** Start at [Part 1, Foundations](01-foundations/).
+**Know the basics?** Jump to whichever method you need — every notebook stands alone.
+**Preparing for interviews?** The "when it wins, when it loses" section of each
+notebook is written for exactly that conversation.
 
 ---
 
 ## Reusing this
 
-Code is MIT. The prose and the figures are CC BY 4.0 — take them into a course or
-a talk, with attribution. Datasets keep their own licences, recorded per dataset.
-Details in [`LICENSE`](LICENSE).
+Code is **MIT**. Text and figures are **CC BY 4.0** — take them into a course, a
+talk, or a study group, with attribution. Datasets keep their own licences,
+recorded per dataset in [`data/README.md`](data/README.md).
 
-If it saved you time, a star helps other people find it.
-
----
-
-## Topics
-
-`machine-learning` `deep-learning` `reinforcement-learning` `self-supervised-learning`
-`jupyter-notebook` `data-science` `scikit-learn` `pytorch` `open-data`
-`reproducible-research` `data-leakage` `cross-validation` `machine-learning-tutorial`
-`ml-portfolio` `data-visualization`
+If this saved you time, **a star helps other people find it**. Found a mistake?
+Open an issue — corrections are genuinely welcome, especially ones that show a
+claim here is wrong.
 
 ---
 
-**Elyes Lounissi** ·
+### Topics
+
+`machine-learning` `deep-learning` `reinforcement-learning` `machine-learning-tutorial`
+`jupyter-notebook` `python` `scikit-learn` `pytorch` `data-science` `neural-network`
+`cnn` `rnn` `lstm` `transformer` `linear-regression` `logistic-regression`
+`random-forest` `xgboost` `clustering` `pca` `learn-machine-learning`
+`machine-learning-algorithms` `ml-tutorial` `data-science-tutorial` `education`
+
+`#MachineLearning` `#DeepLearning` `#ReinforcementLearning` `#DataScience`
+`#Python` `#ScikitLearn` `#PyTorch` `#LearnMachineLearning` `#MLTutorial`
+`#JupyterNotebook` `#OpenSource` `#AI`
+
+---
+
+**Made by Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·
 [pilot.tun@gmail.com](mailto:pilot.tun@gmail.com)
-
-Corrections are welcome, especially ones that show a conclusion here is wrong.
-Open an issue.
