@@ -57,15 +57,15 @@ target.
 | block1 + block2 + embed | 0.8660 |
 
 Copying one block past the best cut cost **−0.0696**, five times more than the
-+0.0132 that copying the first two blocks bought in the first place. That embed
-stage was shaped by pressure to separate trousers from coats, and my question is
-about sandals.
++0.0132 that copying the first two blocks bought in the first place. That embed stage
+was shaped by pressure to separate trousers from coats, and my question is about
+sandals.
 
-The first-layer filters in the figure are why the early blocks work at all. Most are
+The first-layer filters in the figure are why the early blocks work at all: mostly
 oriented light and dark bands, with a few blob detectors. Nobody asked for edge
 detectors. One of those networks saw a million colour photographs across a thousand
-categories and the other saw thirty thousand small greyscale clothes, and their
-first layers are recognisably the same thing.
+categories and the other saw thirty thousand small greyscale clothes, and their first
+layers are recognisably the same thing.
 
 ## Three strategies, at 500 target examples
 
@@ -82,10 +82,10 @@ ceiling is whatever the source task left behind. Here that ceiling sat **5.5 poi
 below** simply starting over from noise.
 
 The interesting part of the figure is the left edge, not the right. Both transferred
-models are useful after a handful of updates, because all they have to learn is a
-map over features that already separate garments. The from-scratch model spends most
-of its 400 updates rediscovering edge detectors that were sitting in the source
-model the whole time. It gets there — it just pays for the trip.
+models are useful after a handful of updates, because all they have to learn is a map
+over features that already separate garments. The from-scratch model spends most of
+its 400 updates rediscovering edge detectors that were sitting in the source model
+all along. It gets there — it just pays for the trip.
 
 ## How little data before it stops helping
 
@@ -126,9 +126,9 @@ that number.
 
 ## Learning rates and catastrophic forgetting
 
-Fine-tuning moves the copied weights, and the source task quietly stops working. I
-measured it by putting the original source head back on the fine-tuned backbone.
-Nothing about that head changed, so any loss is the features moving out from under
+Fine-tuning moves the copied weights and the source task quietly stops working. I
+measured it by putting the original source head back on the fine-tuned backbone —
+nothing about that head changed, so any loss is the features moving out from under
 it. Source accuracy before any of this: **0.9206**.
 
 | Setting | Target accuracy | Source accuracy after |
@@ -141,8 +141,8 @@ it. Source accuracy before any of this: **0.9206**.
 The full learning rate is the row to stare at. It destroyed **0.2520 of source
 accuracy** — a quarter of the old task, gone — and came out *worse on the target*
 than the tenth-rate setting did. It paid the whole price of forgetting and got
-nothing back. The tenth is the standard recipe and this is why. The frozen row is
-the sanity check: it lands exactly on 0.9206, because those weights never moved.
+nothing back; the tenth is the standard recipe and this is why. The frozen row is the
+sanity check, landing exactly on 0.9206 because those weights never moved.
 
 Forgetting matters when one model has to serve several tasks, or when you fine-tune
 the same base repeatedly and each round erases the last. The cheap defences are
@@ -160,8 +160,7 @@ source data back in.
 | **From scratch** | Catches up fast. Only 0.0024 behind fine-tuning by 1000 target examples |
 | **Learning rate** | Head normal, backbone a tenth. Equal rates cost 0.2520 of source accuracy and did not even help the target |
 | **Where to cut** | Freeze from the bottom, and stop early. One block too deep cost −0.0696 |
-| **Watch out** | Frozen batch-norm layers still update running statistics unless you also put them in eval mode |
-| **Watch out** | Match the source preprocessing exactly — same resize, same channel order, same normalisation |
+| **Watch out** | Frozen batch-norm still updates running statistics unless you also set eval mode; and match the source preprocessing exactly |
 
 ---
 

@@ -2,7 +2,7 @@
 
 The vocabulary every other chapter uses. Start here if you are new to machine learning.
 
-**5 of 9 shipped.**
+**7 of 9 shipped.**
 
 | # | Notebook | Status |
 |---|---|---|
@@ -11,10 +11,10 @@ The vocabulary every other chapter uses. Start here if you are new to machine le
 | `03` | [Overfitting and underfitting, seen rather than described](03-overfitting-and-underfitting/) | **shipped** |
 | `04` | [Cross-validation, and which flavour to use when](04-cross-validation/) | **shipped** |
 | `05` | [Accuracy, precision, recall, F1, ROC-AUC](05-classification-metrics/) | **shipped** |
-| `06` | MAE, RMSE, R squared, MAPE | planned |
+| `06` | [MAE, RMSE, R squared, MAPE](06-regression-metrics/) | **shipped** |
 | `07` | [Scaling numbers and encoding categories](07-feature-scaling-and-encoding/) | **shipped** |
 | `08` | [Missing data: what to do and what it costs](08-missing-data/) | **shipped** |
-| `09` | Grid, random, and Bayesian search | planned |
+| `09` | [Grid, random, and Bayesian search](09-hyperparameter-tuning/) | **shipped** |
 
 Every notebook follows the same shape: the idea in plain language, the maths written out, a from-scratch NumPy implementation, the library version annotated line by line, and a measured answer to when the method wins and when it loses.
 
