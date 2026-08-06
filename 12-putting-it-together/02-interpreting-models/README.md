@@ -89,12 +89,10 @@ scikit-learn on a group of one: `HouseAge` at **0.0588** against **0.0603**.
 
 A feature whose partial dependence is flat cannot be moving predictions much,
 whatever any importance chart says. `HouseAge` swings 0.31 across its entire range.
+The latitude-longitude panel is a map: the model rediscovered the California
+coastline from two unlabelled numeric columns.
 
-The latitude-longitude panel is a map. The model rediscovered the California
-coastline from two unlabelled numeric columns, because that is where the expensive
-districts are.
-
-I used `method="brute"` rather than sklearn's default `"recursion"` for tree
+I used `method="brute"` rather than sklearn's `"recursion"` default for tree
 ensembles, because recursion averages over the training distribution baked into
 the tree weights rather than over the data you pass.
 
@@ -109,9 +107,9 @@ at its left edge.
 | `AveOccup` | **−1.89** | −0.96 | **−0.35** |
 
 If every district responded the same way those percentiles would sit on top of each
-other. `AveOccup` spans a factor of more than five between the 10th and 90th
-percentile, so the single averaged curve is describing nobody in particular, and
-that width is itself a measure of interaction. Draw ICE first, the average second.
+other. `AveOccup` spans a factor of more than five between the 10th and 90th, so the
+averaged curve is describing nobody in particular, and that width is itself a
+measure of interaction. Draw ICE first, the average second.
 
 ## One prediction, explained two ways
 
