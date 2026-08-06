@@ -8,7 +8,7 @@ Finding structure when nobody gives you labels.
 | `02` | Elbow, silhouette, and the gap statistic | planned |
 | `03` | Hierarchical clustering and dendrograms | planned |
 | `04` | [Density-based clustering](04-dbscan-and-hdbscan/) | **shipped** |
-| `05` | Gaussian Mixture Models | planned |
+| `05` | [Gaussian Mixture Models](05-gaussian-mixture-models/) | **shipped** |
 | `06` | Isolation Forest, One-Class SVM, LOF | planned |
 | `07` | Apriori and market basket analysis | planned |
 

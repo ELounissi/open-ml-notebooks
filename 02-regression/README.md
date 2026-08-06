@@ -9,7 +9,7 @@ Predicting a number. Nine methods, from the straight line to generalised linear 
 | `03` | Polynomial regression and the bias-variance tradeoff | planned |
 | `04` | [Ridge regression (L2)](04-ridge-regression/) | **shipped** |
 | `05` | [Lasso regression (L1) and automatic feature selection](05-lasso-regression/) | **shipped** |
-| `06` | Elastic Net | planned |
+| `06` | [Elastic Net](06-elastic-net/) | **shipped** |
 | `07` | Huber and RANSAC | planned |
 | `08` | Predicting a range, not a number | planned |
 | `09` | Poisson and friends | planned |

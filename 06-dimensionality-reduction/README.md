@@ -6,7 +6,7 @@ Fewer columns, same information. Compression, visualisation, and feature selecti
 |---|---|---|
 | `01` | [Principal Component Analysis](01-principal-component-analysis/) | **shipped** |
 | `02` | Kernel PCA, ICA, and NMF | planned |
-| `03` | t-SNE | planned |
+| `03` | [t-SNE](03-t-sne/) | **shipped** |
 | `04` | UMAP | planned |
 | `05` | Filter, wrapper, and embedded methods | planned |
 
