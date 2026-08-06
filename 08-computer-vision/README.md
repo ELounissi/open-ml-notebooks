@@ -2,6 +2,8 @@
 
 What a convolution buys you, and how to get results without training from scratch.
 
+**1 of 7 shipped.**
+
 | # | Notebook | Status |
 |---|---|---|
 | `01` | Convolution, pooling, and what a filter learns | planned |

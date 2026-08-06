@@ -2,10 +2,12 @@
 
 Predicting a number. Nine methods, from the straight line to generalised linear models.
 
+**5 of 9 shipped.**
+
 | # | Notebook | Status |
 |---|---|---|
 | `01` | [Linear regression, from the normal equation to scikit-learn](01-linear-regression/) | **shipped** |
-| `02` | Gradient descent, watched step by step | planned |
+| `02` | [Gradient descent, watched step by step](02-gradient-descent/) | **shipped** |
 | `03` | Polynomial regression and the bias-variance tradeoff | planned |
 | `04` | [Ridge regression (L2)](04-ridge-regression/) | **shipped** |
 | `05` | [Lasso regression (L1) and automatic feature selection](05-lasso-regression/) | **shipped** |

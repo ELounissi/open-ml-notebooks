@@ -2,10 +2,12 @@
 
 The comparison chapter, plus everything that happens after a model works.
 
+**1 of 5 shipped.**
+
 | # | Notebook | Status |
 |---|---|---|
 | `01` | Every method on every house dataset, in one table | planned |
-| `02` | Permutation importance, SHAP, LIME | planned |
+| `02` | [Permutation importance, SHAP, LIME](02-interpreting-models/) | **shipped** |
 | `03` | Pipelines, and never leaking again | planned |
 | `04` | Saving, loading, and serving a model | planned |
 | `05` | The mistakes everybody makes | planned |

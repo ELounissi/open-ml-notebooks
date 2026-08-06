@@ -2,6 +2,8 @@
 
 Order matters. Text, time series, and the architectures built for both.
 
+**1 of 9 shipped.**
+
 | # | Notebook | Status |
 |---|---|---|
 | `01` | [Tokenising, bag of words, and TF-IDF](01-text-preprocessing-and-tfidf/) | **shipped** |

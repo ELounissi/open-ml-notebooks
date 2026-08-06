@@ -2,6 +2,8 @@
 
 Predicting a category. The core algorithms every practitioner is expected to know.
 
+**6 of 9 shipped.**
+
 | # | Notebook | Status |
 |---|---|---|
 | `01` | [Logistic regression](01-logistic-regression/) | **shipped** |

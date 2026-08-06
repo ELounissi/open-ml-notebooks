@@ -2,6 +2,8 @@
 
 Fewer columns, same information. Compression, visualisation, and feature selection.
 
+**3 of 5 shipped.**
+
 | # | Notebook | Status |
 |---|---|---|
 | `01` | [Principal Component Analysis](01-principal-component-analysis/) | **shipped** |

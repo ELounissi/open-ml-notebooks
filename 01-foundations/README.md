@@ -2,6 +2,8 @@
 
 The vocabulary every other chapter uses. Start here if you are new to machine learning.
 
+**3 of 9 shipped.**
+
 | # | Notebook | Status |
 |---|---|---|
 | `01` | What machine learning actually does, the workflow end to end | planned |

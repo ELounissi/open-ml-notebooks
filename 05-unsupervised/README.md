@@ -2,6 +2,8 @@
 
 Finding structure when nobody gives you labels.
 
+**5 of 7 shipped.**
+
 | # | Notebook | Status |
 |---|---|---|
 | `01` | [k-Means](01-k-means/) | **shipped** |

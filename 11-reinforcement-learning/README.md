@@ -2,6 +2,8 @@
 
 Learning from reward instead of from answers.
 
+**2 of 8 shipped.**
+
 | # | Notebook | Status |
 |---|---|---|
 | `01` | Agents, states, actions, rewards | planned |

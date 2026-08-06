@@ -2,6 +2,8 @@
 
 Models that produce data instead of labelling it.
 
+**1 of 4 shipped.**
+
 | # | Notebook | Status |
 |---|---|---|
 | `01` | [Autoencoders](01-autoencoders/) | **shipped** |
