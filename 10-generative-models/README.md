@@ -4,7 +4,7 @@ Models that produce data instead of labelling it.
 
 | # | Notebook | Status |
 |---|---|---|
-| `01` | Autoencoders | planned |
+| `01` | [Autoencoders](01-autoencoders/) | **shipped** |
 | `02` | Variational autoencoders | planned |
 | `03` | GANs | planned |
 | `04` | Diffusion, the smallest working example | planned |

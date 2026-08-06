@@ -7,7 +7,7 @@ Many weak models beating one strong model, and the two different reasons why.
 | `01` | [Bagging, and why averaging helps](01-bagging/) | **shipped** |
 | `02` | [Random Forests](02-random-forest/) | **shipped** |
 | `03` | Extremely Randomised Trees | planned |
-| `04` | AdaBoost | planned |
+| `04` | [AdaBoost](04-adaboost/) | **shipped** |
 | `05` | [Gradient Boosting from first principles](05-gradient-boosting/) | **shipped** |
 | `06` | The three production libraries compared | planned |
 | `07` | Stacking and voting | planned |
