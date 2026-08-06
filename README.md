@@ -75,11 +75,23 @@ Full table of contents with all 86 notebooks: **[CURRICULUM.md](CURRICULUM.md)**
 
 ### Available now
 
+- **[01-03 — Overfitting and underfitting](01-foundations/03-overfitting-and-underfitting/)** —
+  the single most useful diagnostic in machine learning, drawn rather than defined;
+  a degree-20 polynomial with a *better* training error than degree 4 and a test
+  error **three hundred times worse**
 - **[02-01 — Linear regression](02-regression/01-linear-regression/)** — the normal
   equation derived, a 30-line NumPy version matched against scikit-learn to 12
   decimal places, residual diagnostics that expose a bias the summary statistic
   hid, and the method failing on cyclical data then being rescued by encoding
   rather than by a bigger model
+- **[02-04 — Ridge regression](02-regression/04-ridge-regression/)** — the L2
+  penalty, and an honest finding that it bought **no accuracy at all** on this data
+  while making the coefficients **32× more stable**; plus a scaling experiment that
+  came out backwards and explains itself
+- **[02-05 — Lasso regression](02-regression/05-lasso-regression/)** — why one
+  exponent turns shrinkage into selection, and the discovery that **`LassoCV` kept
+  17 of 30 pure noise columns**, because cross-validation optimises prediction and
+  not sparsity
 - **[03-01 — Logistic regression](03-classification/01-logistic-regression/)** —
   the sigmoid, log loss, gradient descent written out, softmax on seven unbalanced
   bean varieties, and why the *rarest* class turned out to be the easiest one
