@@ -58,15 +58,8 @@ If you need distances, use PCA.
 
 ![Three maps](figures/fig-01-three-maps.png)
 
-3,000 beans sampled from 13,611, 16 features, timed on the same CPU:
-
-| Method | Seconds |
-|---|---|
-| PCA | 0.0 |
-| t-SNE | **19.4** |
-| Isomap | 3.2 |
-
-Six times faster than t-SNE at 3,000 rows. The gap you see quoted is larger because
+3,000 beans sampled from 13,611, 16 features, timed on the same CPU: PCA **0.0 s**,
+t-SNE **19.4 s**, Isomap **3.2 s**. Six times faster than t-SNE at 3,000 rows. The gap you see quoted is larger because
 most of the reported speed-up only appears at tens of thousands of rows, where
 t-SNE's all-pairs normalisation starts to hurt.
 
@@ -104,12 +97,8 @@ ordering.
 
 ![Transform](figures/fig-04-transform.png)
 
-| Estimator | Has `.transform`? |
-|---|---|
-| PCA | True |
-| t-SNE | **False** |
-| SpectralEmbedding | **False** |
-| Isomap | True |
+`hasattr(estimator, "transform")` reads True for PCA and Isomap, **False** for
+t-SNE and `SpectralEmbedding`.
 
 This is the practical difference, and it is bigger than the speed. Fit on 398
 training rows of Breast Cancer, `transform` the 171 held-out rows, then ask each

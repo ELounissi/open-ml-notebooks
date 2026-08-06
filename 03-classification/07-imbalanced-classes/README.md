@@ -54,12 +54,9 @@ you in false alarms and still post 0.963.
 
 ## Imbalance is not the problem — imbalance plus overlap is
 
-Same rarity, same model, same 60 positives, different rare variety:
-
-| Rare class | Average precision | Recall at 0.5 |
-|---|---|---|
-| SIRA (overlaps DERMASON) | 0.735 | 0.567 |
-| BOMBAY (much larger beans) | **1.000** | **1.000** |
+Same rarity, same model, same 60 positives, different rare variety. SIRA overlaps
+DERMASON heavily: average precision 0.735, recall at 0.5 of 0.567. BOMBAY beans are
+several times larger: **1.000** and **1.000**.
 
 The BOMBAY version is solved before anything is done about the imbalance. If your
 rare class separates cleanly you can stop reading. If it overlaps badly, no
@@ -94,13 +91,8 @@ For a calibrated model, rebalancing the training set to fifty-fifty and cutting 
 $$\frac{p'(x)}{1-p'(x)} = r\cdot\frac{p(x)}{1-p(x)}, \qquad
   \frac{1}{1+r} = \frac{n_{\text{pos}}}{n_{\text{pos}}+n_{\text{neg}}} = \pi$$
 
-The measured version:
-
-| | F1 |
-|---|---|
-| Best resampler (SMOTE) | 0.2313 |
-| Plain model at the base rate | 0.2252 |
-| Plain model at a tuned cut | **0.7227** |
+The measured version: best resampler (SMOTE) **0.2313** F1, plain model at the base
+rate **0.2252**, plain model at a tuned cut **0.7227**.
 
 The tuned cut averages **0.3381** across folds (sd 0.0630, range 0.2616 to 0.5569).
 The base rate itself is 0.0166 — free, needs no data, and reproduces the resamplers
