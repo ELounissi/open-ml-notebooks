@@ -2,12 +2,12 @@
 
 Models that produce data instead of labelling it.
 
-**1 of 4 shipped.**
+**2 of 4 shipped.**
 
 | # | Notebook | Status |
 |---|---|---|
 | `01` | [Autoencoders](01-autoencoders/) | **shipped** |
-| `02` | Variational autoencoders | planned |
+| `02` | [Variational autoencoders](02-variational-autoencoders/) | **shipped** |
 | `03` | GANs | planned |
 | `04` | Diffusion, the smallest working example | planned |
 

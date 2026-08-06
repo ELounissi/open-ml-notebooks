@@ -31,11 +31,11 @@ at initialisation:
 Five epochs of training barely help — sigmoid still sits at **1,351,474.6×**, ReLU at
 **16.2×**.
 
-The early layers of the sigmoid network build the features every later layer depends
-on, and they are learning millions of times slower than the output layer. The network
-is not broken; it is untrainable in any reasonable time, and from outside that looks
-like a model that simply refuses to fit. The architecture was never the obstacle. The
-derivative of the sigmoid was.
+The early layers of the sigmoid network build the features every later layer depends on,
+and they are learning millions of times slower than the output layer. The network is not
+broken; it is untrainable in any reasonable time, and from outside that looks like a
+model that refuses to fit. The architecture was never the obstacle. The derivative of
+the sigmoid was.
 
 ## Proof that a stack of linear layers is one linear layer
 
@@ -46,14 +46,13 @@ between layers and multiplied the weight matrices out by hand. The stack has **3
 parameters** and scored **0.9218**; a single linear layer has **119** and scored
 **0.9198**. They predict the same class on **0.9697** of held-out rows. Collapsing the
 trained stack gives a (7, 16) matrix plus a (7,) bias — **119 numbers** — and the
-largest disagreement with the 3,943-parameter network is **3.43e-05**, which is float32
-rounding. The collapsed matrix has **rank 7**, the most a 7 × 16 matrix can have.
+largest disagreement with the 3,943-parameter network is **3.43e-05**, float32 rounding.
+The collapsed matrix has **rank 7**, the most a 7 × 16 matrix can have.
 
 ![Linear collapse](figures/fig-01-linear-collapse.png)
 
-Hold on to that 0.9198 from a bare linear layer. On sixteen tabular bean measurements a
-straight line already gets you most of the way, which is why the activation differences
-in the last section are so small.
+Hold on to that 0.9198 from a bare linear layer: on sixteen tabular bean measurements a
+straight line already gets most of the way, which is why the differences later are small.
 
 ## The functions, and the derivative that matters more
 
@@ -72,11 +71,10 @@ The sigmoid's derivative peaks at **0.2500** and nowhere higher, and backpropaga
 multiplies one derivative per layer, so nine layers of that is $0.25^9$ before anything
 else is accounted for. ReLU's derivative is a step — exactly one on the right, exactly
 zero on the left — so there is no shrinkage on the active side at all. GELU is the only
-one whose derivative exceeds 1, at **1.1289**.
-
-tanh's flat share of the grid is the largest in the table at 0.5025, above sigmoid's
-0.2363, and tanh still trains fine here. Flat share says where the derivative is small.
-The peak value is what compounds.
+one whose derivative exceeds 1, at **1.1289**. Note that tanh's flat share of the grid
+is the largest in the table at 0.5025, above sigmoid's 0.2363, and tanh still trains
+fine here: flat share says where the derivative is small, the peak value is what
+compounds.
 
 ![Vanishing gradients](figures/fig-03-vanishing-gradients.png)
 
@@ -84,11 +82,10 @@ The peak value is what compounds.
 
 A ReLU unit whose pre-activation is negative for every row outputs zero for every row,
 and its gradient is exactly zero — not small, zero. On a single isolated unit ReLU gave
-**dL/dw = +0.0000, dL/db = +0.0000**, while LeakyReLU (slope 0.01) gave **+0.0600** and
+**dL/dw = +0.0000, dL/db = +0.0000**; LeakyReLU (slope 0.01) gave **+0.0600** and
 **+0.0300**. Zero means the unit can never recover.
 
-Inside a real network, both starting from identical weights, both given a deliberately
-oversized learning rate:
+Inside a real network, both from identical weights, both at an oversized learning rate:
 
 | | Off, untrained | Peak | Off, trained | Exactly-zero gradients | Held-out accuracy |
 |---|---|---|---|---|---|
@@ -99,18 +96,16 @@ oversized learning rate:
 
 Read that honestly. LeakyReLU did exactly what it promises — it ended with **zero**
 permanently off units against ReLU's 57% — and still finished at **0.0970** accuracy,
-worse than the ReLU network's 0.2607. Both runs were wrecked by the learning rate.
-Curing the dead units did not rescue the training, because the dead units were a
-symptom of the oversized step rather than the disease.
-
-So the reason to know this is diagnostic, not prescriptive. Counting units with
-`pre_activation.max(dim=0).values <= 0` takes one line and often explains a network
-that stalled below what the same shape reached yesterday. Then go fix the step size.
+worse than the ReLU network's 0.2607. Both runs were wrecked by the learning rate, and
+curing the dead units did not rescue the training, because the dead units were a symptom
+of the oversized step rather than the disease. So the reason to know this is diagnostic,
+not prescriptive. Counting units with `pre_activation.max(dim=0).values <= 0` takes one
+line and often explains a network that stalled below what the same shape reached
+yesterday. Then go fix the step size.
 
 ## Compared fairly
 
-Same architecture, same starting weights, same learning rate, same epochs, same batch
-order. Only the activation changes.
+Same architecture, weights, learning rate, epochs and batch order. Only the activation.
 
 ![Six activations compared](figures/fig-05-comparison.png)
 
@@ -130,11 +125,10 @@ clear 0.85 in a single epoch, and it still finished fifth on accuracy. tanh, a
 saturating function, beat ELU by 0.0009 — so "saturating" is not by itself the problem,
 a derivative capped at 0.25 is.
 
-Do not read the ordering of the top five as a ranking. Sixteen tabular features and four
-narrow layers do not stress an activation the way a fifty-layer vision network does. The
-measured lesson is the size of the gaps: escaping the sigmoid is worth 42× more than
-every choice made after it, combined. ReLU was also the fastest of the five at 13.3 s,
-which is a real argument for the default.
+Do not read the top five as a ranking: sixteen tabular features and four narrow layers
+do not stress an activation the way a fifty-layer vision network does. The measured
+lesson is the size of the gaps. Escaping the sigmoid is worth 42× more than every choice
+made after it, combined, and ReLU was the fastest of the five at 13.3 s.
 
 ## Cheat sheet
 

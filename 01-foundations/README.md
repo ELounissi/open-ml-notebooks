@@ -2,7 +2,7 @@
 
 The vocabulary every other chapter uses. Start here if you are new to machine learning.
 
-**3 of 9 shipped.**
+**4 of 9 shipped.**
 
 | # | Notebook | Status |
 |---|---|---|
@@ -12,7 +12,7 @@ The vocabulary every other chapter uses. Start here if you are new to machine le
 | `04` | [Cross-validation, and which flavour to use when](04-cross-validation/) | **shipped** |
 | `05` | [Accuracy, precision, recall, F1, ROC-AUC](05-classification-metrics/) | **shipped** |
 | `06` | MAE, RMSE, R squared, MAPE | planned |
-| `07` | Scaling numbers and encoding categories | planned |
+| `07` | [Scaling numbers and encoding categories](07-feature-scaling-and-encoding/) | **shipped** |
 | `08` | Missing data: what to do and what it costs | planned |
 | `09` | Grid, random, and Bayesian search | planned |
 

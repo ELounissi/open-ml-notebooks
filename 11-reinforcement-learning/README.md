@@ -2,7 +2,7 @@
 
 Learning from reward instead of from answers.
 
-**2 of 8 shipped.**
+**3 of 8 shipped.**
 
 | # | Notebook | Status |
 |---|---|---|
@@ -11,7 +11,7 @@ Learning from reward instead of from answers.
 | `03` | MDPs, value iteration, policy iteration | planned |
 | `04` | [Q-learning](04-q-learning/) | **shipped** |
 | `05` | SARSA, and how it differs from Q-learning | planned |
-| `06` | Deep Q-Networks | planned |
+| `06` | [Deep Q-Networks](06-deep-q-networks/) | **shipped** |
 | `07` | Policy gradients and REINFORCE | planned |
 | `08` | Actor-critic and PPO | planned |
 
