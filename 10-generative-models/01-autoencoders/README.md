@@ -16,14 +16,12 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 
 ## The idea
 
-An autoencoder copies its input to its output through a layer narrower than the
-input. That layer is the **bottleneck**, its contents are the **code**, the loss is
-squared error against the input itself, and no labels appear anywhere.
-
-The headline measurement first: **the non-linear autoencoder cut held-out error
-37.8% below PCA at a 2-number code and 36.9% below it at 8, then lost by 10.1% at
-32 and by 52.0% at 64.** Curvature is worth a great deal on a tiny budget and
-nothing at all on a generous one.
+An autoencoder copies its input to its output through a layer narrower than the input. That layer is
+the **bottleneck**, its contents are the **code**, the loss is squared error against the input
+itself, and no labels appear anywhere. The headline measurement first: **the non-linear autoencoder
+cut held-out error 37.8% below PCA at a 2-number code and 36.9% below it at 8, then lost by 10.1% at
+32 and by 52.0% at 64.** Curvature is worth a great deal on a tiny budget and nothing on a generous
+one.
 
 ## What the bottleneck drops, and in what order
 
@@ -38,18 +36,17 @@ Four autoencoders, identical apart from code width, trained in **37 seconds** on
 | 32 | 24× | 0.01659 | **0.01688** |
 | 64 | 12× | 0.01593 | 0.01607 |
 
-Train and test agree to within 0.0003 everywhere, so nothing overfits. The surprise
-is the middle rows: **going from 8 numbers to 32 bought nothing**, test error
-identical to five decimals. From 8 onward the model is the limit, not the
-bottleneck. Squared error buys silhouette and brightness first and texture last,
-which is why narrow codes come out blurred rather than wrong.
+Train and test agree to within 0.0003 everywhere, so nothing overfits. The surprise is the middle
+rows: **going from 8 numbers to 32 bought nothing**, test error identical to five decimals — from 8
+onward the model is the limit, not the bottleneck. Squared error buys silhouette and brightness
+first and texture last, which is why narrow codes come out blurred rather than wrong.
 
 ## Against PCA at the same bottleneck
 
 ![Autoencoder versus PCA](figures/fig-02-autoencoder-vs-pca.png)
 
-Strip the activations out and the autoencoder solves PCA's problem by gradient
-descent — 50,992 parameters against 476,720 for the non-linear version at code 32.
+Strip the activations out and the autoencoder solves PCA's problem by gradient descent — 50,992
+parameters against 476,720 for the non-linear version at code 32.
 
 | Code size | PCA | Linear AE | Non-linear AE | Non-linear advantage |
 |---|---|---|---|---|
@@ -58,29 +55,23 @@ descent — 50,992 parameters against 476,720 for the non-linear version at code
 | 32 | **0.01534** | 0.01624 | 0.01688 | −10.1% |
 | 64 | **0.01057** | 0.01156 | 0.01607 | −52.0% |
 
-PCA keeps improving as $k$ grows while the autoencoder flatlines, so the crossover
-between 8 and 32 is the autoencoder running out of training rather than PCA finding
-curvature. The linear autoencoder sat *above* PCA at every size — by 0.00010 at code
-2, widening to 0.00099 at code 64 — and never below, which is the only direction
-theory allows. That gap is optimisation, not modelling.
-
-I checked the subspace claim directly too: orthonormalise the linear encoder's rows,
-then measure how much of PCA's top-$k$ basis falls inside that span, where 1 means
-the same subspace in other coordinates.
+PCA keeps improving as $k$ grows while the autoencoder flatlines, so the crossover between 8 and 32
+is the autoencoder running out of training rather than PCA finding curvature. The linear autoencoder
+sat *above* PCA at every size — by 0.00010 at code 2, widening to 0.00099 at code 64 — and never
+below, the only direction theory allows. That gap is optimisation, not modelling. I checked the
+subspace claim directly too: orthonormalise the linear encoder's rows, then measure how much of
+PCA's top-$k$ basis falls inside that span, where 1 means the same subspace in other coordinates.
 
 | Code size | 2 | 8 | 32 | 64 |
 |---|---|---|---|---|
 | Overlap with PCA's span | 0.0888 | 0.3042 | 0.5618 | 0.6308 |
 
-**None of them got there.** Twelve epochs reached 0.63 of the span at best and 0.09
-at code 2. A loss 0.001 short of the closed form looked like convergence; the
-subspace says it was not.
+**None of them got there.** Twelve epochs reached 0.63 of the span at best and 0.09 at code 2. A
+loss 0.001 short of the closed form looked like convergence; the subspace says it was not.
 
 ## What two numbers look like
 
 ![The two-dimensional latent space](figures/fig-03-latent-space.png)
-
-Every held-out image at its own code, coloured by a label the model never saw.
 
 | 15-nearest-neighbour accuracy, two coordinates only | |
 |---|---|
@@ -88,17 +79,17 @@ Every held-out image at its own code, coloured by a label the model never saw.
 | PCA components | 0.5358 |
 | Guessing | 0.1000 |
 
-Two numbers per image and a nearest-neighbour vote gets 68% of Fashion-MNIST right,
-against 54% for the first two principal components. Garments that reconstruct
-through nearby codes are garments that look alike, and looking alike is most of what
-a Fashion-MNIST label means.
+Two numbers per image and a nearest-neighbour vote gets 68% of Fashion-MNIST right, against 54% for
+the first two principal components, from a model never shown a label. Garments that reconstruct
+through nearby codes are garments that look alike, and looking alike is most of what a label means
+here.
 
 ## Denoising
 
 ![Denoising reconstructions](figures/fig-04-denoising.png)
 
-Corrupt the input, keep the target clean, redraw the noise every batch. Copying the
-input now scores badly, because it copies the noise.
+Corrupt the input, keep the target clean, redraw the noise every batch. Copying the input now
+scores badly, because it copies the noise.
 
 | Recovering the clean image | MSE per pixel |
 |---|---|
@@ -106,9 +97,8 @@ input now scores badly, because it copies the noise.
 | Plain autoencoder | 0.05681 |
 | Denoising autoencoder | **0.02239** |
 
-That is 2.5× better than the plain autoencoder at removing noise. Whether the *code*
-improved or only the output is a separate question, and a linear probe on the frozen
-encoder answers it.
+That is 2.5× better than the plain autoencoder at removing noise. Whether the *code* improved or
+only the output is a separate question, and a linear probe on the frozen encoder answers it.
 
 | Logistic regression on frozen 32-number codes | Held-out accuracy |
 |---|---|
@@ -116,25 +106,17 @@ encoder answers it.
 | Plain autoencoder, 32 | 0.8014 |
 | Denoising autoencoder, 32 | 0.7836 |
 
-**The denoising code probed worst and PCA probed best.** The usual claim is that
-denoising buys better features; here it bought a better denoiser and a code 0.0178
-worse for classification than the plain one.
+**The denoising code probed worst and PCA probed best.** The usual claim is that denoising buys
+better features; here it bought a better denoiser and a code 0.0178 worse for classification.
 
 ## Reconstruction error as an anomaly score
 
 ![Anomaly score distributions](figures/fig-05-anomaly-scores.png)
 
-Drop one class from training, train on the other nine, score all ten. No examples of
-the anomaly are needed, which is the appeal.
-
-| Bag withheld, 10,786 training images | |
-|---|---|
-| Mean error, nine seen classes | 0.01637 |
-| Mean error, bag | 0.04047 |
-| ROC AUC | **0.9420** |
-| Caught at the 95th-percentile threshold | 0.621 |
-
-One class is one data point, so here is the full sweep, ten models in 19 seconds.
+Drop one class from training, train on the other nine, score all ten. With bag withheld and 10,786
+training images, mean error ran **0.01637** on the nine seen classes against **0.04047** on bag —
+**ROC AUC 0.9420**, catching 62.1% of bags at the 95th-percentile threshold. One class is one data
+point, so here is the full sweep, ten models in 19 seconds.
 
 | Withheld | ROC AUC | | Withheld | ROC AUC |
 |---|---|---|---|---|
@@ -144,9 +126,9 @@ One class is one data point, so here is the full sweep, ten models in 19 seconds
 | boot | 0.754 | | coat | 0.563 |
 | dress | 0.695 | | shirt | **0.538** |
 
-**0.951 down to 0.538, where 0.5 is a coin flip.** The method fires only when
-unfamiliar and hard-to-rebuild mean the same thing. A model that has seen T-shirts,
-pullovers and coats rebuilds a shirt fine without ever having been shown one.
+**0.951 down to 0.538, where 0.5 is a coin flip.** The method fires only when unfamiliar and
+hard-to-rebuild mean the same thing: a model that has seen T-shirts, pullovers and coats rebuilds a
+shirt fine without ever having been shown one.
 
 ## Cheat sheet
 
