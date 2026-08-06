@@ -10,7 +10,7 @@ Predicting a category. The core algorithms every practitioner is expected to kno
 | `04` | Linear and Quadratic Discriminant Analysis | planned |
 | `05` | [Support Vector Machines and the kernel trick](05-support-vector-machines/) | **shipped** |
 | `06` | [Decision trees, and how a split is chosen](06-decision-trees/) | **shipped** |
-| `07` | Resampling, class weights, and thresholds | planned |
+| `07` | [Resampling, class weights, and thresholds](07-imbalanced-classes/) | **shipped** |
 | `08` | One-vs-rest, one-vs-one, and multilabel | planned |
 | `09` | Making predicted probabilities mean something | planned |
 

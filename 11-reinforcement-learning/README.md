@@ -5,7 +5,7 @@ Learning from reward instead of from answers.
 | # | Notebook | Status |
 |---|---|---|
 | `01` | Agents, states, actions, rewards | planned |
-| `02` | Multi-armed bandits | planned |
+| `02` | [Multi-armed bandits](02-multi-armed-bandits/) | **shipped** |
 | `03` | MDPs, value iteration, policy iteration | planned |
 | `04` | [Q-learning](04-q-learning/) | **shipped** |
 | `05` | SARSA, and how it differs from Q-learning | planned |

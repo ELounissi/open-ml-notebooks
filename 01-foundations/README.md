@@ -7,8 +7,8 @@ The vocabulary every other chapter uses. Start here if you are new to machine le
 | `01` | What machine learning actually does, the workflow end to end | planned |
 | `02` | Train, validation, test: why you need all three | planned |
 | `03` | [Overfitting and underfitting, seen rather than described](03-overfitting-and-underfitting/) | **shipped** |
-| `04` | Cross-validation, and which flavour to use when | planned |
-| `05` | Accuracy, precision, recall, F1, ROC-AUC | planned |
+| `04` | [Cross-validation, and which flavour to use when](04-cross-validation/) | **shipped** |
+| `05` | [Accuracy, precision, recall, F1, ROC-AUC](05-classification-metrics/) | **shipped** |
 | `06` | MAE, RMSE, R squared, MAPE | planned |
 | `07` | Scaling numbers and encoding categories | planned |
 | `08` | Missing data: what to do and what it costs | planned |
