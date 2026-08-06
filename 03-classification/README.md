@@ -4,7 +4,7 @@ Predicting a category. The core algorithms every practitioner is expected to kno
 
 | # | Notebook | Status |
 |---|---|---|
-| `01` | Logistic regression | planned |
+| `01` | [Logistic regression](01-logistic-regression/) | **shipped** |
 | `02` | k-Nearest Neighbours | planned |
 | `03` | Naive Bayes | planned |
 | `04` | Linear and Quadratic Discriminant Analysis | planned |

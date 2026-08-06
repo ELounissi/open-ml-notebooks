@@ -5,7 +5,7 @@ Many weak models beating one strong model, and the two different reasons why.
 | # | Notebook | Status |
 |---|---|---|
 | `01` | Bagging, and why averaging helps | planned |
-| `02` | Random Forests | planned |
+| `02` | [Random Forests](02-random-forest/) | **shipped** |
 | `03` | Extremely Randomised Trees | planned |
 | `04` | AdaBoost | planned |
 | `05` | Gradient Boosting from first principles | planned |

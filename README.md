@@ -76,11 +76,25 @@ Full table of contents with all 86 notebooks: **[CURRICULUM.md](CURRICULUM.md)**
 ### Available now
 
 - **[02-01 — Linear regression](02-regression/01-linear-regression/)** — the normal
-  equation derived, a 30-line NumPy implementation matched against scikit-learn to
-  12 decimal places, standardised coefficients, residual diagnostics, and a worked
-  example of the method failing and being rescued by feature encoding
+  equation derived, a 30-line NumPy version matched against scikit-learn to 12
+  decimal places, residual diagnostics that expose a bias the summary statistic
+  hid, and the method failing on cyclical data then being rescued by encoding
+  rather than by a bigger model
+- **[03-01 — Logistic regression](03-classification/01-logistic-regression/)** —
+  the sigmoid, log loss, gradient descent written out, softmax on seven unbalanced
+  bean varieties, and why the *rarest* class turned out to be the easiest one
+- **[04-02 — Random forests](04-ensembles/02-random-forest/)** — the variance
+  equation that explains the whole design, out-of-bag scoring, two feature-importance
+  measures that disagree, and a head-to-head against logistic regression that the
+  forest **does not win**
+- **[11-04 — Q-learning](11-reinforcement-learning/04-q-learning/)** — Cliff Walking
+  built from scratch with no `gym` dependency, the Bellman update in one line, and
+  the classic result where Q-learning finds the better policy while SARSA collects
+  more reward
 
-New notebooks land in batches. Watch or star the repo to get them.
+Between them these cover supervised regression, supervised classification,
+ensembles, and reinforcement learning. New notebooks land in batches — watch or
+star the repo to get them.
 
 ---
 

@@ -7,7 +7,7 @@ Learning from reward instead of from answers.
 | `01` | Agents, states, actions, rewards | planned |
 | `02` | Multi-armed bandits | planned |
 | `03` | MDPs, value iteration, policy iteration | planned |
-| `04` | Q-learning | planned |
+| `04` | [Q-learning](04-q-learning/) | **shipped** |
 | `05` | SARSA, and how it differs from Q-learning | planned |
 | `06` | Deep Q-Networks | planned |
 | `07` | Policy gradients and REINFORCE | planned |
