@@ -1,0 +1,72 @@
+name: notebooks
+
+# Re-executes notebooks on a clean machine. The point is not to test the models,
+# it is to catch the two ways a notebook collection quietly dies: a cell that only
+# ran because of leftover kernel state, and a dependency that moved underneath it.
+#
+# Outputs are not committed back. The committed outputs are the ones I read and
+# published; CI only has to prove the notebook still runs.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    # Monthly, so a broken dependency surfaces before someone else finds it.
+    - cron: "0 6 1 * *"
+  workflow_dispatch:
+
+jobs:
+  execute:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          # CPU wheels only; the GPU build is not needed to prove a notebook runs.
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+          pip install -r requirements.txt
+
+      - name: Check every dataset in use is declared
+        run: |
+          python - <<'PY'
+          import pathlib, sys
+          root = pathlib.Path(".")
+          declared = (root / "data" / "README.md").read_text(encoding="utf-8")
+          missing = [d.name for d in (root / "data" / "raw").iterdir()
+                     if d.is_dir() and d.name not in declared]
+          if missing:
+              sys.exit(f"datasets present but not declared in data/README.md: {missing}")
+          print("every dataset under data/raw is declared")
+          PY
+
+      - name: Execute notebooks
+        run: |
+          shopt -s globstar nullglob
+          failed=0
+          for nb in **/notebook.ipynb; do
+            echo "::group::$nb"
+            if ! (cd "$(dirname "$nb")" && \
+                  jupyter nbconvert --to notebook --execute --inplace \
+                    --ExecutePreprocessor.timeout=1200 notebook.ipynb); then
+              echo "::error file=$nb::failed to execute"
+              failed=1
+            fi
+            echo "::endgroup::"
+          done
+          exit $failed
+
+      - name: Confirm nothing was left uncommitted
+        if: always()
+        run: |
+          git checkout -- . || true
+          git status --short

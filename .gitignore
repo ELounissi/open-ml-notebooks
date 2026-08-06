@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+*.egg-info/
+.ipynb_checkpoints/
+
+# Jupyter
+.jupyter/
+*.nbconvert.ipynb
+
+# Large or derived data. Small source files under data/raw/ are committed on
+# purpose; see data/README.md for the size and licence rule.
+data/cache/
+data/raw/**/*.zip
+data/raw/**/*.tar.gz
+data/raw/**/*.h5
+data/raw/**/*.parquet.tmp
+
+# Torch / model artefacts
+*.pt
+*.pth
+*.onnx
+runs/
+lightning_logs/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini

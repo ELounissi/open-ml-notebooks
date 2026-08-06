@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+title: "open-ml-notebooks: original, executed experiments across machine learning, deep learning, and reinforcement learning"
+message: "If you use this work, please cite it as below."
+type: software
+authors:
+  - family-names: Lounissi
+    given-names: Elyes
+    email: pilot.tun@gmail.com
+    orcid: ""
+repository-code: "https://github.com/ELounissi/open-ml-notebooks"
+url: "https://github.com/ELounissi/open-ml-notebooks"
+abstract: >-
+  A collection of self-contained Jupyter notebooks, each posing one falsifiable
+  question about a machine learning method and answering it on an openly
+  licensed dataset. Covers supervised, unsupervised, and self-supervised
+  learning, deep learning, generative models, graph learning, and reinforcement
+  learning. Every notebook ships executed, with figures that were read before
+  they were published.
+keywords:
+  - machine learning
+  - deep learning
+  - reinforcement learning
+  - self-supervised learning
+  - jupyter notebooks
+  - open datasets
+  - reproducible research
+  - data science education
+license: MIT
+date-released: 2026-08-06

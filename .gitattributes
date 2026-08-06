@@ -1,0 +1,17 @@
+# Normalise to LF in the repository. Without this, a Windows checkout commits
+# CRLF and every file looks fully rewritten to anyone on Linux or macOS.
+* text=auto eol=lf
+
+*.py    text eol=lf
+*.md    text eol=lf
+*.yml   text eol=lf
+*.cff   text eol=lf
+*.txt   text eol=lf
+*.csv   text eol=lf
+
+# Notebooks are JSON. Keep them LF so diffs stay readable, and mark them so
+# GitHub's language stats report this as a Python repository rather than a
+# Jupyter one, which is what the code actually is.
+*.ipynb text eol=lf linguist-language=Python
+
+*.png   binary

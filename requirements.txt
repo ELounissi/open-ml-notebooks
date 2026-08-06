@@ -1,0 +1,35 @@
+# Pinned to the versions every notebook in this repo was executed against.
+# Python 3.11. Everything here runs on CPU; a GPU only makes the deep learning
+# parts faster.
+#
+#   python -m venv .venv
+#   .venv\Scripts\activate        (Windows)
+#   source .venv/bin/activate     (macOS / Linux)
+#   pip install -r requirements.txt
+
+# --- core numerics, used by every project ---
+numpy==2.4.6
+scipy==1.17.1
+pandas==3.0.3
+scikit-learn==1.8.0
+
+# --- figures ---
+matplotlib==3.10.9
+seaborn==0.13.2
+pillow==12.2.0
+
+# --- notebook execution ---
+jupyterlab==4.5.7
+ipykernel==7.2.0
+nbconvert==7.17.1
+
+# --- gradient boosting (part 02) ---
+lightgbm==4.6.0
+
+# --- graphs (part 07) ---
+networkx==3.6.1
+
+# --- deep learning (parts 04-06), CPU wheels by default ---
+# For CUDA, install from https://pytorch.org instead of this pin.
+torch==2.11.0
+torchvision==0.26.0
