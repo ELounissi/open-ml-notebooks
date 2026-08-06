@@ -2,7 +2,7 @@
 
 Predicting a category. The core algorithms every practitioner is expected to know.
 
-**6 of 9 shipped.**
+**7 of 9 shipped.**
 
 | # | Notebook | Status |
 |---|---|---|
@@ -14,7 +14,7 @@ Predicting a category. The core algorithms every practitioner is expected to kno
 | `06` | [Decision trees, and how a split is chosen](06-decision-trees/) | **shipped** |
 | `07` | [Resampling, class weights, and thresholds](07-imbalanced-classes/) | **shipped** |
 | `08` | One-vs-rest, one-vs-one, and multilabel | planned |
-| `09` | Making predicted probabilities mean something | planned |
+| `09` | [Making predicted probabilities mean something](09-probability-calibration/) | **shipped** |
 
 Every notebook follows the same shape: the idea in plain language, the maths written out, a from-scratch NumPy implementation, the library version annotated line by line, and a measured answer to when the method wins and when it loses.
 
