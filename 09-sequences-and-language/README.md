@@ -4,7 +4,7 @@ Order matters. Text, time series, and the architectures built for both.
 
 | # | Notebook | Status |
 |---|---|---|
-| `01` | Tokenising, bag of words, and TF-IDF | planned |
+| `01` | [Tokenising, bag of words, and TF-IDF](01-text-preprocessing-and-tfidf/) | **shipped** |
 | `02` | Word2Vec and GloVe | planned |
 | `03` | Recurrent neural networks | planned |
 | `04` | LSTM | planned |

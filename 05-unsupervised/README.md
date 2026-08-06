@@ -6,7 +6,7 @@ Finding structure when nobody gives you labels.
 |---|---|---|
 | `01` | [k-Means](01-k-means/) | **shipped** |
 | `02` | Elbow, silhouette, and the gap statistic | planned |
-| `03` | Hierarchical clustering and dendrograms | planned |
+| `03` | [Hierarchical clustering and dendrograms](03-hierarchical-clustering/) | **shipped** |
 | `04` | [Density-based clustering](04-dbscan-and-hdbscan/) | **shipped** |
 | `05` | [Gaussian Mixture Models](05-gaussian-mixture-models/) | **shipped** |
 | `06` | [Isolation Forest, One-Class SVM, LOF](06-anomaly-detection/) | **shipped** |
