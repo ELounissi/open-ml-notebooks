@@ -24,32 +24,20 @@ land at the *correct* $k$ against how far apart Ward lands across $k = 2,3,4,5$:
 | Two crescents | ARI 0.241 to 1.000, **spread 0.759** | ARI 0.190 to 0.304, spread 0.114 |
 | Three blobs plus noise | ARI 0.000 to 0.950, **spread 0.950** | ARI 0.558 to 0.950, spread 0.393 |
 
-The linkage swing is **6.7×** the $k$ swing on the crescents and **2.4×** on the
-blobs. Getting $k$ wrong splits or merges a cluster. Getting the linkage wrong changes
-what a cluster *is*.
+The linkage swing is **6.7×** the $k$ swing on the crescents and **2.4×** on the blobs.
+Getting $k$ wrong splits or merges a cluster. Getting the linkage wrong changes what a
+cluster *is*.
 
-Second thing worth knowing before you invest an afternoon: on the real dataset,
-**plain k-means beat every linkage**, including Ward, on the same 1,500-row sample.
-Details in section 4.
+Second thing worth knowing before you invest an afternoon: on the real dataset **plain
+k-means beat every linkage**, Ward included, on the same 1,500-row sample.
 
 ## The merge record is the whole model
 
-Eight points in three obvious groups give seven merges:
-
-| Left | Right | Distance | Size |
-|---|---|---|---|
-| 0 | 1 | 0.224 | 2 |
-| 3 | 4 | 0.224 | 2 |
-| 2 | 8 | 0.316 | 3 |
-| 6 | 7 | 0.361 | 2 |
-| 5 | 9 | 0.412 | 3 |
-| 10 | 12 | **3.895** | 6 |
-| 11 | 13 | **4.031** | 8 |
-
-Ids 0 to $n-1$ are points; merge $i$ creates id $n+i$, so anything above 7 is a
-cluster. The distance column never decreases. Notice the jump from 0.412 to 3.895 —
-that is the three groups being forced together, and it is the entire basis for cutting
-a tree.
+Eight points in three obvious groups give seven merges, at distances 0.224, 0.224,
+0.316, 0.361, 0.412, then **3.895** and **4.031**. Ids 0 to $n-1$ are points; merge $i$
+creates id $n+i$, so anything above 7 is a cluster. The distance column never
+decreases. The jump from 0.412 to 3.895 is the three groups being forced together, and
+that jump is the entire basis for cutting a tree.
 
 ## The four linkages
 
@@ -62,11 +50,11 @@ a tree.
 | Average | 0.425 | 0.527 |
 | Ward | 0.241 | **0.950** |
 
-Single linkage goes from perfect to worthless between two panels. It only needs a
-chain of near neighbours to walk along, which is exactly what traces a crescent and
-exactly what walks through scattered noise from one blob to the next. That failure is
-called **chaining**, and it is why single linkage is never a safe default. Ward makes
-the opposite trade: it will never chain, and it will never find the crescents.
+Single linkage goes from perfect to worthless between two panels. It only needs a chain
+of near neighbours to walk along, which is exactly what traces a crescent and exactly
+what walks through scattered noise from one blob to the next. That failure is called
+**chaining**, and it is why single linkage is never a safe default. Ward makes the
+opposite trade: it will never chain, and it will never find the crescents.
 
 ## Reading a dendrogram
 
@@ -74,30 +62,22 @@ the opposite trade: it will never chain, and it will never find the crescents.
 
 The height of a bar is the distance at which that merge happened, and nothing else in
 the picture carries information — leaf order is only constrained by the tree. On sixty
-points from three blobs, the largest gap in the last twelve merges runs from
-**27.492 to 56.750**, so the cut goes at **42.121**, leaving **2 clusters**.
+points from three blobs, the largest gap in the last twelve merges runs from **27.492
+to 56.750**, so the cut goes at **42.121**, leaving **2 clusters**.
 
 ![Merge heights](figures/fig-03-merge-heights.png)
 
-| Clusters left | Merge distance |
-|---|---|
-| 8 | 3.009 |
-| 6 | 3.886 |
-| 4 | 4.923 |
-| 3 | 5.260 |
-| **2** | **27.492** |
-| 1 | 56.750 |
-
-Six merges under 5.3, then one at 27.5. Everything below that height held together
-much more cheaply, which is the tree telling you where to cut.
+Merge distances going up: 8 clusters left at 3.009, 6 at 3.886, 4 at 4.923, 3 at
+**5.260**, then 2 at **27.492** and 1 at 56.750. Six merges under 5.3, then one at
+27.5. Everything below that height held together far more cheaply, which is the tree
+telling you where to cut.
 
 **Cutting by height and cutting by count are different questions.** Cutting at 42.121
-gave 2 clusters, asking for 3 gave 3 clusters, and `same partition: False`.
-`criterion="distance"` states a claim about distance and accepts whatever count
-follows. `criterion="maxclust"` states a claim about $k$ and hides the height it
-needed.
+gave 2 clusters, asking for 3 gave 3 clusters, `same partition: False`.
+`criterion="distance"` states a claim about distance and accepts the count that
+follows; `criterion="maxclust"` states a claim about $k$ and hides the height.
 
-Chaining seen from that side, on the 340 noisy blob points with single linkage:
+Chaining seen from that side, single linkage on 340 noisy blob points:
 
 | Cut height | Clusters | Largest cluster | Singletons |
 |---|---|---|---|
@@ -105,17 +85,16 @@ Chaining seen from that side, on the 340 noisy blob points with single linkage:
 | 0.826 | 12 | 325 of 340 | 9 |
 | 1.534 | 3 | **337 of 340** | 1 |
 
-However you move the line, you get one cluster holding almost everything and a scatter
-of singletons peeling off the edge. Asking for exactly three clusters does not fix
-that — it stops you noticing it.
+However you move the line you get one cluster holding almost everything and singletons
+peeling off the edge. Asking for exactly three clusters does not fix that — it stops
+you noticing it.
 
 ## On real beans, against k-means
 
 ![Linkage on beans](figures/fig-04-linkage-on-beans.png)
 
-The full set has 13,611 rows, which is **92,622,855 pairs**. I sampled **1,500 rows
-(11.0%)**, or **1,124,250 pairs**, because the full distance matrix does not fit
-comfortably in memory.
+The full set is **92,622,855 pairs**. I sampled **1,500 rows (11.0%)**, or **1,124,250
+pairs**, because the full distance matrix does not fit comfortably in memory.
 
 | Method | ARI |
 |---|---|
@@ -125,29 +104,24 @@ comfortably in memory.
 | Average | 0.318 |
 | Single | **0.037** |
 
-Ward lost to k-means by 0.012 on identical data. That is the honest result and it is
-not a surprise: Ward merges greedily on the same within-cluster sum of squares that
-k-means minimises directly, so on round similar-sized clouds the direct optimiser
-should edge the greedy one. Single linkage sits near zero because in sixteen
-standardised dimensions there is always a chain of near neighbours between any two
-varieties.
+Ward lost to k-means by 0.012 on identical data. That is the honest result and not a
+surprise: Ward merges greedily on the same within-cluster sum of squares k-means
+minimises directly, so on round similar-sized clouds the direct optimiser should edge
+the greedy one. Single linkage sits near zero because in sixteen standardised
+dimensions there is always a chain of near neighbours between any two varieties.
 
-Hierarchical clustering does buy you one thing k-means cannot: any distance you can
-define works, since the algorithm only ever asks for distances.
-
-| Linkage and metric | ARI |
-|---|---|
-| Average, Euclidean | 0.318 |
-| Average, Manhattan | 0.300 |
-| **Complete, cosine** | **0.428** |
+Hierarchical clustering does buy one thing k-means cannot: any distance works, since
+the algorithm only ever asks for distances. Average linkage scored **0.318** on
+Euclidean and **0.300** on Manhattan, and complete linkage on cosine reached
+**0.428** — better than complete on Euclidean.
 
 ## Is the tree a fair summary?
 
 ![Cophenetic correlation](figures/fig-05-cophenetic.png)
 
 Cophenetic distance is the height at which two points first share a cluster — the
-tree's opinion of how far apart they are. Correlate that against the real distances
-and you measure the tree, not the clusters.
+tree's opinion of how far apart they are. Correlate that against the real distances and
+you measure the tree, not the clusters.
 
 | Linkage | Cophenetic correlation | ARI |
 |---|---|---|
@@ -156,27 +130,18 @@ and you measure the tree, not the clusters.
 | **Average** | **0.831** | 0.318 |
 | Ward | 0.608 | **0.644** |
 
-The two columns rank the linkages differently and even *invert* at the top: the most
-faithful tree is average, the best partition is Ward, and Ward is last on faithfulness
-while first on ARI. Average linkage merges on the mean cross-pair distance, so it is
-close to optimising cophenetic correlation by construction. Use the number to catch a
-tree that has distorted the data, not to pick a linkage.
+The two columns invert at the top: the most faithful tree is average, the best
+partition is Ward, and Ward is last on faithfulness while first on ARI. Average linkage
+merges on the mean cross-pair distance, so it is close to optimising this quantity by
+construction. Use the number to catch a tree that has distorted the data, not to pick a
+linkage.
 
 ## The $O(n^2)$ wall
 
-Ward on samples of the standardised beans:
-
-| Rows | Pairs | Matrix | Time | vs previous |
-|---|---|---|---|---|
-| 250 | 31,125 | 0.2 MB | 0.002 s | — |
-| 500 | 124,750 | 1.0 MB | 0.009 s | 3.8× |
-| 1,000 | 499,500 | 3.8 MB | 0.050 s | 5.7× |
-| 2,000 | 1,999,000 | 15.3 MB | 0.236 s | 4.7× |
-| 4,000 | 7,998,000 | 61.0 MB | 1.116 s | 4.7× |
-
-Doubling the rows roughly quadruples the time, which is the $O(n^2)$ of SciPy's
-nearest-neighbour chain rather than the $O(n^3)$ of the naive algorithm. Time is not
-the problem. Memory is:
+Ward on samples of the standardised beans: 250 rows in 0.002 s, 500 in 0.009 s, 1,000
+in 0.050 s, 2,000 in 0.236 s, 4,000 in 1.116 s — the last three doublings costing
+**5.7×**, **4.7×** and **4.7×**. That is the $O(n^2)$ of SciPy's nearest-neighbour
+chain, not the $O(n^3)$ of the naive algorithm. Time is not the problem. Memory is:
 
 | Rows | Pairs | Just to hold the distances |
 |---|---|---|
@@ -188,9 +153,9 @@ Two escapes, both ordinary practice. **Sample, then assign**: the tree fitted on
 rows scored ARI 0.644 on the sample and **0.672 across all 13,611 rows** once every
 remaining row took its nearest centroid — better on the full set than on the sample it
 was built from. **Connectivity constraint**: hand sklearn a k-nearest-neighbour graph
-and the dense matrix is never built. All 13,611 rows clustered in **6.6 s** at
-**ARI 0.658**, with sizes [3986, 3036, 2353, 1918, 1679, 522, 117]. Both beat the
-1,500-row unconstrained Ward fit.
+and the dense matrix is never built; all 13,611 rows clustered in **6.6 s** at **ARI
+0.658**, sizes [3986, 3036, 2353, 1918, 1679, 522, 117]. Both beat the 1,500-row
+unconstrained Ward fit.
 
 ## Cheat sheet
 
