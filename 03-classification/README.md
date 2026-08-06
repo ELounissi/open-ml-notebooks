@@ -5,11 +5,11 @@ Predicting a category. The core algorithms every practitioner is expected to kno
 | # | Notebook | Status |
 |---|---|---|
 | `01` | [Logistic regression](01-logistic-regression/) | **shipped** |
-| `02` | k-Nearest Neighbours | planned |
+| `02` | [k-Nearest Neighbours](02-k-nearest-neighbours/) | **shipped** |
 | `03` | Naive Bayes | planned |
 | `04` | Linear and Quadratic Discriminant Analysis | planned |
 | `05` | Support Vector Machines and the kernel trick | planned |
-| `06` | Decision trees, and how a split is chosen | planned |
+| `06` | [Decision trees, and how a split is chosen](06-decision-trees/) | **shipped** |
 | `07` | Resampling, class weights, and thresholds | planned |
 | `08` | One-vs-rest, one-vs-one, and multilabel | planned |
 | `09` | Making predicted probabilities mean something | planned |

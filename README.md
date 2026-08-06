@@ -87,14 +87,43 @@ Full table of contents with all 86 notebooks: **[CURRICULUM.md](CURRICULUM.md)**
   equation that explains the whole design, out-of-bag scoring, two feature-importance
   measures that disagree, and a head-to-head against logistic regression that the
   forest **does not win**
+- **[03-02 — k-Nearest Neighbours](03-classification/02-k-nearest-neighbours/)** —
+  the model that does no training at all; scaling alone is worth **+0.205
+  accuracy**, `k=1` scores a meaningless perfect 1.000 on training data, and the
+  curse of dimensionality gets measured rather than asserted
+- **[03-06 — Decision trees](03-classification/06-decision-trees/)** — the split
+  search written from scratch, the single best question in the whole dataset found
+  by arithmetic, a readable depth-3 tree, and an unrestrained one that hits perfect
+  training accuracy while getting *worse* on held-out data
+- **[04-02 — Random forests](04-ensembles/02-random-forest/)** — the variance
+  equation that explains the whole design, out-of-bag scoring, two feature-importance
+  measures that disagree, and a head-to-head against logistic regression that the
+  forest **does not win**
+- **[05-01 — k-Means](05-unsupervised/01-k-means/)** — Lloyd's algorithm from
+  scratch, the elbow and silhouette both pointing at the *wrong* number of clusters
+  on data where the truth is known, and four failure modes including k-means
+  confidently carving pure noise into tidy groups
+- **[06-01 — PCA](06-dimensionality-reduction/01-principal-component-analysis/)** —
+  eigendecomposition by hand agreeing with scikit-learn to 2.2×10⁻¹⁶, components
+  that turn out to mean "size" and "shape", and an honest finding that PCA **never
+  beat** simply keeping every column
 - **[11-04 — Q-learning](11-reinforcement-learning/04-q-learning/)** — Cliff Walking
   built from scratch with no `gym` dependency, the Bellman update in one line, and
   the classic result where Q-learning finds the better policy while SARSA collects
   more reward
 
 Between them these cover supervised regression, supervised classification,
-ensembles, and reinforcement learning. New notebooks land in batches — watch or
-star the repo to get them.
+ensembles, unsupervised clustering, dimensionality reduction, and reinforcement
+learning. New notebooks land in batches — watch or star the repo to get them.
+
+### A recurring theme
+
+Because every notebook uses the same datasets, the comparisons accumulate. So far
+on UCI Dry Bean: logistic regression **0.9234**, random forest **0.9244**, decision
+tree **0.8945**, k-NN **0.9231**. The flexible models do not pull ahead, because
+bean measurements are smooth correlated geometry with little non-linear structure
+to exploit. Several notebooks here report a result I expected to go the other way,
+and say so.
 
 ---
 

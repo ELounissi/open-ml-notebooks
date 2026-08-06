@@ -4,7 +4,7 @@ Finding structure when nobody gives you labels.
 
 | # | Notebook | Status |
 |---|---|---|
-| `01` | k-Means | planned |
+| `01` | [k-Means](01-k-means/) | **shipped** |
 | `02` | Elbow, silhouette, and the gap statistic | planned |
 | `03` | Hierarchical clustering and dendrograms | planned |
 | `04` | Density-based clustering | planned |

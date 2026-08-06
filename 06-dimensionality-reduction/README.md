@@ -4,7 +4,7 @@ Fewer columns, same information. Compression, visualisation, and feature selecti
 
 | # | Notebook | Status |
 |---|---|---|
-| `01` | Principal Component Analysis | planned |
+| `01` | [Principal Component Analysis](01-principal-component-analysis/) | **shipped** |
 | `02` | Kernel PCA, ICA, and NMF | planned |
 | `03` | t-SNE | planned |
 | `04` | UMAP | planned |
