@@ -2,15 +2,15 @@
 
 What a convolution buys you, and how to get results without training from scratch.
 
-**1 of 7 shipped.**
+**3 of 7 shipped.**
 
 | # | Notebook | Status |
 |---|---|---|
-| `01` | Convolution, pooling, and what a filter learns | planned |
+| `01` | [Convolution, pooling, and what a filter learns](01-convolution-and-pooling/) | **shipped** |
 | `02` | [A CNN on Fashion-MNIST, layer by layer](02-a-cnn-layer-by-layer/) | **shipped** |
 | `03` | LeNet, VGG, ResNet | planned |
 | `04` | Data augmentation | planned |
-| `05` | Transfer learning and fine-tuning | planned |
+| `05` | [Transfer learning and fine-tuning](05-transfer-learning/) | **shipped** |
 | `06` | Image segmentation, an introduction | planned |
 | `07` | Object detection, an introduction | planned |
 

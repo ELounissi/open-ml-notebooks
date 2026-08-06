@@ -2,13 +2,13 @@
 
 Order matters. Text, time series, and the architectures built for both.
 
-**1 of 9 shipped.**
+**2 of 9 shipped.**
 
 | # | Notebook | Status |
 |---|---|---|
 | `01` | [Tokenising, bag of words, and TF-IDF](01-text-preprocessing-and-tfidf/) | **shipped** |
 | `02` | Word2Vec and GloVe | planned |
-| `03` | Recurrent neural networks | planned |
+| `03` | [Recurrent neural networks](03-recurrent-neural-networks/) | **shipped** |
 | `04` | LSTM | planned |
 | `05` | GRU, and how it compares to LSTM | planned |
 | `06` | Sequence to sequence with attention | planned |
