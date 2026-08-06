@@ -36,3 +36,7 @@ lightning_logs/
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Verification sandboxes used by tooling. Never part of the book.
+_scratch_verify/
+_scratch*/
