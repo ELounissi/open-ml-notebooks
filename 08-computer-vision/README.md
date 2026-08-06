@@ -5,7 +5,7 @@ What a convolution buys you, and how to get results without training from scratc
 | # | Notebook | Status |
 |---|---|---|
 | `01` | Convolution, pooling, and what a filter learns | planned |
-| `02` | A CNN on Fashion-MNIST, layer by layer | planned |
+| `02` | [A CNN on Fashion-MNIST, layer by layer](02-a-cnn-layer-by-layer/) | **shipped** |
 | `03` | LeNet, VGG, ResNet | planned |
 | `04` | Data augmentation | planned |
 | `05` | Transfer learning and fine-tuning | planned |

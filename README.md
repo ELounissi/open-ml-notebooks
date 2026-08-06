@@ -87,6 +87,9 @@ Full table of contents with all 86 notebooks: **[CURRICULUM.md](CURRICULUM.md)**
   the model that does no training at all; scaling alone is worth **+0.205
   accuracy**, `k=1` scores a meaningless perfect 1.000 on training data, and the
   curse of dimensionality gets measured rather than asserted
+- **[03-03 — Naive Bayes](03-classification/03-naive-bayes/)** — why an assumption
+  everyone knows is false still works, and a thirteen-point detour into
+  scikit-learn's `var_smoothing` default that quietly destroys small-scale features
 - **[03-05 — Support Vector Machines](03-classification/05-support-vector-machines/)** —
   the margin, what `C` actually controls, and the kernel trick shown by lifting two
   rings into a third dimension before explaining why you never need to build it;
@@ -106,10 +109,27 @@ Full table of contents with all 86 notebooks: **[CURRICULUM.md](CURRICULUM.md)**
   scratch, the elbow and silhouette both pointing at the *wrong* number of clusters
   on data where the truth is known, and four failure modes including k-means
   confidently carving pure noise into tidy groups
+- **[05-04 — DBSCAN and HDBSCAN](05-unsupervised/04-dbscan-and-hdbscan/)** — density
+  clustering that finds crescents k-means cannot, choosing `eps` from a k-distance
+  elbow instead of guessing, and the discovery that **no `eps` setting reports "this
+  data has no structure"**
 - **[06-01 — PCA](06-dimensionality-reduction/01-principal-component-analysis/)** —
   eigendecomposition by hand agreeing with scikit-learn to 2.2×10⁻¹⁶, components
   that turn out to mean "size" and "shape", and an honest finding that PCA **never
   beat** simply keeping every column
+- **[07-01 — The perceptron](07-neural-networks/01-the-perceptron/)** — one neuron,
+  the learning rule that needs no calculus, and the four points of XOR that stalled
+  neural networks for a decade
+- **[07-02 — MLP and backpropagation](07-neural-networks/02-mlp-and-backpropagation/)** —
+  every gradient derived by hand and **checked numerically to 1.9×10⁻¹⁰**, then a
+  working network in NumPy alone
+- **[07-03 — The same net in PyTorch](07-neural-networks/03-the-same-net-in-pytorch/)** —
+  autograd demonstrated on something checkable by hand, the five-line training loop
+  you reuse forever, and the three mistakes everyone makes once
+- **[08-02 — A CNN, layer by layer](08-computer-vision/02-a-cnn-layer-by-layer/)** —
+  weight sharing explained, and a convolutional net that beats a dense one on
+  accuracy, parameter count **and** speed; its first-layer filters turn into edge
+  detectors nobody asked for
 - **[11-04 — Q-learning](11-reinforcement-learning/04-q-learning/)** — Cliff Walking
   built from scratch with no `gym` dependency, the Bellman update in one line, and
   the classic result where Q-learning finds the better policy while SARSA collects
@@ -132,11 +152,17 @@ Because every notebook uses the same datasets, the comparisons accumulate. On
 | Random forest | 0.9244 |
 | Logistic regression | 0.9234 |
 | k-Nearest Neighbours | 0.9231 |
+| Neural network (NumPy, from scratch) | 0.9306 * |
+| Naive Bayes | 0.8972 |
 | Decision tree | 0.8945 |
 
-Seven methods inside seven hundredths of each other, and a straight line beats
-most of them. Bean measurements are smooth correlated geometry, so the flexible
-models have little non-linear structure to exploit.
+\* single held-out split rather than 5-fold, so not directly comparable — see the
+[notebook](07-neural-networks/02-mlp-and-backpropagation/) for why I do not claim
+it as a win.
+
+Nine methods inside four hundredths of each other, and a straight line beats most
+of them. Bean measurements are smooth correlated geometry, so the flexible models
+have little non-linear structure to exploit.
 
 Change the dataset and the ordering changes. On **California Housing**, gradient
 boosting cuts RMSE from linear regression's 0.7263 to **0.4668** — a 36%

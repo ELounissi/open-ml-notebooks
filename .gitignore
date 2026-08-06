@@ -15,6 +15,12 @@ env/
 # purpose; see data/README.md for the size and licence rule.
 data/cache/
 data/raw/**/*.zip
+
+# Fashion-MNIST is 82 MB and downloads itself on first use via torchvision.
+# Committing it would quadruple the size of a clone for no benefit.
+data/raw/fashion-mnist/
+*.idx3-ubyte
+*.idx1-ubyte
 data/raw/**/*.tar.gz
 data/raw/**/*.h5
 data/raw/**/*.parquet.tmp

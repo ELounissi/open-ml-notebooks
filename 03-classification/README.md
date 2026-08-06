@@ -6,7 +6,7 @@ Predicting a category. The core algorithms every practitioner is expected to kno
 |---|---|---|
 | `01` | [Logistic regression](01-logistic-regression/) | **shipped** |
 | `02` | [k-Nearest Neighbours](02-k-nearest-neighbours/) | **shipped** |
-| `03` | Naive Bayes | planned |
+| `03` | [Naive Bayes](03-naive-bayes/) | **shipped** |
 | `04` | Linear and Quadratic Discriminant Analysis | planned |
 | `05` | [Support Vector Machines and the kernel trick](05-support-vector-machines/) | **shipped** |
 | `06` | [Decision trees, and how a split is chosen](06-decision-trees/) | **shipped** |

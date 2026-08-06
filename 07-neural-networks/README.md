@@ -4,9 +4,9 @@ From one neuron to a working training loop, with the maths visible throughout.
 
 | # | Notebook | Status |
 |---|---|---|
-| `01` | The perceptron | planned |
-| `02` | Multilayer perceptron and backprop, in NumPy | planned |
-| `03` | The same network in PyTorch | planned |
+| `01` | [The perceptron](01-the-perceptron/) | **shipped** |
+| `02` | [Multilayer perceptron and backprop, in NumPy](02-mlp-and-backpropagation/) | **shipped** |
+| `03` | [The same network in PyTorch](03-the-same-net-in-pytorch/) | **shipped** |
 | `04` | Activation functions and why they matter | planned |
 | `05` | SGD, Momentum, RMSProp, Adam | planned |
 | `06` | Dropout, batch norm, weight decay, early stopping | planned |
