@@ -162,15 +162,14 @@ that beats everything on average can still be third-best where nothing much happ
 Both models follow the two commuter peaks and the overnight trough without being told
 that days exist, and both shave the tops off the sharpest spikes, because a squared
 error loss prefers being slightly low on a peak to being badly wrong on either side of
-it. Their errors are correlated, which is the tell that they are using the same
-information in nearly the same way.
+it. Their errors are correlated, the tell that they use the same information in nearly
+the same way.
 
-Two honest notes. The recurrent layer earns its place when the useful history is
-longer than you can comfortably flatten, when sequences vary in length, or when what
-matters is a pattern rather than a fixed lag. A one-hour horizon on a strongly
-periodic series is none of those, and it still won — which is a result, not a rule.
-And the model saw the counts alone. The dataset also carries temperature, humidity,
-holiday flags and the hour of day, which the tabular chapters feed their models.
+Two honest notes. A recurrent layer earns its place when the useful history is longer
+than you can comfortably flatten, when sequences vary in length, or when what matters
+is a pattern rather than a fixed lag. A one-hour horizon on a periodic series is none
+of those, and it still won — a result, not a rule. And the model saw the counts alone;
+the dataset also carries temperature, humidity, holiday flags and hour of day.
 
 ## Cheat sheet
 

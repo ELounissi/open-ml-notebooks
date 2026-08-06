@@ -119,7 +119,7 @@ is monotone and cannot reorder anything, so that came from the refitting inside
 
 Breast cancer is too small to sweep, so I switched to dry bean, kept the two
 varieties that get confused most, and split 1730 train / 2597 calibration pool /
-1855 test. Uncalibrated: Brier 0.0775, ECE 0.0736. Then I held the base model fixed
+1855 test — uncalibrated Brier 0.0775, ECE 0.0736. Then I held the base model fixed
 and grew only the calibration set.
 
 | Calibration rows | Platt Brier | Isotonic Brier | Winner |
@@ -154,14 +154,14 @@ means near-certain, because on those rows it was.
 | Isotonic, cross-fitted on everything | 0.0152 | **0.0497** | **0.9836** |
 
 Both methods came out worse than doing nothing when fitted on the training rows,
-isotonic hardest at **3.8× the uncalibrated ECE** plus a 0.0409 AUC loss. Note also
-that sigmoid on held-out rows, at 0.0344, still failed to beat leaving this model
-alone. Cross-fitting is the version to reach for: best Brier and best AUC of the
-six, and no data set aside permanently.
+isotonic hardest at **3.8× the uncalibrated ECE** plus a 0.0409 AUC loss. Sigmoid on
+held-out rows, at 0.0344, still failed to beat leaving this model alone.
+Cross-fitting is the version to reach for: best Brier and best AUC of the six, and
+no data set aside permanently.
 
 The danger scales with overfitting. Repeated with naive Bayes, which fits its
-training rows about as well as anything else — 0.9035 train against 0.9121 test —
-the two rows land at ECE 0.0176 and 0.0187. Barely a difference. Rather than reason
+training rows about as well as anything else (0.9035 train against 0.9121 test), the
+two rows land at ECE 0.0176 and 0.0187. Barely a difference. Rather than reason
 about that per model, always use held-out data.
 
 ## Cheat sheet
@@ -175,8 +175,7 @@ about that per model, always use held-out data.
 | **Naive Bayes** | Over-confident. 95.6% of predictions above 0.99 confidence at 0.9385 accuracy |
 | **SVM** | `decision_function` is a distance. Squashing it by hand fixes nothing — ECE stayed at 0.1927 |
 | **Logistic regression** | Usually arrives calibrated. Wrapping it made ECE 2.9× worse here |
-| **Platt (`method="sigmoid"`)** | Two parameters. Safer below roughly 800 calibration rows |
-| **Isotonic** | Any monotone shape. Won past 800 rows, and by a small margin even then |
+| **Platt vs isotonic** | Sigmoid below roughly 800 calibration rows, isotonic past it — and by a small margin even then |
 | **Where to fit it** | Never the training rows. Held-out split, or `CalibratedClassifierCV(estimator=..., cv=5)` to cross-fit |
 | **Prefit models** | `FrozenEstimator(model)` in scikit-learn 1.8. The old `cv="prefit"` has been removed |
 

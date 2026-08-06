@@ -27,12 +27,10 @@ running the scikit-learn fallback - pip install umap-learn for the real thing
 
 So every number on this page came from **`Isomap`**, with `SpectralEmbedding`
 alongside it in one figure. Isomap builds a neighbour graph, measures geodesic
-distances along it, then runs classical MDS on those distances. It has a `transform`,
-the way UMAP does. What is missing is `min_dist`, which has no scikit-learn
-equivalent, and the stochastic layout — Isomap is deterministic. Install `umap-learn`,
-re-run, and every cell produces the UMAP version instead.
-
-That distinction is not a footnote here. It changes one of the conclusions.
+distances along it, then runs classical MDS on those distances, and it has a
+`transform` the way UMAP does. What is missing is `min_dist`, which has no
+scikit-learn equivalent, and the stochastic layout — Isomap is deterministic. That
+distinction is not a footnote here. It changes one of the conclusions.
 
 ## The rigged test came out the wrong way, and that is the lesson
 
@@ -66,31 +64,28 @@ was minimising.
 3,000 beans sampled from 13,611, 16 features, timed on the same CPU: PCA **0.0 s**,
 t-SNE **15.4 s**, Isomap **2.7 s**.
 
-Read the label on the third one before you read it as a speed claim. Isomap has its
-own cost profile — neighbour graph, shortest paths, eigendecomposition — and it is
-not evidence about UMAP in either direction. The UMAP speed argument is about scale
-anyway: t-SNE normalises over all pairs, and that is what starts to hurt at tens of
-thousands of rows rather than at three thousand.
+Read the label on the third panel before you read it as a speed claim. Isomap has its
+own cost profile — neighbour graph, shortest paths, eigendecomposition — and it is not
+evidence about UMAP either way. The UMAP speed argument is about scale anyway: t-SNE's
+all-pairs normalisation is what hurts at tens of thousands of rows, not at 3,000.
 
 ## The dials
 
 ![The dials](figures/fig-02-dials.png)
 
-`n_neighbors` is the one that matters. It sets how many neighbours define "local"
-when the graph is built, and it is the closest thing UMAP has to t-SNE's
-`perplexity`. Small (2 to 10) splinters the layout into islands; large (50 to 200)
-forces a broader arrangement and smooths fine structure away.
-
-`min_dist` does something narrower than people assume. It never touches the graph. It
-only sets a floor on how close two points may sit in the output, so changing it
-changes how a plot looks without changing what the algorithm concluded.
+`n_neighbors` is the one that matters. It sets how many neighbours define "local" when
+the graph is built, and it is the closest thing UMAP has to t-SNE's `perplexity`.
+Small (2 to 10) splinters the layout into islands; large (50 to 200) forces a broader
+arrangement and smooths fine structure away. `min_dist` does something narrower than
+people assume: it never touches the graph, only the floor on how close two points may
+sit in the output, so it changes how a plot looks without changing what the algorithm
+concluded.
 
 Without `umap-learn` this grid is one dial across three settings (5, 15, 50) on the
-first 1,000 beans, Isomap on the top row and `SpectralEmbedding` on the bottom,
-instead of an `n_neighbors` × `min_dist` grid. Widening the neighbourhood merges
-groups that a narrow one kept apart, for both methods. A reader shown one panel would
-count a different number of clusters depending on which panel you picked. **Try three
-settings of `n_neighbors` before you believe any of them.**
+first 1,000 beans, Isomap on the top row and `SpectralEmbedding` on the bottom.
+Widening the neighbourhood merges groups a narrow one kept apart, for both methods. A
+reader shown one panel would count a different number of clusters depending on which
+panel you picked. **Try three settings of `n_neighbors` before you believe any.**
 
 ## Local versus global, measured
 
@@ -111,9 +106,8 @@ PCA on global structure while giving up 0.0430 locally.
 
 Two caveats worth more than the table. This is one dataset at one setting —
 `n_neighbors=15` against `perplexity=30` is one point on two different curves. And a
-strong global score means different things for different methods: for Isomap it is
-the objective, not a discovery. UMAP's version of the claim is the weaker one, more
-global structure *than t-SNE*, which keeps almost none.
+strong global score means different things for different methods: for Isomap it is the
+objective, not a discovery.
 
 ## It has a transform, so it can go in a pipeline
 
