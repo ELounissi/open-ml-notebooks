@@ -83,14 +83,14 @@ Full table of contents with all 86 notebooks: **[CURRICULUM.md](CURRICULUM.md)**
 - **[03-01 — Logistic regression](03-classification/01-logistic-regression/)** —
   the sigmoid, log loss, gradient descent written out, softmax on seven unbalanced
   bean varieties, and why the *rarest* class turned out to be the easiest one
-- **[04-02 — Random forests](04-ensembles/02-random-forest/)** — the variance
-  equation that explains the whole design, out-of-bag scoring, two feature-importance
-  measures that disagree, and a head-to-head against logistic regression that the
-  forest **does not win**
 - **[03-02 — k-Nearest Neighbours](03-classification/02-k-nearest-neighbours/)** —
   the model that does no training at all; scaling alone is worth **+0.205
   accuracy**, `k=1` scores a meaningless perfect 1.000 on training data, and the
   curse of dimensionality gets measured rather than asserted
+- **[03-05 — Support Vector Machines](03-classification/05-support-vector-machines/)** —
+  the margin, what `C` actually controls, and the kernel trick shown by lifting two
+  rings into a third dimension before explaining why you never need to build it;
+  plus the cost nobody mentions, where 27× the rows cost **139× the time**
 - **[03-06 — Decision trees](03-classification/06-decision-trees/)** — the split
   search written from scratch, the single best question in the whole dataset found
   by arithmetic, a readable depth-3 tree, and an unrestrained one that hits perfect
@@ -99,6 +99,9 @@ Full table of contents with all 86 notebooks: **[CURRICULUM.md](CURRICULUM.md)**
   equation that explains the whole design, out-of-bag scoring, two feature-importance
   measures that disagree, and a head-to-head against logistic regression that the
   forest **does not win**
+- **[04-05 — Gradient boosting](04-ensembles/05-gradient-boosting/)** — why fitting
+  the residual *is* gradient descent, the learning-rate trade, and the sharpest
+  difference from a forest: adding trees eventually makes boosting **worse**
 - **[05-01 — k-Means](05-unsupervised/01-k-means/)** — Lloyd's algorithm from
   scratch, the elbow and silhouette both pointing at the *wrong* number of clusters
   on data where the truth is known, and four failure modes including k-means
@@ -116,14 +119,32 @@ Between them these cover supervised regression, supervised classification,
 ensembles, unsupervised clustering, dimensionality reduction, and reinforcement
 learning. New notebooks land in batches — watch or star the repo to get them.
 
-### A recurring theme
+### The scoreboard so far
 
-Because every notebook uses the same datasets, the comparisons accumulate. So far
-on UCI Dry Bean: logistic regression **0.9234**, random forest **0.9244**, decision
-tree **0.8945**, k-NN **0.9231**. The flexible models do not pull ahead, because
-bean measurements are smooth correlated geometry with little non-linear structure
-to exploit. Several notebooks here report a result I expected to go the other way,
-and say so.
+Because every notebook uses the same datasets, the comparisons accumulate. On
+**UCI Dry Bean**, 5-fold cross-validated accuracy:
+
+| Method | Accuracy |
+|---|---|
+| SVM, RBF kernel | **0.9301** |
+| Gradient boosting | 0.9271 |
+| SVM, linear kernel | 0.9262 |
+| Random forest | 0.9244 |
+| Logistic regression | 0.9234 |
+| k-Nearest Neighbours | 0.9231 |
+| Decision tree | 0.8945 |
+
+Seven methods inside seven hundredths of each other, and a straight line beats
+most of them. Bean measurements are smooth correlated geometry, so the flexible
+models have little non-linear structure to exploit.
+
+Change the dataset and the ordering changes. On **California Housing**, gradient
+boosting cuts RMSE from linear regression's 0.7263 to **0.4668** — a 36%
+improvement — because that problem *is* full of interactions.
+
+**Which method wins is a property of your data, not a ranking of algorithms.**
+That is the thread running through the whole book, and several notebooks here
+report a result I expected to go the other way and say so plainly.
 
 ---
 

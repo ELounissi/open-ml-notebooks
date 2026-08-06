@@ -8,7 +8,7 @@ Many weak models beating one strong model, and the two different reasons why.
 | `02` | [Random Forests](02-random-forest/) | **shipped** |
 | `03` | Extremely Randomised Trees | planned |
 | `04` | AdaBoost | planned |
-| `05` | Gradient Boosting from first principles | planned |
+| `05` | [Gradient Boosting from first principles](05-gradient-boosting/) | **shipped** |
 | `06` | The three production libraries compared | planned |
 | `07` | Stacking and voting | planned |
 
