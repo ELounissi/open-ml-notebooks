@@ -26,16 +26,14 @@ land at the *correct* $k$ against how far apart Ward lands across $k = 2,3,4,5$:
 
 The linkage swing is **6.7×** the $k$ swing on the crescents and **2.4×** on the blobs.
 Getting $k$ wrong splits or merges a cluster. Getting the linkage wrong changes what a
-cluster *is*.
-
-Second thing worth knowing before you invest an afternoon: on the real dataset **plain
-k-means beat every linkage**, Ward included, on the same 1,500-row sample.
+cluster *is*. And before you invest an afternoon: on the real dataset **plain k-means
+beat every linkage**, Ward included, on the same 1,500-row sample.
 
 ## The merge record is the whole model
 
 Eight points in three obvious groups give seven merges, at distances 0.224, 0.224,
 0.316, 0.361, 0.412, then **3.895** and **4.031**. Ids 0 to $n-1$ are points; merge $i$
-creates id $n+i$, so anything above 7 is a cluster. The distance column never
+creates id $n+i$, so anything above 7 is a cluster, and the distance column never
 decreases. The jump from 0.412 to 3.895 is the three groups being forced together, and
 that jump is the entire basis for cutting a tree.
 
@@ -53,8 +51,8 @@ that jump is the entire basis for cutting a tree.
 Single linkage goes from perfect to worthless between two panels. It only needs a chain
 of near neighbours to walk along, which is exactly what traces a crescent and exactly
 what walks through scattered noise from one blob to the next. That failure is called
-**chaining**, and it is why single linkage is never a safe default. Ward makes the
-opposite trade: it will never chain, and it will never find the crescents.
+**chaining**. Ward makes the opposite trade: it will never chain, and it will never
+find the crescents.
 
 ## Reading a dendrogram
 
@@ -69,8 +67,8 @@ to 56.750**, so the cut goes at **42.121**, leaving **2 clusters**.
 
 Merge distances going up: 8 clusters left at 3.009, 6 at 3.886, 4 at 4.923, 3 at
 **5.260**, then 2 at **27.492** and 1 at 56.750. Six merges under 5.3, then one at
-27.5. Everything below that height held together far more cheaply, which is the tree
-telling you where to cut.
+27.5 — everything below held together far more cheaply, which is the tree telling you
+where to cut.
 
 **Cutting by height and cutting by count are different questions.** Cutting at 42.121
 gave 2 clusters, asking for 3 gave 3 clusters, `same partition: False`.
@@ -86,15 +84,15 @@ Chaining seen from that side, single linkage on 340 noisy blob points:
 | 1.534 | 3 | **337 of 340** | 1 |
 
 However you move the line you get one cluster holding almost everything and singletons
-peeling off the edge. Asking for exactly three clusters does not fix that — it stops
-you noticing it.
+peeling off the edge. Asking for exactly three clusters does not fix that, it stops you
+noticing it.
 
 ## On real beans, against k-means
 
 ![Linkage on beans](figures/fig-04-linkage-on-beans.png)
 
-The full set is **92,622,855 pairs**. I sampled **1,500 rows (11.0%)**, or **1,124,250
-pairs**, because the full distance matrix does not fit comfortably in memory.
+The full set is **92,622,855 pairs**, so I sampled **1,500 rows (11.0%)** — **1,124,250
+pairs** — because the full distance matrix does not fit comfortably in memory.
 
 | Method | ARI |
 |---|---|
@@ -110,10 +108,10 @@ minimises directly, so on round similar-sized clouds the direct optimiser should
 the greedy one. Single linkage sits near zero because in sixteen standardised
 dimensions there is always a chain of near neighbours between any two varieties.
 
-Hierarchical clustering does buy one thing k-means cannot: any distance works, since
-the algorithm only ever asks for distances. Average linkage scored **0.318** on
-Euclidean and **0.300** on Manhattan, and complete linkage on cosine reached
-**0.428** — better than complete on Euclidean.
+Hierarchical clustering does buy one thing k-means cannot: any distance works, since the
+algorithm only ever asks for distances. Average linkage scored **0.318** on Euclidean
+and **0.300** on Manhattan, and complete linkage on **cosine reached 0.428**, better
+than complete on Euclidean.
 
 ## Is the tree a fair summary?
 
