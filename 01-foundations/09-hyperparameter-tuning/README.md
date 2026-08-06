@@ -30,22 +30,19 @@ repeats in three. The advantage was never about randomness. A grid pays for
 resolution in every dimension at once, and you almost never need it in every
 dimension — but when you do, the lattice is the right shape.
 
-Worth noting the second column of the first row: the grid's worst repeat was
-0.3680 and random's worst was 0.3514. Random search wins on the average, not on
-the floor.
+Even in the case random search wins, it wins on the average and not on the floor:
+the grid's worst repeat scored 0.3680, random's worst scored 0.3514.
 
 ## Why the grid runs out
 
 ![Grid cost](figures/fig-01-grid-cost.png)
 
 A grid on a decision tree over four hyperparameters: **96 candidates, 288 fits,
-14.2 s**, best score 0.9000, median candidate 0.8780, worst 0.7043. One fit alone
-takes 60.4 ms, and at that speed the exponent decides everything.
-
-Three values each over eight hyperparameters is 6,561 combinations and 0.33
-hours. Five values each is 390,625 and **19.66 hours**. Ten values each over
-eight is a hundred million combinations and **5,033 hours** — on the fastest
-model in the book.
+14.2 s**, best score 0.9000, median candidate 0.8780, worst 0.7043. One fit takes
+60.4 ms, and at that speed the exponent decides everything. Three values each
+over eight hyperparameters is 6,561 combinations and 0.33 hours. Five values each
+is 390,625 and **19.66 hours**. Ten values each over eight is a hundred million
+combinations and **5,033 hours** — on the fastest model in the book.
 
 ## What the grid never learns
 
@@ -97,9 +94,8 @@ Halving reached 0.9807 at a cost of 25.6; the grid reached 0.9754 at a cost of 4
 I want to be exact about the Bayesian result, because it is usually oversold. At
 10 evaluations it was **behind** random search, 0.9758 against 0.9760. It only
 pulled ahead from 20 evaluations on, and its final margin over random after 42
-evaluations is 0.0012. On this objective — a broad optimum, cheap evaluations —
-halving was the better buy, reaching the highest score of any method at 60% of
-the grid's cost.
+evaluations is 0.0012. On this objective halving was the better buy, reaching the
+highest score of any method at 60% of the grid's cost.
 
 Applying halving to the section-2 tree grid instead:
 
@@ -110,8 +106,8 @@ Applying halving to the section-2 tree grid instead:
 
 **14.1x faster, and it picked a different model** — `max_depth=5,
 min_samples_leaf=1` instead of `max_depth=8, min_samples_leaf=5`. Judging on a
-slice of the rows did lose the winner here. That is the trade, stated with the
-run that shows it happening.
+slice of the rows did lose the winner here. That is the trade, stated with a run
+that shows it happening rather than as a footnote.
 
 ## Sample multiplicative parameters on a log scale
 
@@ -127,23 +123,18 @@ instead of `uniform(1e-4, 1)`.
 ![Nested vs not](figures/fig-05-nested-vs-not.png)
 
 Every candidate truly worth 0.900, each measurement carrying noise of 0.020, no
-model differences at all:
-
-| Candidates | Reported best | Inflation |
-|---|---|---|
-| 1 | 0.8997 | -0.0003 |
-| 20 | 0.9375 | +0.0375 |
-| 100 | 0.9501 | +0.0501 |
-| 500 | 0.9606 | +0.0606 |
+model differences at all. With 1 candidate the reported best averages 0.8997;
+with 20 it averages 0.9375 (**+0.0375**); with 100, 0.9501 (**+0.0501**); with
+500, 0.9606 (**+0.0606**).
 
 The inflation is a property of the maximum. Nested cross-validation measures the
 procedure instead: the search reported **0.9805**, nested cross-validation said
 **0.9731**, a mean optimism of **+0.0074**.
 
-The search looked better in **9 of 10 trials** — so the direction is strongly
-consistent, but not universal, and one trial is not enough to detect it. Ten
-nested trials cost 10.7 s here. The gap is small because twelve candidates is a
-narrow search on 569 rows; it scales with how much freedom the search had.
+The search looked better in **9 of 10 trials** — strongly consistent, not
+universal, and one trial is not enough to detect it. Ten nested trials cost
+10.7 s. The gap is small because twelve candidates on 569 rows is a narrow
+search; it scales with how much freedom the search had to chase noise.
 
 ## Cheat sheet
 

@@ -2,17 +2,17 @@
 
 Learning from reward instead of from answers.
 
-**3 of 8 shipped.**
+**5 of 8 shipped.**
 
 | # | Notebook | Status |
 |---|---|---|
 | `01` | Agents, states, actions, rewards | planned |
 | `02` | [Multi-armed bandits](02-multi-armed-bandits/) | **shipped** |
-| `03` | MDPs, value iteration, policy iteration | planned |
+| `03` | [MDPs, value iteration, policy iteration](03-markov-decision-processes/) | **shipped** |
 | `04` | [Q-learning](04-q-learning/) | **shipped** |
 | `05` | SARSA, and how it differs from Q-learning | planned |
 | `06` | [Deep Q-Networks](06-deep-q-networks/) | **shipped** |
-| `07` | Policy gradients and REINFORCE | planned |
+| `07` | [Policy gradients and REINFORCE](07-policy-gradients/) | **shipped** |
 | `08` | Actor-critic and PPO | planned |
 
 Every notebook follows the same shape: the idea in plain language, the maths written out, a from-scratch NumPy implementation, the library version annotated line by line, and a measured answer to when the method wins and when it loses.

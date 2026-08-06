@@ -2,7 +2,7 @@
 
 Many weak models beating one strong model, and the two different reasons why.
 
-**5 of 7 shipped.**
+**6 of 7 shipped.**
 
 | # | Notebook | Status |
 |---|---|---|
@@ -11,7 +11,7 @@ Many weak models beating one strong model, and the two different reasons why.
 | `03` | Extremely Randomised Trees | planned |
 | `04` | [AdaBoost](04-adaboost/) | **shipped** |
 | `05` | [Gradient Boosting from first principles](05-gradient-boosting/) | **shipped** |
-| `06` | The three production libraries compared | planned |
+| `06` | [The three production libraries compared](06-xgboost-lightgbm-catboost/) | **shipped** |
 | `07` | [Stacking and voting](07-stacking-and-voting/) | **shipped** |
 
 Every notebook follows the same shape: the idea in plain language, the maths written out, a from-scratch NumPy implementation, the library version annotated line by line, and a measured answer to when the method wins and when it loses.

@@ -25,14 +25,11 @@ is what their losses say about it:
 | Balanced, with smoothing | **8.000** of 8 | 0.797 | 1.044 | 1.278 |
 
 The collapsed run has the **lower** generator loss. Worse than that: the
-theoretical equilibrium values, printed in the notebook, are 0.693 for the
-generator and 1.386 for the discriminator. The collapsed run sits at 0.682 and
-1.410 — closer to textbook equilibrium on both counts than the run that actually
-works.
-
-If you were monitoring this training the way you monitor everything else in this
-book, the broken run would look like the healthy one, and by the equilibrium
-reference it would look better.
+theoretical equilibrium values are 0.693 for the generator and 1.386 for the
+discriminator, and the collapsed run sits at 0.682 and 1.410 — closer to textbook
+equilibrium on both counts than the run that works. Monitored the way you monitor
+everything else in this book, the broken run would look like the healthy one, and
+by the equilibrium reference it would look better.
 
 ## What the collapse actually looked like
 
@@ -45,9 +42,8 @@ Counting where 2,000 generated points land, at the end of each run:
 | Share per mode, range | 0.110 to 0.131 | 0.0 on all eight | 0.050 to 0.144 |
 | Largest share on any mode | 0.131 | **0.000** | 0.144 |
 
-Worth being precise about what the measurement found, because it is not the
-textbook picture. The collapsing run's largest share on any single mode is
-**0.000**. It did not settle on one mode and produce it well — it ended up
+Worth being precise here, because it is not the textbook picture. The collapsing
+run did not settle on one mode and produce it well — it ended up
 producing points that land on no mode at all, quality 0.169, meaning 83% of its
 output falls in the gaps between the Gaussians. The sawtooth over training is
 real, but the final state is drift, not one sharp mode.
@@ -71,34 +67,28 @@ $-\log D(G(z))$ has the same optimum and the opposite profile:
 That table is arithmetic and settles the point. The training comparison is
 weaker, and the notebook says so: with a 200-step discriminator head start to
 force the saturating regime, **both forms covered 8 of 8 modes**. Only quality
-separated them, 0.537 for the saturating form against 0.675 for the
-non-saturating one.
+separated them, 0.537 against 0.675.
 
 ## The main run, and why its loss curve is a trap
 
 ![Ring training stages](figures/fig-01-ring-training-stages.png)
 
 3,000 steps, 24 seconds, nothing switched on. Final checkpoint: **8 of 8 modes
-covered, quality 0.941**. The generator never sees a real point — the ring comes
-entirely out of the discriminator's gradient.
+covered, quality 0.941**. The generator never sees a real point; the ring comes
+out of the discriminator's gradient alone.
 
 ![Losses tell you nothing](figures/fig-02-losses-tell-you-nothing.png)
 
-The equilibrium references are 1.386 for the discriminator and 0.693 for the
-generator. Across all checkpoints, generator loss against coverage correlates at
-Pearson **-0.771**, Spearman **-0.447**.
-
-I want to be exact about what this run proves and what it does not. Coverage hit
-8 by step 500 and **never moved again**, so within this run the loss cannot be
-shown to mislead about coverage — there is no variation left to mislead about.
-The correlation of -0.771 comes almost entirely from the opening transient, and
-the notebook notes that after the first fifth the correlation is undefined for
-exactly that reason.
+Across all checkpoints, generator loss against coverage correlates at Pearson
+**-0.771**, Spearman **-0.447**. I want to be exact about what that proves.
+Coverage hit 8 by step 500 and **never moved again**, so within this run the loss
+cannot be shown to mislead — there is no variation left to mislead about. The
+-0.771 comes almost entirely from the opening transient, and the notebook itself
+notes the correlation is undefined after the first fifth.
 
 The evidence that the loss is untrustworthy is the collapsed-run comparison at
-the top of this page, not this panel. Two different runs with the same loss
-neighbourhood and completely different coverage is the demonstration. One run
-whose coverage never varied is not.
+the top of this page, not this panel — two runs with similar losses and opposite
+coverage. One run whose coverage never varied is not evidence either way.
 
 ## Stabilisers, measured across seeds
 
@@ -113,16 +103,14 @@ Four configurations, three seeds each, 1,200 steps, 149 seconds:
 | Slower generator | 8.0 | 8.0 | 8.0 | **0.645** |
 | Both | 8.0 | 8.0 | 8.0 | 0.650 |
 
-This is the honest reading, and it cuts against the advice it was meant to
-support. **No stabiliser changed coverage.** Every configuration, including the
-plain one, covered all eight modes on every seed with zero spread between seeds.
-
-On quality, only label smoothing helped, +0.082 over plain. Halving the
-generator's learning rate made things **worse**, 0.645 against plain's 0.684, and
-combining it with smoothing gave back most of smoothing's gain. One of the two
-recommended stabilisers is a net negative here. The caveat that keeps this
-useful: the plain configuration was never in trouble, so this measures what
-stabilisers cost when they are not needed, not what they buy when they are.
+This cuts against the advice it was meant to support. **No stabiliser changed
+coverage.** Every configuration, the plain one included, covered all eight modes
+on every seed with zero spread. On quality, only label smoothing helped, +0.082
+over plain; halving the generator's learning rate made things **worse**, 0.645
+against 0.684, and combining the two gave back most of smoothing's gain. One of
+the two recommended stabilisers is a net negative here. The caveat that keeps
+this useful: the plain configuration was never in trouble, so this measures what
+stabilisers cost when unnecessary, not what they buy when they are needed.
 
 ## The image GAN
 
@@ -141,10 +129,10 @@ what came out.
 The blurred row is the comparison against the
 [variational autoencoder](../02-variational-autoencoders/), which averages when
 unsure. The GAN was never asked to minimise a per-pixel distance, so it has no
-reason to blur. Note that it overshoots: at 0.1087 the samples are 26% sharper
-than the real data, which is high-frequency noise rather than fidelity. The
-per-pixel spread of 0.2341 against the real 0.2762 is the collapse check, and it
-passes — a GAN that had settled on one garment would read near zero here.
+reason to blur — but note that it overshoots. At 0.1087 the samples are 26%
+sharper than the real data, which is high-frequency noise rather than fidelity.
+The per-pixel spread of 0.2341 against the real 0.2762 is the collapse check, and
+it passes: a GAN settled on one garment would read near zero here.
 
 ## Cheat sheet
 
