@@ -29,10 +29,8 @@ of 300 trees. **AdaBoost barely moved and the forest fell apart.**
 
 Accuracy lost from clean to 30% noise: **0.0054 for AdaBoost, 0.0751 for the
 forest** — fourteen times more. Test labels were clean throughout, and each row is
-the mean of three runs.
-
-The mechanism the warning describes is real and I measured it directly. It just
-did not reach the accuracy on this dataset. Section on noise below has both halves.
+the mean of three runs. The mechanism behind the warning is real and I measured it
+directly further down; it just did not reach the accuracy on this dataset.
 
 ## Where the weights come from
 
@@ -40,9 +38,8 @@ Write the classes as $y \in \{-1, +1\}$ and minimise the exponential loss
 $\sum_i \exp(-y_i F(x_i))$. Substitute $F_m = F_{m-1} + \alpha h$ and the
 exponential factors apart. The part that does not involve $\alpha$ or $h$ is a
 number attached to row $i$, and **that number is the sample weight**. Nobody
-invented the reweighting rule; it is the leftover.
-
-Differentiate what remains and $\alpha = \frac{1}{2}\ln\frac{1-e}{e}$ falls out.
+invented the reweighting rule; it is the leftover. Differentiate what remains and
+$\alpha = \frac{1}{2}\ln\frac{1-e}{e}$ falls out.
 
 ![Alpha and the loss](figures/fig-01-alpha-and-loss.png)
 
@@ -54,17 +51,15 @@ Differentiate what remains and $\alpha = \frac{1}{2}\ln\frac{1-e}{e}$ falls out.
 | 0.50 | +0.000 | 1.00× heavier |
 | 0.60 | **−0.405** | 0.67× heavier |
 
-A coin flip gets a vote of exactly zero. A learner worse than chance gets a
-negative vote, meaning it is used backwards, which is correct.
-
-## Sixty stumps on two crescents
+A coin flip gets a vote of exactly zero. A learner worse than chance gets a negative
+vote, meaning it is used backwards, which is correct.
 
 ![Rounds on moons](figures/fig-02-rounds-on-moons.png)
 
-Uniform weight was 0.00625. After one round the spread was 0.00385 to 0.01667;
-after sixty it was 0.00002 to 0.05260, and the heaviest row sat at **8.4× uniform**.
-Each dashed line is a terrible classifier on its own. Sixty of them build a
-boundary none could describe.
+Sixty stumps on two interleaving crescents. Uniform weight was 0.00625; after one
+round the spread was 0.00385 to 0.01667, after sixty it was 0.00002 to 0.05260 with
+the heaviest row at **8.4× uniform**. Each dashed line is a terrible classifier
+alone. Sixty of them build a boundary none could describe.
 
 ## On real data, from scratch
 
@@ -92,27 +87,18 @@ stumps at round one send the weights down paths that never reconverge.
 
 I ran a second loop that never mentions a sample weight: negative gradient of the
 exponential loss, stump most correlated with it, step size by exact line search.
-
-| Check | Result |
-|---|---|
-| Rounds where both loops chose the same stump | **200 / 200** |
-| Largest gap between $\alpha$ and twice the gradient step | 4.00e-14 |
-| Largest gap between the two ensemble scores $F$ | 5.24e-14 |
-
-Same rounds, same answer, to floating point.
+The two loops chose the same stump in **200 of 200 rounds**. Largest gap between
+AdaBoost's $\alpha$ and twice the gradient step: **4.00e-14**. Largest gap between
+the two ensemble scores $F$: **5.24e-14**. Same rounds, same answer.
 
 ## Where the weight ends up
 
 ![Weights concentrate](figures/fig-03-weights-concentrate.png)
 
-| | |
-|---|---|
-| Heaviest training row, final round | **31×** the uniform weight |
-| Share of weight held by the heaviest 1% of rows | 15.5% |
-| Share held by the lightest half of rows | **0.76%** |
-
-Most rows sink out of the bottom of the chart. They are settled, and no later
-stump is paid anything for getting them right.
+By the final round the heaviest training row sat at **31× the uniform weight**, the
+heaviest 1% of rows held **15.5%** of all the weight, and the lightest half held
+**0.76%**. Most rows sink out of the bottom of the chart — they are settled, and no
+later stump is paid anything for getting them right.
 
 ## Boost something too strong and it collapses
 
@@ -128,22 +114,16 @@ stump is paid anything for getting them right.
 An unlimited tree memorises the training set, its weighted error is zero, $\alpha$
 is undefined, and scikit-learn stops after one tree. The ensemble is a single
 overfitted tree wearing an ensemble's name, and it is the worst of the four.
-
-Depth 2 won here, and there is a reason worth knowing: an ensemble of stumps is an
-additive model. Each stump touches one feature, so the total is a sum of
-one-dimensional step functions with no interaction terms anywhere.
+Depth 2 won here, and an ensemble of stumps is why: each stump touches one feature,
+so the total is a sum of one-dimensional step functions with no interaction terms.
 
 ## Label noise, mechanism and cost
 
 ![Label noise](figures/fig-05-label-noise.png)
 
-The mechanism is exactly as advertised. With 10% of training labels flipped:
-
-| | |
-|---|---|
-| Flipped rows as a share of the training set | 10.0% |
-| Share of the final-round weight they hold | **35.7%** |
-| Average weight of a flipped row against a clean one | **5×** |
+The mechanism is exactly as advertised. Flip 10% of the training labels and by the
+last round those rows hold **35.7% of the total weight**, each flipped row carrying
+on average **5× the weight of a clean one**.
 
 So most late stumps are indeed fitted to rows whose labels are wrong. What did not
 follow is the accuracy collapse — see the table at the top. The forest was the one
@@ -151,15 +131,12 @@ that gave ground, dropping 0.0751 against AdaBoost's 0.0054.
 
 One warning if you open the notebook: the left panel's title was written before the
 run and reads that AdaBoost gives up ground faster. The curves it plots say the
-opposite. Trust the printed numbers.
-
-The reasonable reading is that concentrating weight on 36% of the mass is survivable
-when the clean signal is this separable, and that the textbook failure needs either
-harder noise, more rounds, or a dataset with less headroom. The mitigations still
-apply: fewer rounds, a smaller `learning_rate`, or logistic loss, which grows
-linearly in the margin so a hopeless row plateaus instead of exploding.
-
-The weight vector doubles as a label-error detector. Rows AdaBoost pushes to the
+opposite. Trust the printed numbers. The reasonable reading is that concentrating
+weight on 36% of the mass is survivable when the clean signal is this separable, and
+that the textbook failure needs harder noise, more rounds, or less headroom. The
+mitigations still apply: fewer rounds, a smaller `learning_rate`, or logistic loss,
+which grows linearly in the margin so a hopeless row plateaus instead of exploding.
+The weight vector doubles as a label-error detector — rows AdaBoost pushes to the
 top of the ranking are worth reading by hand.
 
 ## Cheat sheet

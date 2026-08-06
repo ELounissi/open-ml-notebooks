@@ -33,14 +33,13 @@ of this is usually presented, but it won.
 ![Final accuracy](figures/fig-03-final-accuracy.png)
 
 Every method did what it claims to do. Augmentation cut the generalisation gap from
-**0.1093 to 0.0212**, an 81% reduction. The combined run cut it to **0.0164**. None
-of them converted that into test accuracy inside 25 epochs, because closing the gap
-by making the network worse at training is not worth anything on its own.
-
-Dropout came closest to free, giving up 0.0088 test accuracy for a gap 39% smaller.
-Weight decay at 1e-2 was too strong and cost 0.0766. Batch norm is the odd one:
-it produced the **widest** gap of all seven runs at 0.1893, higher than the
-unregularised baseline, and still finished third on test accuracy.
+**0.1093 to 0.0212**, an 81% reduction; the combined run cut it to **0.0164**. None
+converted that into test accuracy inside 25 epochs, because closing the gap by
+making the network worse at training is not worth anything on its own. Dropout came
+closest to free, giving up 0.0088 for a gap 39% smaller. Weight decay at 1e-2 was
+too strong and cost 0.0766. Batch norm is the odd one: it produced the **widest**
+gap of all seven runs at 0.1893, above the unregularised baseline, and still
+finished third on test accuracy.
 
 The honest reading is that 25 epochs is not enough for the noisy methods. Dropout
 and augmentation both slow convergence in exchange for a better ceiling, and this
@@ -49,18 +48,10 @@ a fraction of a percent in the middle of that table are noise.
 
 ## Building the gap first
 
-You cannot judge a regulariser on a network that is not overfitting.
-
-| | |
-|---|---|
-| Training images | 2,000 (class counts 165 to 219) |
-| Validation images | 500, held out of the training pool |
-| Test images | **10,000**, untouched until the final table |
-| Parameters | **235,146** |
-| **Parameters per training image** | **118** |
-
-Two hidden layers of 256 and 128 with ReLU, trained with SGD and momentum on
-torch 2.11.0+cu128 on CUDA.
+You cannot judge a regulariser on a network that is not overfitting. Two hidden
+layers of 256 and 128 with ReLU, **235,146 parameters** against **2,000 training
+images** — **118 parameters per image** — plus 500 validation images and the full
+**10,000** test images, on torch 2.11.0+cu128 on CUDA.
 
 ![Overfitting](figures/fig-01-overfitting.png)
 
@@ -100,26 +91,15 @@ removing freedom.
 
 ![One at a time](figures/fig-02-one-at-a-time.png)
 
-| Run | Wall clock |
-|---|---|
-| Dropout | 7 s |
-| Batch norm | 7 s |
-| Weight decay | 2 s |
-| Augmentation | 4 s |
-| Everything combined | 4 s |
+Wall clock per 25-epoch run: dropout 7 s, batch norm 7 s, weight decay 2 s,
+augmentation 4 s, everything combined 4 s.
 
 ## Early stopping cost negative epochs
 
 The baseline run already recorded validation loss every epoch, so no retraining was
-needed to measure it.
-
-| | |
-|---|---|
-| Validation loss bottomed out at | **epoch 9 of 25** |
-| Test accuracy at that epoch | 0.7963 |
-| Test accuracy at epoch 25 | 0.8087 |
-| Difference | −0.0124 |
-| **Training epochs saved** | **16, or 64% of the run** |
+needed. It bottomed out at **epoch 9 of 25**, where test accuracy was **0.7963**
+against **0.8087** at epoch 25 — a difference of −0.0124 for **16 saved epochs, 64%
+of the run**.
 
 It gave back 0.0124 accuracy for 64% of the compute. On a longer run past the
 point where the test curve turns down as well, that sign flips. It is the first
@@ -134,14 +114,11 @@ reports a wrong number and edits the model while doing it.
 
 ![Train/eval trap](figures/fig-04-train-eval-trap.png)
 
-| | |
-|---|---|
-| `model.eval()` | **0.7533**, the same number every time |
-| `model.train()`, 15 identical calls | 0.7351 average, ranging **0.7327 to 0.7400** |
-| Error from forgetting one line | **−0.0182** |
-
-Then the part that catches people. In training mode the test accuracy depends on
-the evaluation batch size, a parameter that should have no effect on anything:
+`model.eval()` returns **0.7533**, the same number every time. `model.train()` over
+15 identical calls averaged **0.7351**, ranging **0.7327 to 0.7400** — an error of
+**−0.0182** from forgetting one line. Then the part that catches people: in training
+mode the accuracy depends on the evaluation batch size, a parameter that should have
+no effect on anything.
 
 | Eval batch size | 8 | 16 | 32 | 64 | 128 | 500 | 2000 |
 |---|---|---|---|---|---|---|---|
@@ -149,14 +126,14 @@ the evaluation batch size, a parameter that should have no effect on anything:
 
 **At batch size 8 the reported accuracy is 0.6426 against a true 0.7533 — an error
 of 0.1107 from a missing line of code.** Batch norm is normalising each image
-against whichever other images happen to share its batch, so the prediction for one
-garment depends on what you loaded beside it.
+against whichever others share its batch, so the prediction for one garment depends
+on what you loaded beside it.
 
-The failure mode in the wild is quieter than either panel. You leave the model in
-training mode during validation, the accuracy comes out a couple of points low, and
-you spend an afternoon tuning a learning rate to fix a one-line bug. Put
-`model.eval()` inside your evaluation function rather than at the call site, and
-wrap it in `torch.no_grad()` while you are there.
+The failure mode in the wild is quieter than either panel: you leave the model in
+training mode during validation, accuracy comes out a couple of points low, and you
+spend an afternoon tuning a learning rate to fix a one-line bug. Put `model.eval()`
+inside your evaluation function rather than at the call site, and wrap it in
+`torch.no_grad()` while you are there.
 
 ## Cheat sheet
 
