@@ -36,6 +36,12 @@ jobs:
           pip install torch --index-url https://download.pytorch.org/whl/cpu
           pip install -r requirements.txt
 
+      - name: Health check
+        # Catches the failure modes that have actually happened here: a notebook
+        # committed mid-run with empty outputs, a cell that errored, a README
+        # pointing at a figure that does not exist, and the prose rules in STYLE.md.
+        run: python tools/healthcheck.py
+
       - name: Check every dataset in use is declared
         run: |
           python - <<'PY'

@@ -1,0 +1,172 @@
+# Hyperparameter tuning
+
+### Grid, random, halving, and a Bayesian search written by hand
+
+**[Open the notebook](notebook.ipynb)** · Part 1, Foundations ·
+Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
+
+| | |
+|---|---|
+| **What you will learn** | Why a grid wastes its budget when few hyperparameters matter, when random search loses instead, what halving buys, how to write expected improvement yourself, why penalties want log-uniform sampling, and why a search's own score is too high |
+| **You should already know** | [Cross-validation](../04-cross-validation/), [overfitting and underfitting](../03-overfitting-and-underfitting/) |
+| **Datasets** | UCI Dry Bean, Breast Cancer Wisconsin (569 rows, 30 features) |
+| **Runtime** | About three minutes on a laptop CPU |
+
+---
+
+## The result I would lead with
+
+"Random search beats grid search" is quoted everywhere. It is conditional, and I
+measured both sides of the condition on the same budget of 36 evaluations over
+800 repeats.
+
+| Search space | Grid mean best | Random mean best | Random wins |
+|---|---|---|---|
+| Only one of two parameters matters | 0.7638 | **0.9840** | **78.1%** of repeats |
+| Both parameters matter equally | **0.8592** | 0.7710 | **38.0%** of repeats |
+
+When both axes carry signal, the grid wins and random search loses nearly two
+repeats in three. The advantage was never about randomness. A grid pays for
+resolution in every dimension at once, and you almost never need it in every
+dimension — but when you do, the lattice is the right shape.
+
+Worth noting the second column of the first row: the grid's worst repeat was
+0.3680 and random's worst was 0.3514. Random search wins on the average, not on
+the floor.
+
+## Why the grid runs out
+
+![Grid cost](figures/fig-01-grid-cost.png)
+
+A grid on a decision tree over four hyperparameters: **96 candidates, 288 fits,
+14.2 s**, best score 0.9000, median candidate 0.8780, worst 0.7043. One fit alone
+takes 60.4 ms, and at that speed the exponent decides everything.
+
+Three values each over eight hyperparameters is 6,561 combinations and 0.33
+hours. Five values each is 390,625 and **19.66 hours**. Ten values each over
+eight is a hundred million combinations and **5,033 hours** — on the fastest
+model in the book.
+
+## What the grid never learns
+
+![Grid vs random](figures/fig-02-grid-vs-random.png)
+
+Same space, same 36 evaluations. The grid tried **6 distinct values** of the
+parameter that matters; random search tried **36**. A grid of $k$ values per
+parameter never learns more than $k$ things about any one parameter, however
+large the budget gets.
+
+| Parameters | Budget | Grid values of $a$ | Random values of $a$ | Grid best | Random best |
+|---|---|---|---|---|---|
+| 2 | 16 | 4 | 16 | 0.5750 | 0.8640 |
+| 3 | 64 | 4 | 64 | 0.5297 | 1.0158 |
+| 4 | 256 | 4 | 256 | 0.5761 | 1.0378 |
+| 5 | 1024 | 4 | 1024 | 0.5929 | 1.0415 |
+
+The grid's column is flat. Sixty-four times the budget bought it nothing on the
+axis that mattered.
+
+## Halving and a hand-written Bayesian search
+
+The objective is a cross-validated RBF SVM on Breast Cancer over $\log_{10} C$
+and $\log_{10} \gamma$. One evaluation costs 45 ms.
+
+Expected improvement, written out rather than imported:
+
+$$\mathrm{EI}(x) = (\mu(x) - f^*)\,\Phi(z) + \sigma(x)\,\phi(z),
+\qquad z = \frac{\mu(x) - f^*}{\sigma(x)}$$
+
+The surrogate's early guesses are visibly bad, which is the point of the
+uncertainty term. At step 5 it predicted 0.9370 and the truth was **0.6292**.
+
+`HalvingRandomSearchCV` rations training rows instead of candidates:
+
+| Iteration | Candidates | Rows | Cost so far | Leader's true full-data score |
+|---|---|---|---|---|
+| 0 | 81 | 60 | 8.54 | 0.9684 |
+| 1 | 27 | 180 | 17.08 | 0.9789 |
+| 2 | 9 | 540 | 25.62 | **0.9807** |
+
+![Budget curves](figures/fig-03-budget-curves.png)
+
+| Budget | Random | Bayesian |
+|---|---|---|
+| 10 evaluations | **0.9760** | 0.9758 |
+| 20 evaluations | 0.9780 | **0.9786** |
+| 42 evaluations | 0.9791 | **0.9803** |
+
+Halving reached 0.9807 at a cost of 25.6. Grid reached 0.9754 at a cost of 42.
+
+I want to be exact about the Bayesian result, because it is usually oversold. At
+10 evaluations it was **behind** random search, 0.9758 against 0.9760. It only
+pulled ahead from 20 evaluations on, and its final margin over random after 42
+evaluations is 0.0012. On this objective — a broad optimum, cheap evaluations —
+halving was the better buy, reaching the highest score of any method at 60% of
+the grid's cost.
+
+Applying halving to the section-2 tree grid instead:
+
+| | Time | Best CV score |
+|---|---|---|
+| Full grid | 14.2 s | 0.9000 |
+| Halving | 1.0 s | 0.8883 |
+
+**14.1x faster, and it picked a different model** — `max_depth=5,
+min_samples_leaf=1` instead of `max_depth=8, min_samples_leaf=5`. Judging on a
+slice of the rows did lose the winner here. That is the trade, stated with the
+run that shows it happening.
+
+## Sample multiplicative parameters on a log scale
+
+![Log-uniform](figures/fig-04-log-uniform.png)
+
+Over the range 1e-4 to 1, uniform sampling puts **0.8% of draws below 0.01** and
+finds a best of 0.9655. Log-uniform puts **50.0%** there and finds **0.9759**,
+winning **92% of 12 runs**. It is a one-word change: `loguniform(1e-4, 1e0)`
+instead of `uniform(1e-4, 1)`.
+
+## The score from the search is too high
+
+![Nested vs not](figures/fig-05-nested-vs-not.png)
+
+Every candidate truly worth 0.900, each measurement carrying noise of 0.020, no
+model differences at all:
+
+| Candidates | Reported best | Inflation |
+|---|---|---|
+| 1 | 0.8997 | -0.0003 |
+| 20 | 0.9375 | +0.0375 |
+| 100 | 0.9501 | +0.0501 |
+| 500 | 0.9606 | +0.0606 |
+
+The inflation is a property of the maximum. Nested cross-validation measures the
+procedure instead: the search reported **0.9805**, nested cross-validation said
+**0.9731**, a mean optimism of **+0.0074**.
+
+The search looked better in **9 of 10 trials** — so the direction is strongly
+consistent, but not universal, and one trial is not enough to detect it. Ten
+nested trials cost 10.7 s here. The gap is small because twelve candidates is a
+narrow search on 569 rows; it scales with how much freedom the search had.
+
+## Cheat sheet
+
+| | |
+|---|---|
+| **Grid** | $k^d$ evaluations, $k$ distinct values per axis forever. Fine at one or two hyperparameters, and genuinely better when they all matter |
+| **Random** | One distinct value per parameter per evaluation. The default when you do not know which parameters matter |
+| **Halving** | Screened 81 candidates for 25.6 evaluations and 14.1x faster on the tree grid. It can drop the true winner |
+| **Bayesian** | Surrogate plus expected improvement. It trailed random at 10 evaluations here and led by 0.0012 at 42 |
+| **Scales** | `loguniform` for C, alpha, gamma, learning rates. 0.8% of uniform draws landed in the bottom two decades |
+| **Reporting** | Nested CV, or a test set the search never saw. Never `best_score_` |
+
+---
+
+Made by **Elyes Lounissi** ·
+[LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·
+[pilot.tun@gmail.com](mailto:pilot.tun@gmail.com)
+
+Back to [Part 1](../) · [the curriculum](../../CURRICULUM.md) · [the book](../../README.md)
+
+`#MachineLearning` `#HyperparameterTuning` `#RandomSearch` `#GridSearch`
+`#BayesianOptimization` `#GaussianProcess` `#CrossValidation` `#Python`
+`#ScikitLearn` `#DataScience`

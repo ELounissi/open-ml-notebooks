@@ -1,0 +1,185 @@
+# Generative adversarial networks
+
+### Two networks with opposing objectives, and no loss you can trust
+
+**[Open the notebook](notebook.ipynb)** · Part 10, Generative models ·
+Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
+
+| | |
+|---|---|
+| **What you will learn** | Why the generator's original loss goes flat when it is losing, why GAN losses do not tell you whether training is working, how to count mode collapse instead of describing it, and what two cheap stabilisers actually bought when measured across seeds |
+| **You should already know** | [Variational autoencoders](../02-variational-autoencoders/), [the PyTorch training loop](../../07-neural-networks/03-the-same-net-in-pytorch/) |
+| **Dataset** | A 2-D mixture of eight Gaussians on a ring for everything measured; Fashion-MNIST (12,000 images) for the closing demonstration |
+| **Runtime** | About five and a half minutes of training on a GPU across all five experiments |
+
+---
+
+## The result I would lead with
+
+Two runs of the same architecture. One covers the ring, one has collapsed. Here
+is what their losses say about it:
+
+| Run | Modes covered (last third) | Quality | Generator loss | Discriminator loss |
+|---|---|---|---|---|
+| Generator outruns discriminator | **0.571** of 8 | 0.169 | **0.682** | 1.410 |
+| Balanced, with smoothing | **8.000** of 8 | 0.797 | 1.044 | 1.278 |
+
+The collapsed run has the **lower** generator loss. Worse than that: the
+theoretical equilibrium values, printed in the notebook, are 0.693 for the
+generator and 1.386 for the discriminator. The collapsed run sits at 0.682 and
+1.410 — closer to textbook equilibrium on both counts than the run that actually
+works.
+
+If you were monitoring this training the way you monitor everything else in this
+book, the broken run would look like the healthy one, and by the equilibrium
+reference it would look better.
+
+## What the collapse actually looked like
+
+![Mode collapse counted](figures/fig-03-mode-collapse-counted.png)
+
+Counting where 2,000 generated points land, at the end of each run:
+
+| Mode | Real data | Collapsing run | Stabilised run |
+|---|---|---|---|
+| 0 | 0.110 | 0.0 | 0.118 |
+| 1 | 0.118 | 0.0 | 0.050 |
+| 2 | 0.122 | 0.0 | 0.110 |
+| 3 | 0.125 | 0.0 | 0.100 |
+| 4 | 0.131 | 0.0 | 0.140 |
+| 5 | 0.126 | 0.0 | 0.058 |
+| 6 | 0.130 | 0.0 | 0.144 |
+| 7 | 0.130 | 0.0 | 0.114 |
+
+Worth being precise about what the measurement found, because it is not the
+textbook picture. The collapsing run's largest share on any single mode is
+**0.000**. It did not settle on one mode and produce it well. It ended up
+producing points that land on no mode at all — quality 0.169, meaning 83% of its
+output falls in the gaps between the Gaussians. The sawtooth over training is
+real, but the final state is not one sharp mode, it is drift.
+
+Both failure modes need catching, which is why coverage and quality are always
+reported together. The notebook's calibration run makes the point: a generator
+stuck on one mode scores quality 0.988 with coverage 1, and a generator emitting
+uniform noise scores coverage 0 with quality 0.030.
+
+## The saturating loss
+
+The generator's original loss has gradient proportional to $D(G(z))$, so it is
+flattest where the generator most needs to move. The non-saturating form
+$-\log D(G(z))$ has the same optimum and the opposite profile:
+
+| $D(G(z))$ | $\log(1-D)$ gradient | $-\log D$ gradient | Ratio |
+|---|---|---|---|
+| 0.0009 | -0.0009 | -0.9991 | **1096.6x** |
+| 0.0067 | -0.0067 | -0.9933 | 148.4x |
+| 0.0474 | -0.0474 | -0.9526 | 20.1x |
+| 0.5000 | -0.5000 | -0.5000 | 1.0x |
+
+That table is arithmetic and settles the point. The training comparison is
+weaker, and the notebook says so: with a 200-step discriminator head start to
+force the saturating regime, **both forms covered 8 of 8 modes**. Only quality
+separated them, 0.537 for the saturating form against 0.675 for the
+non-saturating one.
+
+## The main run, and why its loss curve is a trap
+
+![Ring training stages](figures/fig-01-ring-training-stages.png)
+
+3,000 steps, 24 seconds, nothing switched on. Final checkpoint: **8 of 8 modes
+covered, quality 0.941**. The generator never sees a real point — the ring comes
+entirely out of the discriminator's gradient.
+
+![Losses tell you nothing](figures/fig-02-losses-tell-you-nothing.png)
+
+| | Value |
+|---|---|
+| Equilibrium discriminator loss | 1.386 |
+| Equilibrium generator loss | 0.693 |
+| Pearson correlation, generator loss against coverage | -0.771 |
+| Spearman correlation | -0.447 |
+
+I want to be exact about what this run proves and what it does not. Coverage hit
+8 by step 500 and **never moved again**, so within this run the loss cannot be
+shown to mislead about coverage — there is no variation left to mislead about.
+The correlation of -0.771 comes almost entirely from the opening transient, and
+the notebook notes that after the first fifth the correlation is undefined for
+exactly that reason.
+
+The evidence that the loss is untrustworthy is the collapsed-run comparison at
+the top of this page, not this panel. Two different runs with the same loss
+neighbourhood and completely different coverage is the demonstration. One run
+whose coverage never varied is not.
+
+## Stabilisers, measured across seeds
+
+![Stabilisers](figures/fig-04-stabilisers.png)
+
+Four configurations, three seeds each, 1,200 steps, 149 seconds:
+
+| Stabiliser | Mean covered | Worst seed | Best seed | Mean quality |
+|---|---|---|---|---|
+| Plain | 8.0 | 8.0 | 8.0 | 0.684 |
+| Label smoothing | 8.0 | 8.0 | 8.0 | **0.766** |
+| Slower generator | 8.0 | 8.0 | 8.0 | **0.645** |
+| Both | 8.0 | 8.0 | 8.0 | 0.650 |
+
+This is the honest reading, and it cuts against the advice it was meant to
+support. **No stabiliser changed coverage.** Every configuration, including the
+plain one, covered all eight modes on every seed with zero spread between seeds.
+
+On quality, only label smoothing helped, +0.082 over plain. Halving the
+generator's learning rate made things **worse**, 0.645 against plain's 0.684, and
+combining it with smoothing gave back most of smoothing's gain. On this problem
+at this budget, one of the two recommended stabilisers is a net negative.
+
+The caveat that keeps this useful: the plain configuration was never in trouble
+here, so this measures what stabilisers cost when they are not needed, not what
+they buy when they are.
+
+## The image GAN
+
+![Fashion-MNIST samples](figures/fig-05-fashion-mnist-samples.png)
+
+552k generator parameters, 534k discriminator, 60 epochs in 77 seconds. Final
+losses: generator 1.294, discriminator 1.151 — numbers that say nothing about
+what came out.
+
+| | Edge energy | Per-pixel spread |
+|---|---|---|
+| Real images | 0.0866 | 0.2762 |
+| Real images, 3x3 box blur | 0.0528 | — |
+| GAN samples | **0.1087** | 0.2341 |
+
+The blurred row is the comparison against the
+[variational autoencoder](../02-variational-autoencoders/), which averages when
+unsure. The GAN was never asked to minimise a per-pixel distance, so it has no
+reason to blur. Note that it overshoots: at 0.1087 the samples are 26% sharper
+than the real data, which is high-frequency noise rather than fidelity. The
+per-pixel spread of 0.2341 against the real 0.2762 is the collapse check, and it
+passes — a GAN that had settled on one garment would read near zero here.
+
+## Cheat sheet
+
+| | |
+|---|---|
+| **Use it when** | Sharpness is the deliverable and you can afford a sample-based measurement to babysit training |
+| **Avoid it when** | You need coverage guarantees, a likelihood, or a run that behaves the same way twice |
+| **Generator loss** | `bce_with_logits(D(G(z)), ones)`. Never the literal `log(1 - D(G(z)))` from the paper |
+| **Discriminator loss** | `bce(D(real), 0.9) + bce(D(fake), 0)`. Detach the fake batch |
+| **Adam** | `betas=(0.5, 0.999)` on both |
+| **Label smoothing** | Real target 0.9, one-sided. The only stabiliser that improved quality here, +0.082 |
+| **Learning rates** | Slowing the generator cost 0.039 of quality here and changed no coverage. Measure before adopting it |
+| **Diagnosis** | Sample-based, always. A collapsed run scored a lower generator loss than a healthy one |
+
+---
+
+Made by **Elyes Lounissi** ·
+[LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·
+[pilot.tun@gmail.com](mailto:pilot.tun@gmail.com)
+
+Back to [Part 10](../) · [the curriculum](../../CURRICULUM.md) · [the book](../../README.md)
+
+`#DeepLearning` `#GAN` `#GenerativeAdversarialNetworks` `#GenerativeModels`
+`#ModeCollapse` `#PyTorch` `#FashionMNIST` `#TrainingDynamics`
+`#MachineLearning` `#MLTutorial`
