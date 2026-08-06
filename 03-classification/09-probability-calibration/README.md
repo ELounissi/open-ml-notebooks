@@ -161,8 +161,7 @@ about that per model, always use held-out data.
 | **SVM** | `decision_function` is a distance. Squashing it by hand fixes nothing — ECE stayed at 0.1927 |
 | **Logistic regression** | Usually arrives calibrated. Wrapping it made ECE 2.9× worse here |
 | **Platt vs isotonic** | Sigmoid below roughly 800 calibration rows, isotonic past it — and by a small margin even then |
-| **Where to fit it** | Never the training rows. Held-out split, or `CalibratedClassifierCV(estimator=..., cv=5)` to cross-fit |
-| **Prefit models** | `FrozenEstimator(model)` in scikit-learn 1.8. The old `cv="prefit"` has been removed |
+| **Where to fit it** | Never the training rows. Held-out split, or `CalibratedClassifierCV(estimator=..., cv=5)` to cross-fit. For a prefit model, `FrozenEstimator` — the old `cv="prefit"` is gone in scikit-learn 1.8 |
 
 ---
 
