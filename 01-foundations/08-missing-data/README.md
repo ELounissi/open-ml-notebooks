@@ -63,14 +63,10 @@ and the measured survivors track it: 65.81% for 4 columns at 10% (theory 65.61%)
 Five per cent missing in each of sixteen columns sounds clean and leaves 43.92%
 of the rows. The second cost is invisible — dropping is only unbiased under MCAR:
 
-| Mechanism | Rows kept | Survivor mean | Bias against a true 3.8707 |
-|---|---|---|---|
-| MCAR | 69.9% | 3.8719 | +0.0013 |
-| MAR | 69.6% | 3.6368 | -0.2339 |
-| MNAR | 69.8% | 3.5254 | -0.3452 |
-
-All three threw away the same number of rows. Only one threw away a random
-selection.
+Dropping kept 69.9%, 69.6% and 69.8% of rows under MCAR, MAR and MNAR — the same
+number every time. Against a true mean of 3.8707 the survivors averaged 3.8719
+(+0.0013), 3.6368 (**-0.2339**) and 3.5254 (**-0.3452**). Only one of the three
+threw away a random selection.
 
 ## What constant filling does to a column
 
@@ -90,11 +86,9 @@ prediction for every pair.
 
 ![Indicator gain](figures/fig-05-indicator-gain.png)
 
-| Mechanism | Median | Median + indicator | Gain |
-|---|---|---|---|
-| MCAR | 0.4976 | 0.4989 | 0.0013 |
-| MAR | 0.4699 | 0.4778 | 0.0079 |
-| MNAR | 0.4589 | 0.4849 | **0.0260** |
+Adding `SimpleImputer(add_indicator=True)` moved R squared from 0.4976 to 0.4989
+under MCAR (+0.0013), 0.4699 to 0.4778 under MAR (+0.0079), and 0.4589 to 0.4849
+under MNAR (**+0.0260**).
 
 Under MCAR the indicator is a column of noise and buys nothing, which is correct.
 Under MNAR it buys the most — but be precise about how much: 0.0260 recovered out

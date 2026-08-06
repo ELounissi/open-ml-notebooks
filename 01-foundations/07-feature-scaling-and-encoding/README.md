@@ -136,8 +136,7 @@ that never saw it. The out-of-fold column never leaves the baseline, 0.2891 to
 
 | | |
 |---|---|
-| **Scale for** | k-NN, SVM, PCA, k-means, neural nets, any penalised linear model. Anything using a distance or a gradient |
-| **Do not bother for** | Trees and tree ensembles. The change was 0.0000, not small |
+| **Scale for** | k-NN, SVM, PCA, k-means, neural nets, any penalised linear model — anything using a distance or a gradient. Not trees: their change was 0.0000, not small |
 | **Which one** | `StandardScaler`, or `RobustScaler` on a long tail. The four differed by 0.0083 and beat no scaling by 0.2747, and no affine scaler removes an outlier |
 | **Always** | Fit the scaler inside a `Pipeline` so it never sees the validation fold |
 | **Categories** | One-hot by default. Ordinal only when the order is real *and* the spacing means something |

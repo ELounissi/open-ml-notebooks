@@ -56,22 +56,22 @@ parameter that matters; random search tried **36**. A grid of $k$ values per
 parameter never learns more than $k$ things about any one parameter, however
 large the budget gets.
 
-| Parameters | Budget | Grid values of $a$ | Random values of $a$ | Grid best | Random best |
-|---|---|---|---|---|---|
-| 2 | 16 | 4 | 16 | 0.5750 | 0.8640 |
-| 3 | 64 | 4 | 64 | 0.5297 | 1.0158 |
-| 4 | 256 | 4 | 256 | 0.5761 | 1.0378 |
-| 5 | 1024 | 4 | 1024 | 0.5929 | 1.0415 |
+| Parameters | Budget | Grid values of $a$ | Grid best | Random best |
+|---|---|---|---|---|
+| 2 | 16 | 4 | 0.5750 | 0.8640 |
+| 3 | 64 | 4 | 0.5297 | 1.0158 |
+| 4 | 256 | 4 | 0.5761 | 1.0378 |
+| 5 | 1024 | 4 | 0.5929 | 1.0415 |
 
-The grid's column is flat. Sixty-four times the budget bought it nothing on the
-axis that mattered.
+Random search tried one distinct value of $a$ per evaluation, so its column ran
+16, 64, 256, 1024. The grid's stayed at 4, and sixty-four times the budget bought
+it nothing on the axis that mattered.
 
 ## Halving and a hand-written Bayesian search
 
 The objective is a cross-validated RBF SVM on Breast Cancer over $\log_{10} C$
-and $\log_{10} \gamma$. One evaluation costs 45 ms.
-
-Expected improvement, written out rather than imported:
+and $\log_{10} \gamma$, at 45 ms per evaluation. Expected improvement, written
+out rather than imported:
 
 $$\mathrm{EI}(x) = (\mu(x) - f^*)\,\Phi(z) + \sigma(x)\,\phi(z),
 \qquad z = \frac{\mu(x) - f^*}{\sigma(x)}$$
@@ -81,11 +81,9 @@ uncertainty term. At step 5 it predicted 0.9370 and the truth was **0.6292**.
 
 `HalvingRandomSearchCV` rations training rows instead of candidates:
 
-| Iteration | Candidates | Rows | Cost so far | Leader's true full-data score |
-|---|---|---|---|---|
-| 0 | 81 | 60 | 8.54 | 0.9684 |
-| 1 | 27 | 180 | 17.08 | 0.9789 |
-| 2 | 9 | 540 | 25.62 | **0.9807** |
+it starts with 81 candidates on 60 rows and finishes with 9 on 540. The leader's
+true full-data score climbs 0.9684, 0.9789, **0.9807** across the three rounds,
+for a total cost of **25.62 full evaluations**.
 
 ![Budget curves](figures/fig-03-budget-curves.png)
 
@@ -95,8 +93,7 @@ uncertainty term. At step 5 it predicted 0.9370 and the truth was **0.6292**.
 | 20 evaluations | 0.9780 | **0.9786** |
 | 42 evaluations | 0.9791 | **0.9803** |
 
-Halving reached 0.9807 at a cost of 25.6. Grid reached 0.9754 at a cost of 42.
-
+Halving reached 0.9807 at a cost of 25.6; the grid reached 0.9754 at a cost of 42.
 I want to be exact about the Bayesian result, because it is usually oversold. At
 10 evaluations it was **behind** random search, 0.9758 against 0.9760. It only
 pulled ahead from 20 evaluations on, and its final margin over random after 42

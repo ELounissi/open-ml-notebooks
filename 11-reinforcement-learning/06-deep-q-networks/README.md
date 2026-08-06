@@ -55,15 +55,10 @@ Four real numbers in, two actions out. The episode ends at 12 degrees of lean or
 The obvious repair is to bin each axis. Four axes means the count is the bin
 count raised to the fourth power:
 
-| Bins per axis | Boxes | Table cells |
-|---|---|---|
-| 3 | 81 | 162 |
-| 6 | 1,296 | 2,592 |
-| 12 | 20,736 | 41,472 |
-| 32 | 1,048,576 | 2,097,152 |
-
-A 500-episode run collects about 50,000 transitions in total, so most of the
-larger tables can never be filled.
+Three bins per axis gives 81 boxes and 162 table cells; 12 bins gives 20,736
+boxes and 41,472 cells; 32 bins gives over two million cells. A 500-episode run
+collects about **50,000 transitions in total**, so most of the larger tables can
+never be filled.
 
 ![Table explosion](figures/fig-02-table-explosion.png)
 
@@ -98,11 +93,8 @@ spiral instead of converging.
 
 ![Epsilon](figures/fig-04-epsilon.png)
 
-| Schedule | Last-50 mean |
-|---|---|
-| Decayed 1.0 to 0.05 | **234.0** |
-| Fixed 0.05 (too greedy) | 58.1 |
-| Fixed 0.30 (too random) | 113.8 |
+Decaying epsilon from 1.0 to 0.05 gives a last-50 mean of **234.0 steps**. A
+fixed 0.05 gives 58.1, and a fixed 0.30 gives 113.8.
 
 The greedy setting commits to whatever the untrained network happened to prefer.
 The random setting keeps learning and then throws the pole away doing it. The

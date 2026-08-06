@@ -40,28 +40,21 @@ reference it would look better.
 
 Counting where 2,000 generated points land, at the end of each run:
 
-| Mode | Real data | Collapsing run | Stabilised run |
+| | Real data | Collapsing run | Stabilised run |
 |---|---|---|---|
-| 0 | 0.110 | 0.0 | 0.118 |
-| 1 | 0.118 | 0.0 | 0.050 |
-| 2 | 0.122 | 0.0 | 0.110 |
-| 3 | 0.125 | 0.0 | 0.100 |
-| 4 | 0.131 | 0.0 | 0.140 |
-| 5 | 0.126 | 0.0 | 0.058 |
-| 6 | 0.130 | 0.0 | 0.144 |
-| 7 | 0.130 | 0.0 | 0.114 |
+| Share per mode, range | 0.110 to 0.131 | 0.0 on all eight | 0.050 to 0.144 |
+| Largest share on any mode | 0.131 | **0.000** | 0.144 |
 
 Worth being precise about what the measurement found, because it is not the
 textbook picture. The collapsing run's largest share on any single mode is
-**0.000**. It did not settle on one mode and produce it well. It ended up
-producing points that land on no mode at all — quality 0.169, meaning 83% of its
+**0.000**. It did not settle on one mode and produce it well — it ended up
+producing points that land on no mode at all, quality 0.169, meaning 83% of its
 output falls in the gaps between the Gaussians. The sawtooth over training is
-real, but the final state is not one sharp mode, it is drift.
+real, but the final state is drift, not one sharp mode.
 
-Both failure modes need catching, which is why coverage and quality are always
-reported together. The notebook's calibration run makes the point: a generator
-stuck on one mode scores quality 0.988 with coverage 1, and a generator emitting
-uniform noise scores coverage 0 with quality 0.030.
+That is why coverage and quality are always reported together. The calibration
+run makes the point: a generator stuck on one mode scores quality 0.988 with
+coverage 1, and one emitting uniform noise scores coverage 0 with quality 0.030.
 
 ## The saturating loss
 
@@ -72,7 +65,6 @@ $-\log D(G(z))$ has the same optimum and the opposite profile:
 | $D(G(z))$ | $\log(1-D)$ gradient | $-\log D$ gradient | Ratio |
 |---|---|---|---|
 | 0.0009 | -0.0009 | -0.9991 | **1096.6x** |
-| 0.0067 | -0.0067 | -0.9933 | 148.4x |
 | 0.0474 | -0.0474 | -0.9526 | 20.1x |
 | 0.5000 | -0.5000 | -0.5000 | 1.0x |
 
@@ -92,12 +84,9 @@ entirely out of the discriminator's gradient.
 
 ![Losses tell you nothing](figures/fig-02-losses-tell-you-nothing.png)
 
-| | Value |
-|---|---|
-| Equilibrium discriminator loss | 1.386 |
-| Equilibrium generator loss | 0.693 |
-| Pearson correlation, generator loss against coverage | -0.771 |
-| Spearman correlation | -0.447 |
+The equilibrium references are 1.386 for the discriminator and 0.693 for the
+generator. Across all checkpoints, generator loss against coverage correlates at
+Pearson **-0.771**, Spearman **-0.447**.
 
 I want to be exact about what this run proves and what it does not. Coverage hit
 8 by step 500 and **never moved again**, so within this run the loss cannot be
@@ -130,12 +119,10 @@ plain one, covered all eight modes on every seed with zero spread between seeds.
 
 On quality, only label smoothing helped, +0.082 over plain. Halving the
 generator's learning rate made things **worse**, 0.645 against plain's 0.684, and
-combining it with smoothing gave back most of smoothing's gain. On this problem
-at this budget, one of the two recommended stabilisers is a net negative.
-
-The caveat that keeps this useful: the plain configuration was never in trouble
-here, so this measures what stabilisers cost when they are not needed, not what
-they buy when they are.
+combining it with smoothing gave back most of smoothing's gain. One of the two
+recommended stabilisers is a net negative here. The caveat that keeps this
+useful: the plain configuration was never in trouble, so this measures what
+stabilisers cost when they are not needed, not what they buy when they are.
 
 ## The image GAN
 
@@ -148,7 +135,7 @@ what came out.
 | | Edge energy | Per-pixel spread |
 |---|---|---|
 | Real images | 0.0866 | 0.2762 |
-| Real images, 3x3 box blur | 0.0528 | — |
+| Real, 3x3 box blur | 0.0528 | — |
 | GAN samples | **0.1087** | 0.2341 |
 
 The blurred row is the comparison against the
