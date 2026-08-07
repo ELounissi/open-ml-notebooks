@@ -1,3 +1,5 @@
+[English](../CURRICULUM.md) · [العربية](CURRICULUM.ar.md) · [Français](CURRICULUM.fr.md) · [Deutsch](CURRICULUM.de.md) · [Español](CURRICULUM.es.md) · [Português](CURRICULUM.pt.md) · [हिन्दी](CURRICULUM.hi.md) · [简体中文](CURRICULUM.zh-CN.md)
+
 # Plan de estudios
 
 Ochenta y seis notebooks, doce partes, un método en cada uno. Léelos en orden o
@@ -204,8 +206,9 @@ Hecho por **Elyes Lounissi** ·
 ## Usar esto, y ayudar a que llegue a más gente
 
 El código tiene licencia MIT. Cópialo, adáptalo, mételo en tus propios proyectos
-o en tus clases, sin pedir permiso y sin citar la fuente. Si un capítulo te
-ahorra una tarde, para eso estaba.
+o en tus clases, sin pedir permiso y sin citar la fuente. El texto y las figuras
+son CC BY 4.0, así que también circulan libremente, citando la fuente. Si un
+capítulo te ahorra una tarde, para eso estaba.
 
 Si te resulta útil, **una estrella ayuda a que otras personas lo encuentren**,
 que es la única forma en que viaja un libro como este. Las correcciones y los

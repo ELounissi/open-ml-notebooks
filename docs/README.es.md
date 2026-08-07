@@ -138,7 +138,7 @@ a una red neuronal cuando hay pocas filas.
   tasa de aprendizaje, y la diferencia más marcada con un bosque: llega un punto
   en el que añadir árboles deja el boosting **peor**
 - **[05-01: k-Means](../05-unsupervised/01-k-means/)**, el algoritmo de Lloyd
-  desde cero, el codo y la silueta señalando los dos al número *equivocado* de
+  desde cero, el codo y la silueta señalando los dos el número *equivocado* de
   clusters sobre datos cuya verdad se conoce, y cuatro maneras de fallar, entre
   ellas la de k-means partiendo puro ruido en grupos ordenados sin despeinarse
 - **[05-04: DBSCAN y HDBSCAN](../05-unsupervised/04-dbscan-and-hdbscan/)**,
@@ -199,9 +199,9 @@ explico por qué no lo reclamo como victoria.
 Los números de esta tabla aparecen tal cual los imprimen los notebooks, con punto
 decimal; en el texto de esta página uso la coma, que es lo normal en español.
 
-Nueve métodos dentro de cuatro centésimas, y una recta le gana a casi todos. Las
-medidas de los frijoles son geometría suave y correlacionada, así que a los
-modelos flexibles les queda poca estructura no lineal que aprovechar.
+Nueve métodos separados por menos de cuatro centésimas, y una recta le gana a
+casi todos. Las medidas de los frijoles son geometría suave y correlacionada, así
+que a los modelos flexibles les queda poca estructura no lineal que aprovechar.
 
 Cambia el conjunto de datos y cambia el orden. Sobre **California Housing**,
 gradient boosting baja el RMSE de la regresión lineal de 0,7263 a **0,4668**, una

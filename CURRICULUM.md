@@ -202,9 +202,10 @@ Made by **Elyes Lounissi** ·
 
 ## Using this, and helping it reach people
 
-The code is MIT licensed. Copy it, adapt it, put it in your own projects or
-your teaching, no permission needed and no attribution required. If a chapter
-saves you an afternoon, that is what it was for.
+The code is MIT licensed. Copy it, adapt it, put it in your own projects or your
+teaching, no permission needed and no credit required. The prose and the figures
+are CC BY 4.0, so those travel freely too, with attribution. If a chapter saves
+you an afternoon, that is what it was for.
 
 If you find it useful, **a star helps other people find it**, which is the only
 way a book like this travels. Corrections and disagreements are welcome in the

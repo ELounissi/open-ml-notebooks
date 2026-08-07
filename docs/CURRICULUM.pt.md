@@ -1,3 +1,5 @@
+[English](../CURRICULUM.md) · [العربية](CURRICULUM.ar.md) · [Français](CURRICULUM.fr.md) · [Deutsch](CURRICULUM.de.md) · [Español](CURRICULUM.es.md) · [Português](CURRICULUM.pt.md) · [हिन्दी](CURRICULUM.hi.md) · [简体中文](CURRICULUM.zh-CN.md)
+
 # Plano de estudos
 
 Oitenta e seis notebooks, doze partes, um método em cada. Leia na ordem ou vá
@@ -204,8 +206,9 @@ Feito por **Elyes Lounissi** ·
 ## Usar isto, e ajudar a fazer chegar às pessoas
 
 O código está sob licença MIT. Copie, adapte, use nos seus projetos ou nas suas
-aulas, sem pedir permissão e sem precisar dar crédito. Se um capítulo te poupar
-uma tarde, era para isso mesmo.
+aulas, sem pedir permissão e sem precisar dar crédito. O texto e as figuras são
+CC BY 4.0, então também circulam livremente, com atribuição. Se um capítulo te
+poupar uma tarde, era para isso mesmo.
 
 Se for útil para você, **uma estrela ajuda outras pessoas a encontrarem o
 livro**, que é o único jeito de um livro assim circular. Correções e discordâncias

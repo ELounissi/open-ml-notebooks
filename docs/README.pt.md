@@ -196,9 +196,9 @@ explico por que não reivindico isso como vitória.
 Os números desta tabela aparecem exatamente como os notebooks os imprimem, com
 ponto decimal; no texto desta página uso a vírgula, como é normal em português.
 
-Nove métodos dentro de quatro centésimos um do outro, e uma reta ganha da maioria
-deles. As medidas dos feijões são geometria suave e correlacionada, então sobra
-pouca estrutura não linear para os modelos flexíveis explorarem.
+Nove métodos separados por menos de quatro centésimos, e uma reta ganha da
+maioria deles. As medidas dos feijões são geometria suave e correlacionada, então
+sobra pouca estrutura não linear para os modelos flexíveis explorarem.
 
 Troque o conjunto de dados e a ordem muda. No **California Housing**, o gradient
 boosting derruba o RMSE de 0,7263 da regressão linear para **0,4668**, uma melhora

@@ -1,3 +1,5 @@
+[English](../CURRICULUM.md) · [العربية](CURRICULUM.ar.md) · [Français](CURRICULUM.fr.md) · [Deutsch](CURRICULUM.de.md) · [Español](CURRICULUM.es.md) · [Português](CURRICULUM.pt.md) · [हिन्दी](CURRICULUM.hi.md) · [简体中文](CURRICULUM.zh-CN.md)
+
 # Lehrplan
 
 Sechsundachtzig Notebooks, zwölf Teile, je ein Verfahren. Lies sie der Reihe nach
@@ -203,8 +205,9 @@ Von **Elyes Lounissi** ·
 ## Weiterverwenden, und dabei helfen, dass es Leser findet
 
 Der Code steht unter der MIT-Lizenz. Kopier ihn, pass ihn an, nimm ihn in eigene
-Projekte oder in deinen Unterricht, ohne Erlaubnis und ohne Namensnennung. Wenn
-ein Kapitel dir einen Nachmittag spart, war es genau dafür da.
+Projekte oder in deinen Unterricht, ohne Erlaubnis und ohne Namensnennung. Text
+und Abbildungen stehen unter CC BY 4.0 und reisen genauso frei, mit Namensnennung.
+Wenn ein Kapitel dir einen Nachmittag spart, war es genau dafür da.
 
 Wenn es dir nützt, **hilft ein Stern anderen dabei, es zu finden**, und anders
 reist ein Buch wie dieses nicht. Korrekturen und Widerspruch sind in den Issues

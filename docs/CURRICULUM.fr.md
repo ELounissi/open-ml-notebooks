@@ -206,8 +206,9 @@ Par **Elyes Lounissi** ·
 
 Le code est sous licence MIT. Copiez-le, adaptez-le, mettez-le dans vos propres
 projets ou dans votre enseignement, sans demander la permission et sans
-obligation de citer la source. Si un chapitre vous fait gagner un après-midi,
-c'est qu'il a fait son travail.
+obligation de citer la source. Le texte et les figures sont en CC BY 4.0, donc
+ils circulent tout aussi librement, en citant l'auteur. Si un chapitre vous
+fait gagner un après-midi, c'est qu'il a fait son travail.
 
 Si vous le trouvez utile, **une étoile aide les autres à le trouver**, et c'est à
 peu près le seul moyen pour qu'un livre comme celui-ci circule. Les corrections
