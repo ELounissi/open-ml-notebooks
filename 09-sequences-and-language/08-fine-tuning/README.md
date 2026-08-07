@@ -10,7 +10,7 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 | **What you will learn** | How masked language modelling turns unlabelled text into supervision, what a pretrained checkpoint actually contains, how fine-tuning compares against a frozen feature extractor and against random initialisation across a sweep of labelled-set sizes, how much of the pretraining objective fine-tuning destroys, and whether discriminative learning rates fix it |
 | **You should already know** | [The Transformer, built from scratch](../07-the-transformer/). [Transfer learning](../../08-computer-vision/05-transfer-learning/) runs the same three-way comparison on images |
 | **Datasets** | A synthetic language defined in the notebook: 24,000 sentences of 9 tokens, 216,000 tokens in all, over a vocabulary of 73. Nothing is downloaded and no pretrained weights are used |
-| **Runtime** | Three to four minutes, torch 2.11.0+cu128. Pretraining takes 15 s on 71,616 encoder parameters and the 36-run sweep takes 58 s |
+| **Runtime** | Three to four minutes, torch 2.11.0+cu128. Pretraining takes 13 s on 71,616 encoder parameters and the 36-run sweep takes 57 s |
 
 ---
 
@@ -35,8 +35,9 @@ accuracy before anything is fine-tuned. After:
 
 **The best model on the task is the one that destroyed its pretraining.** Full
 rate wins the target at 0.9607 and pays +3.5720 nats, dropping masked-token
-accuracy from 0.2760 to 0.0516, which is below the 0.2298 a frequency baseline
-gets and not far above the 0.0139 of a uniform guess over the vocabulary.
+accuracy from 0.2760 to 0.0516. That is below the 0.2298 a frequency baseline gets
+on held-out rows and not far above the 0.0139 of a uniform guess over the
+vocabulary, so what is left of the pretraining is worse than counting.
 
 I expected this table to reproduce [08-05](../../08-computer-vision/05-transfer-learning/),
 where the full learning rate destroyed the source task and came out worse on the
@@ -77,13 +78,23 @@ disappointed by a language model's accuracy:
 | adj 1 | **3.1777** | 0.0442 |
 | noun 1 | 3.1777 | 0.0438 |
 | verb | 2.4848 | 0.0860 |
+| a | -0.0000 | 1.0000 |
+| adj 2 | **3.1778** | 0.0429 |
+| noun 2 | 3.1773 | 0.0445 |
 | prep | 0.6931 | 0.5023 |
 | place | 2.0793 | 0.1283 |
 
+Only two of the nine slots are free. "the" and "a" are fixed by the template, and
+the other function word in the sentence, the preposition, costs **0.6931 nats**,
+so "function words are free" is a slogan that this table does not support. A slot
+holding one of eight equally likely nouns cannot be predicted better than one in
+eight when nothing else narrows it down, and no amount of training changes that.
+
 Guessing the most frequent token in every slot would be right **0.3213** of the
-time. A slot holding one of eight equally likely nouns cannot be predicted better
-than one in eight when nothing else narrows it down, and no amount of training
-changes that.
+time, and the notebook prints a warning next to that number rather than leaving it
+to be quoted: it is an average over all nine slots including the two fixed ones,
+and the model is never scored on those. It is not the baseline the model is
+measured against. The one that is comes next, and it is 0.2298.
 
 ## Pretraining, and what ended up in the weights
 
@@ -98,20 +109,40 @@ would train the model to copy.
 | 5 | 1.8734 | 0.2873 |
 | 8 | 1.8802 | 0.2830 |
 
-Scored on 4,822 masked positions against three references:
+The table above is the training loop's own report, over the 24,000 pretraining
+sentences. It is not what the model gets scored on. Every row below is measured on
+**4,822 masked positions of 4,000 held-out sentences, the same rows and the same
+masks for the model as for the baseline**:
 
 | Predictor | Accuracy | Loss (nats) |
 |---|---|---|
 | uniform guess over the vocabulary | 0.0139 | |
 | the commonest token for that slot | 0.2298 | 2.2500 |
-| **the pretrained model** | **0.2830** | **1.8802** |
+| **the pretrained model** | **0.2752** | **1.8831** |
+
+The model clears the frequency baseline by **+0.0454 accuracy and -0.3669 nats**.
+
+The last training epoch reported 0.2830, which is a little higher and would have
+been the convenient number to put in that table. It comes from a different set of
+rows. Quoting it against a baseline scored on the held-out sentences is exactly
+the mistake this section is about, so the notebook scores the model where the
+baseline was scored and prints the training-epoch number separately, labelled.
 
 ![Pretraining](figures/fig-02-pretraining.png)
 
-The model was never told domains exist. The embedding table clusters by domain
-anyway, because predicting a masked adjective requires knowing which nouns it
-goes with, and a randomly initialised encoder of the same shape is the control
-that shows the clustering came from training rather than from the architecture.
+The model was never told domains exist and the domains are in the embedding table
+anyway, because predicting a masked adjective requires knowing which nouns it goes
+with. **They are not visible in the picture, and the picture no longer claims they
+are.** Two principal components of the 48 content-word vectors give a silhouette by
+domain of **+0.061**, against **-0.025** for a randomly initialised encoder of the
+same shape. Both are near zero, which is what no clustering looks like.
+
+What separates the two encoders is the full space. A cross-validated logistic
+regression reads the domain off the whole 64-dimensional embedding vector at
+**0.9583** for the pretrained encoder and **0.3542** for the untrained one, against
+a chance of 0.3333. The same regression on only the two drawn components gets
+**0.6250**. The pretraining is in the weights; the two directions of largest
+variance are not where it lives, and PCA never promised they would be.
 
 ## How much labelled data before the pretraining stops mattering
 
@@ -138,13 +169,31 @@ sentences** and closes to +0.0508 by 1024, which is the shape 08-05 measured on
 images: transfer buys you data, and the amount it buys shrinks as you get more of
 your own.
 
-Two rows deserve to be said out loud rather than smoothed over. At 32 sentences
+The **largest seed spread across all runs is 0.0567**, and it is the bar every
+number in that list has to clear. Three of the six do not: +0.0270 at 32, +0.0188
+at 64, and **+0.0508 at 1024, the value the closing of the gap is quoted from**.
+So "beat from-scratch at every size" is true of the arithmetic and load-bearing at
+only three sizes out of six. The notebook prints both gaps against the spread:
+
+| Labelled sentences | Fine-tune minus frozen | Fine-tune minus scratch | Both clear the seed spread |
+|---|---|---|---|
+| 32 | -0.0473 | +0.0270 | False |
+| 64 | +0.0258 | +0.0188 | False |
+| 128 | +0.1368 | +0.1087 | **True** |
+| 256 | +0.3733 | +0.2587 | **True** |
+| 512 | +0.4555 | +0.1557 | **True** |
+| 1024 | +0.4982 | +0.0508 | False |
+
+Only **32 and 64** have both leads inside the spread. At 1024 the lead over the
+frozen encoder is +0.4982, far outside it; it is the lead over from-scratch alone
+that has closed.
+
+The 32-sentence row deserves to be said out loud rather than smoothed over. There
 the **frozen encoder is the highest score in the row at 0.5575**, above
 fine-tuning's 0.5102, so fine-tuning did not lead everywhere in the table even
-though it led against from-scratch everywhere. The **largest seed spread across
-all runs is 0.0567**, which is wider than that gap, so the honest reading of the
-32-sentence row is that all four methods are at chance and the ordering inside it
-means nothing.
+though it led against from-scratch everywhere. That gap is narrower than the seed
+spread, so the honest reading is that all four methods are at chance and the
+ordering inside the row means nothing.
 
 Bag of words never leaves chance, between 0.4817 and 0.5040 at every size,
 because token counts cannot express a comparison between two of the tokens.
@@ -188,8 +237,8 @@ that the backbone is wrong.
 | | |
 |---|---|
 | **Masked language modelling** | Replace a fraction of tokens with `[MASK]`, predict them, take the loss at masked positions only |
-| **Before you judge accuracy** | Compute the entropy of the slots. The frequency baseline here scored 0.2298 and the trained model 0.2830 |
-| **Fine-tuning** | Load the encoder, attach a fresh head, train both. Beat from-scratch at every size, by +0.2587 at the peak and +0.0508 at the top |
+| **Before you judge accuracy** | Compute the entropy of the slots, then score the model on the rows the baseline was scored on. Here that is 0.2298 against 0.2752, not against the 0.2830 the training loop reported over different rows |
+| **Fine-tuning** | Load the encoder, attach a fresh head, train both. Beat from-scratch at every size, by +0.2587 at the peak, but the +0.0508 at the top sits inside the 0.0567 seed spread and is not a result |
 | **Feature extraction** | Freeze the encoder, train the head. Cheap, and limited to what one linear map of the pooled features can express |
 | **From scratch** | The control that decides whether pretraining bought anything. Run it every time |
 | **Sanity control** | A random encoder with the same pooling. It hit 0.9373 on the one-word probe here. If your frozen features cannot beat it, they are not features |

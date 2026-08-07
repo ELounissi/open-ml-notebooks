@@ -10,7 +10,7 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 | **What you will learn** | Which pieces of a training loop earn their place, why averaging a metric over batches is wrong and how large the error gets, what keeping the last epoch's weights costs, how a schedule and gradient clipping actually behave when you measure them, and one function to paste into your own project |
 | **You should already know** | [The same network in PyTorch](../03-the-same-net-in-pytorch/), [optimisers](../05-optimisers/), [regularisation](../06-regularisation/) |
 | **Dataset** | Fashion-MNIST, cut to 4,000 training and 1,000 validation images against a 10,000-image test set left untouched until the last section |
-| **Runtime** | Four to five minutes on a laptop CPU. This run used a CUDA device, torch 2.11.0+cu128 on an NVIDIA RTX A2000 Laptop GPU |
+| **Runtime** | A few minutes. The device is chosen at run time and printed by the first cell; the timings on this page came from a CUDA device, torch 2.11.0+cu128 on an NVIDIA RTX A2000 Laptop GPU |
 
 ---
 
@@ -41,8 +41,8 @@ comparisons you are about to run, including the ones on this page.
 
 ![The complete loop](figures/fig-05-complete-loop.png)
 
-The complete loop reached **0.8227** test accuracy in **28 epochs and 2.9851 s**.
-The loop from section 1 reached **0.8020** in **40 epochs and 3.0292 s**. Early
+The complete loop reached **0.8227** test accuracy in **28 epochs and 2.5139 s**.
+The loop from section 1 reached **0.8020** in **40 epochs and 2.7196 s**. Early
 stopping saved **12 epochs**. The accuracy difference is real and it is smaller
 than the seed spread, so the defensible claim is the cheaper one: same result,
 fewer epochs, and a number chosen by a validation set the test data never
@@ -138,19 +138,35 @@ Then the sweep that was supposed to show clipping rescuing a run:
 | 1.00 | off | 2.3128 | True | 0.121 |
 | 1.00 | norm <= 1.0 | 2.1089 | True | **0.360** |
 | 3.00 | off | 2.3478 | True | 0.121 |
+| 3.00 | norm <= 1.0 | 2.3500 | True | 0.121 |
 | 8.00 | off | 2.5498 | True | 0.121 |
+| 8.00 | norm <= 1.0 | 2.5645 | True | 0.121 |
 | 20.00 | off | 22.2093 | True | 0.099 |
 | 20.00 | norm <= 1.0 | 31.1005 | True | 0.099 |
 
 `runs that produced a non-finite loss without clipping : 0 of 6`
 `runs that produced a non-finite loss with clipping    : 0 of 6`
 
-Nothing was rescued, because nothing broke. At learning rate 0.05 clipping cost
-0.030 of accuracy and at 0.20 it gained 0.051, both of which are inside the seed
-spread. Clipping does not make a bad learning rate good either: at 1.00 and above
-the accuracies sit at chance whether it is on or off, and at 20.00 the clipped
-run's final training loss is the higher of the two. Surviving is a different
-thing from learning.
+Nothing was rescued, because nothing broke. What the table shows instead is that
+the two columns disagree about clipping, and which one you read decides the
+verdict.
+
+On **final training loss** clipping ended worse at **4 of 6** rates, including
+the largest one in the sweep, where 31.1005 against 22.2093 is the clipped run
+finishing higher.
+
+On **best validation accuracy**, which is what the right-hand panel of the figure
+plots, clipping is behind at 0.05 by 0.030, ahead at 0.20 by 0.051, ahead again
+at 1.00 by 0.239, and level at 3.00, 8.00 and 20.00 where both runs land on the
+same number. So the 1.00 row is not a case of clipping failing to rescue a bad
+rate: 0.360 against 0.121 is the largest accuracy gap in the table, well clear of
+the 0.10 a ten-class coin flip would give, and it is the one place clipping
+visibly bought something. It bought it on a learning rate nobody should use, and
+0.360 is still a broken run. Surviving is a different thing from learning.
+
+Read across both columns and the pattern is that clipping's sign changes with the
+setting, and changes again with the metric. That is what an undeclared second
+learning-rate dial looks like.
 
 Keep it anyway. It costs one norm computation per step, and the day a single
 batch produces a norm an order of magnitude off the median is the day you would

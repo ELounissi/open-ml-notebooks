@@ -10,7 +10,7 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 | **What you will learn** | Where LDA and QDA come from as generative models, why sharing one covariance makes the boundary straight, why QDA refuses outright to fit Dry Bean, which of the standard repairs actually work, and what a supervised projection is worth against an unsupervised one |
 | **You should already know** | [Naive Bayes](../03-naive-bayes/) and [logistic regression](../01-logistic-regression/) |
 | **Datasets** | UCI Dry Bean, 13,611 rows by 16 columns across 7 varieties, plus Gaussian data generated twice: once obeying the shared-covariance assumption and once breaking it |
-| **Runtime** | Three to four minutes on a laptop CPU. Every fit on the leaderboard takes under a second, the slowest at 0.8051 s |
+| **Runtime** | Three to four minutes on a laptop CPU. Every fit on the leaderboard takes under a second, the slowest at 0.7522 s |
 
 ---
 
@@ -37,14 +37,22 @@ scikit-learn counts a direction as usable when its eigenvalue clears
 
 | Class | Rows | Numerical rank | Eigenvalues above tol | Condition number |
 |---|---|---|---|---|
-| **BARBUNYA** (the one that raised) | 1322 | 11 | **8** | **4.46e+19** |
-| BOMBAY | 522 | 9 | 7 | 1.13e+21 |
+| BARBUNYA (the one the error names) | 1322 | 11 | 8 | 4.46e+19 |
+| **BOMBAY** | 522 | **9** | 7 | **1.13e+21** |
 | CALI | 1630 | 10 | 7 | 1.27e+20 |
 | DERMASON | 3546 | 11 | 7 | 8.60e+18 |
 | HOROZ | 1928 | 11 | 8 | 3.80e+19 |
 | SEKER | 2027 | 11 | 8 | 1.88e+19 |
 | SIRA | 2636 | 11 | 7 | 3.14e+19 |
 | pooled, what LDA uses | 13611 | 12 | 9 | 5.49e+17 |
+
+**Read the message as "which class did we get to first", not "which class is the
+problem".** BARBUNYA is one of the three best rows on the tolerance count, at 8.
+The worst rows belong to BOMBAY, which has the largest condition number at
+1.13e+21 and the only numerical rank in single figures. The classes are
+enumerated in sorted order and the check raises on the first failure rather than
+surveying all seven, so the name in the exception is alphabetical. Treating it as
+a diagnosis sends you to the wrong bean.
 
 **The best any single variety manages is 8 of 16 directions.** Pooling gets to 9
 and drops the worst condition number from 1.13e+21 to 5.49e+17, a factor of
@@ -185,13 +193,13 @@ anything clever. The best setting, 6 components at 0.9175, beats LDA by
 
 | Model | Accuracy | Balanced | Seconds |
 |---|---|---|---|
-| logistic regression | **0.9234** | 0.9341 | 0.8051 |
-| QDA on 6 principal components | 0.9175 | 0.9312 | 0.1381 |
-| QDA + `reg_param` 0.0001 | 0.9163 | 0.9297 | 0.1379 |
-| LDA | 0.9046 | 0.9167 | 0.1252 |
-| LDA + shrinkage | 0.9029 | 0.9144 | 0.1482 |
-| Gaussian naive Bayes | 0.7641 | 0.7670 | 0.0823 |
-| **QDA, as it comes** | **did not fit** | **did not fit** | 0.0201 |
+| logistic regression | **0.9234** | 0.9341 | 0.7522 |
+| QDA on 6 principal components | 0.9175 | 0.9312 | 0.1127 |
+| QDA + `reg_param` 0.0001 | 0.9163 | 0.9297 | 0.1157 |
+| LDA | 0.9046 | 0.9167 | 0.1239 |
+| LDA + shrinkage | 0.9029 | 0.9144 | 0.1228 |
+| Gaussian naive Bayes | 0.7641 | 0.7670 | 0.0738 |
+| **QDA, as it comes** | **did not fit** | **did not fit** | 0.0163 |
 
 The bottom two rows are the section. Gaussian naive Bayes is QDA with every
 off-diagonal covariance entry forced to zero, and it fits this data without
@@ -214,12 +222,24 @@ by a 15-nearest-neighbour classifier:
 | 5 | **0.9247** | 0.9241 | +0.0006 |
 | 6 | 0.9231 | 0.9240 | -0.0009 |
 
+The row to read first is the second one. **At two components PCA wins, and by
+-0.0495, the largest margin anywhere in the column**, larger than LDA's own lead
+at one component. Access to the labels is not worth a constant amount and it is
+not concentrated where the budget is tightest either. It is worth +0.0312 at one
+direction, worth less than nothing at two, worth roughly its one-component lead
+again at three and four, and worth nothing either way past that: at five and six
+components the two methods are within a thousandth of each other, once in each
+direction. The column changes sign twice on the way down.
+
+LDA maximises separation between class means relative to within-class scatter,
+which is not the same objective as leaving the 15 nearest neighbours of a point
+inside the same variety, and at two directions the two objectives disagree enough
+to decide the comparison.
+
 All 16 standardised columns with no projection score 0.9232. LDA with one
-component scores 0.6373 and PCA needs two components to reach that, so the value
-of looking at the labels is concentrated where the budget is tight and gone by
-five components. Two caveats the chart cannot show: LDA's ceiling is K-1
-components, six for seven varieties, and LDA needs labels so it cannot be fitted
-on the unlabelled pile.
+component scores 0.6373 and PCA needs two components to reach that. Two caveats
+the chart cannot show: LDA's ceiling is K-1 components, six for seven varieties,
+and LDA needs labels so it cannot be fitted on the unlabelled pile.
 
 ![Projections](figures/fig-05-projections.png)
 
@@ -227,7 +247,11 @@ The columns weighing most on the first principal component are MajorAxisLength
 0.326, ShapeFactor2 0.315, Perimeter 0.311, EquivDiameter 0.297 and ConvexArea
 0.283, and the first two components carry **0.8190** of the variance. PCA spreads
 the beans along the direction of largest variance and the varieties smear across
-it, because nothing in the fit was told varieties exist.
+it, because nothing in the fit was told varieties exist. The right-hand panel
+looks the more sorted of the two and it is the one that scores lower, by the
+0.0495 above. Looking separated to a reader and being separable by a
+nearest-neighbour rule are different properties, and at two components they come
+apart.
 
 ## Where the theory did not hold
 
@@ -243,7 +267,7 @@ covariances are shared:
 | unequal covariance | 0.6768 | **0.8507** | QDA |
 
 The notebook checks its own prediction and prints `each method won where its
-assumption holds: False`. QDA took the regime built for LDA by 0.0008, which at
+assumption holds: False`. QDA took the regime built for LDA by +0.0009, which at
 this sample size is a margin worth nothing except as a reminder that a correct
 assumption is not a guarantee of a win. With 3,000 rows per class, QDA can afford
 its extra parameters and there is nothing left for the shared assumption to buy.
@@ -273,10 +297,20 @@ honest version of it. The two failures stay separate: in section 4 the covarianc
 could not be inverted at any sample size because the columns were redundant, and
 here it inverts fine at 11 rows per class and immediately earns its keep.
 
-The shaded bands carry the rest. QDA's band is wider than LDA's at the left of
-the chart, because more parameters means more sensitivity to which rows you
-happened to draw. The mean is what people quote and the spread is what ruins an
-afternoon.
+The shaded bands carry the rest, and they run the other way from the textbook
+reasoning. More parameters is supposed to mean more sensitivity to which rows you
+happened to draw, so QDA's band should be the wider one. **LDA's is wider at all
+13 sizes where both models fit**, and the gap grows rather than shrinks as rows
+are added: 0.0473 against 0.0451 at 11 rows per class, 0.0019 against 0.0009 at
+1,800.
+
+The textbook reasoning is about the variance of the parameter estimates and the
+band here is the variance of the accuracy they produce. In this regime the two
+classes have nearly the same centre, so the mean difference LDA is estimating is
+faint and the boundary it draws swings with the draw. QDA is estimating a
+difference in shape, which in this data is loud, and once it has rows enough to
+see it the answer stops moving. The mean is what people quote and the spread is
+what ruins an afternoon, and QDA is ahead on both.
 
 ## Cheat sheet
 

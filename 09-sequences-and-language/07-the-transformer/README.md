@@ -1,48 +1,63 @@
 # The Transformer, built from scratch
 
-### Every piece written by hand, checked against PyTorch to float32 noise, and each design choice measured rather than asserted
+### Five pieces written by hand, three of which PyTorch has something to check them against, and a printed accounting of the difference
 
 **[Open the notebook](notebook.ipynb)** · Part 9, Sequences and language ·
 Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 
 | | |
 |---|---|
-| **What you will learn** | Scaled dot-product attention, multi-head attention, sinusoidal positional encoding, the position-wise feed-forward block and a complete encoder block, each written from scratch and checked against the PyTorch version; why the $\sqrt{d_k}$ is not decoration; what a causal mask stops, measured against an information-theoretic floor; what individual heads attend to; and the quadratic cost in sequence length, timed |
+| **What you will learn** | Scaled dot-product attention, multi-head attention, sinusoidal positional encoding, the position-wise feed-forward block and a complete encoder block, each written from scratch; which of them PyTorch has an equivalent to check against and which have to be checked against their own formula instead, with the accounting printed; why the $\sqrt{d_k}$ is not decoration; what a causal mask stops, measured against an information-theoretic floor; what individual heads attend to; and the cost in sequence length, timed |
 | **You should already know** | [LSTM](../04-lstm/), or enough PyTorch to read `nn.Module`. Softmax, layer normalisation and residual connections from [Part 7](../../07-neural-networks/) |
 | **Datasets** | Two synthetic tasks generated in the notebook: a two-marker retrieval problem, and a first-order Markov chain whose conditional entropy is known exactly. Nothing is downloaded |
-| **Runtime** | Three to four minutes, torch 2.11.0+cu128 running on cpu for this run. The two trained models take 8 s and 24 s of that |
+| **Runtime** | Three to four minutes, torch 2.11.0+cu128 running on cpu for this run. The two trained models take 9 s and 20 s of that |
 
 ---
 
 ## The result I would lead with
 
 Everything in this notebook is written out in NumPy-style PyTorch and then
-checked against the library implementation with the weights copied across. Four
-checks, four printed maximum absolute differences:
+checked. **The interesting part is that "checked" does not mean the same thing
+for every piece, and the notebook prints which is which** rather than letting one
+word cover both:
 
-| Piece, written from scratch | Checked against | Max abs difference |
-|---|---|---|
-| multi-head attention, the weight matrix | `nn.MultiheadAttention` | **2.235e-08** |
-| multi-head attention, the outputs | `nn.MultiheadAttention` | **8.941e-08** |
-| scaled dot-product attention | `F.scaled_dot_product_attention` | 4.172e-07 |
-| the complete encoder block | `nn.TransformerEncoderLayer` | 4.768e-07 |
+| Piece | Written | Checked against | Library reference | Max abs difference |
+|---|---|---|---|---|
+| scaled dot-product attention | by hand | `F.scaled_dot_product_attention` | **True** | 4.172e-07 |
+| multi-head attention | by hand | `nn.MultiheadAttention` | **True** | 8.941e-08 |
+| encoder block | by hand | `nn.TransformerEncoderLayer` | **True** | 4.768e-07 |
+| sinusoidal positional encoding | by hand | the formula, one entry at a time | False | **1.937e-06** |
+| position-wise feed-forward | by hand | its own weights, multiplied out | False | 0.000e+00 |
+| layer normalisation | `nn.LayerNorm` | the formula, written out | False | 4.768e-07 |
 
-The tightest is **2.235e-08** and the loosest is **4.768e-07**, which is float32
-noise on a block assembled from five hand-written pieces. The parameter counts
-agree exactly as well: **4,224 for my multi-head attention and 4,224 for
-torch's**.
+```
+pieces built by hand : 5
+of those, checked against the PyTorch module that does the same job : 3
+checked against their own formula instead : 2
+largest disagreement anywhere in the table : 1.937e-06
+```
 
-**Nothing in a transformer encoder is hidden inside the library.** That is the
-claim this chapter is built to let you verify rather than accept, and the four
-numbers above are the verification. If your own implementation does not land in
-that range against the same weights, you have a bug and not a stylistic
-difference.
+Three of the five hand-written pieces were compared against an independent
+implementation. The other two could not be, because **PyTorch ships no sinusoidal
+positional encoding and no separate feed-forward module** to compare against, so
+they were compared against a rewrite of the same formula by the same author on
+the same afternoon. That second kind of check catches a transcription slip and
+would not catch a misunderstanding of the formula.
 
-The same notebook also checks the pieces that have no library counterpart. The
-attention weights sum to one along every row and are non-negative, both `True`.
-Every masked position gets attention mass of exactly **0.000e+00**. Reloading a
-checkpoint into a fresh network reproduces the logits with a largest difference
-of zero.
+The loosest number in the table is **1.937e-06**, and it comes from the
+positional-encoding row, which is one of the weakly checked ones. The tightest
+independent check is **8.941e-08** on multi-head attention, whose weight matrix
+also agrees to **2.235e-08** and whose parameter count agrees exactly: **4,224
+for mine and 4,224 for torch's**.
+
+**Nothing in a transformer encoder is hidden inside the library, and three fifths
+of it can be proved that way.** That is the claim this chapter is built to let
+you verify rather than accept. A blanket "checked against PyTorch" would be doing
+less work than the table, which is why the table is printed.
+
+The notebook also checks what has no counterpart to compare with at all: the
+attention weights sum to one along every row and are non-negative, both `True`,
+and every masked position gets attention mass of exactly **0.000e+00**.
 
 ## A model that beat a bound no honest predictor can beat
 
@@ -64,9 +79,25 @@ cross entropy is the chain's conditional entropy:
 The masked model lands at 1.4142 against a floor of 1.4107, which is where an
 honest predictor stops. The unmasked model reports **0.0037 nats**, three orders
 of magnitude below a bound that no predictor of the future can beat, and the
-attention map says how it did it: with the mask off, **0.0338** of its attention
-mass sits on positions after the query and **0.2539** of it sits on the very next
-position, which holds the token it is being asked to name.
+attention map says how it did it.
+
+Two means are printed with their set sizes attached, because they are averages
+over sets of very different size and stacking them without the sizes makes the
+smaller one look like a rebuttal of the larger:
+
+| Cells, mask off | How many | Mean weight each | Share of all attention mass |
+|---|---|---|---|
+| read the future | 496 | 0.0338 | 52.5% |
+| read the very next position | 31 | **0.2539** | 24.6% |
+
+Every query row of 32 weights sums to one, so those are shares of the same 32
+units. **6.2% of the future cells carry 46.9% of everything the model reads out of
+the future**, and the cells in question are the ones holding the token it is being
+asked to name.
+
+That single next position takes the largest share of any position in the row. It
+is a plurality and not a majority, and one cell in thirty-two does not need a
+majority to leak an answer.
 
 It is not a better model. It is a model reading the answer sheet, and nothing in
 the run fails. The loss curve looks excellent, the code runs, and the model is
@@ -155,11 +186,19 @@ not at all on where in the sequence the pair sits, so a head that wants "the
 token before me" learns one pattern rather than a different one per starting
 point.
 
+The left panel is the frequency ladder, and it runs low-channel-fast rather than
+the other way round. `inv_freq = exp(arange(0, d, 2) * -log(10000)/d)` gives
+channel 0 a rate of **1.0000 radians per position**, a full cycle every 6.3
+positions, and channel 62 **1.334e-04**, a full cycle every **47,117**
+positions, which is 0.0014 of a cycle across the 64 positions drawn. The two ends
+are **7,499x** apart. The stripes at the top of the image are the fast channels
+and the near-flat bands at the bottom are the slow ones.
+
 ### The encoding bought nothing on this task
 
 The retrieval task here is to find two marked tokens in a sequence of 48 and sum
 their symbols, with chance accuracy at **0.25**. Two identical models, one with
-positional encoding and one without, 38,740 parameters each, both trained in 24
+positional encoding and one without, 38,740 parameters each, both trained in 20
 s:
 
 | Epoch | With positional encoding | Without |
@@ -236,15 +275,30 @@ with the square of the sequence length while everything else grows linearly:
 
 | Sequence length | Attention ms | Feed-forward ms | Score matrix MB |
 |---|---|---|---|
-| 64 | 0.451 | 0.213 | 0.262 |
-| 256 | 1.760 | 0.509 | 4.194 |
-| 1024 | 27.032 | 1.977 | 67.109 |
-| **2048** | **111.396** | 4.592 | **268.435** |
+| 64 | 0.546 | 0.187 | 0.262 |
+| 128 | 0.547 | 0.254 | 1.049 |
+| 256 | 0.928 | 0.247 | 4.194 |
+| 512 | 3.989 | 0.788 | 16.777 |
+| 1024 | 25.446 | 1.489 | 67.109 |
+| **2048** | **103.833** | 4.084 | **268.435** |
 
-Fitted over the last four lengths, the exponent is **2.05 for attention and 1.05
-for the feed-forward network**, which is what the arithmetic says. Going from 64
-to 2048 tokens, a 32x longer sequence, attention costs **247.2x** more time and
-the feed-forward network **21.5x**.
+Going from 64 to 2048 tokens, a 32x longer sequence, attention costs **190.2x**
+more time and the feed-forward network **21.8x**.
+
+Fitted over the last four lengths, the exponents come out at **2.31 for attention
+and 1.31 for the feed-forward network** on this run. The arithmetic says two and
+one, so neither fit lands on its predicted value, and in this run both miss on the
+same side by the same amount, **+0.31**, including the curve that is supposed to
+be linear. A quadratic term cannot explain an excess on a linear curve, so the
+shared offset is measuring one machine's memory system as much as the algorithm.
+What the fit does support is the **difference of one power** between the two,
+which is the claim worth carrying out of this table. At the short end neither
+slope is clean either, because at 64 tokens Python and kernel launch overhead
+dominate, which is also why nobody notices the quadratic term until their context
+window grows.
+
+These are timings, the least reproducible numbers on this page. Run it yourself
+and expect the exponents to move; expect the gap between them to move much less.
 
 The memory panel is what bites first in practice. Storing the scores for
 backpropagation at long context is what fills a card, and it is why
@@ -262,8 +316,8 @@ with a larger effect on model sizes than most architecture papers.
 | **Encoder block** | `x = LN(x + attn(x))` then `x = LN(x + ffn(x))`. Post-norm needs warmup; `norm_first=True` does not |
 | **The feed-forward net** | 65.7% of the block's parameters, applied per position, and the only non-linearity between mixtures |
 | **Causal mask** | `torch.triu(ones(T, T), 1).bool()`, set to -inf before the softmax. Without it the loss reached 0.0037 nats under a 1.4107 floor |
-| **Cost** | Measured exponent 2.05 in sequence length for attention, 1.05 for everything else. Scores alone need 268.435 MB at 2048 tokens |
-| **Sanity checks** | Rows of the weights sum to one, masked entries are exactly 0.000e+00, and a from-scratch block matches `nn.TransformerEncoderLayer` at 4.768e-07 with the weights copied across |
+| **Cost** | Fitted exponents 2.31 for attention and 1.31 for everything else, one power apart, both above the arithmetic, so read the gap rather than either number. Scores alone need 268.435 MB at 2048 tokens |
+| **Sanity checks** | Rows of the weights sum to one, masked entries are exactly 0.000e+00, and a from-scratch block matches `nn.TransformerEncoderLayer` at 4.768e-07 with the weights copied across. Say which pieces got that kind of check: here 3 of 5, and the other 2 got the weaker one against their own formula |
 | **Next** | [Fine-tuning a pretrained transformer](../08-fine-tuning/), which pretrains one from nothing and then measures what the pretraining was worth |
 
 ---
