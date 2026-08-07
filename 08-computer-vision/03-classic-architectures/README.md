@@ -73,32 +73,32 @@ Gradient norm at the first convolution:
 
 ![Gradient at the first layer](figures/fig-04-gradient-at-the-first-layer.png)
 
-Three separate stories in one table. PyTorch's default convolution
-initialisation, which is not He, underflows to exactly zero by 65 layers. He
-initialisation alone slows the decay to a 226x fall over the same range but does
-not stop it. The residual family is the only one that stays in a usable band the
-whole way, from 4.711e-01 to 3.778e+00.
+Three separate stories in one table, and the column order is what separates them.
 
-**The figure's title and the printed labels get one thing backwards, and it is
-worth naming.** The code ranks the families by gradient magnitude and calls the
-largest the "strongest signal" and the "best setup". At 65 layers the largest is
-plain with He and batch norm at 4.013e+02, a gradient norm two orders of
-magnitude above the residual family's. That is exploding, not best. Batch norm on
-its own does prevent the vanishing failure, and it overshoots straight into the
-other one. The line you want is the flat orange one.
+PyTorch's default convolution initialisation, which is not He, underflows to
+exactly zero by 65 layers. He initialisation alone slows the decay to a 226x fall
+over the same range and does not stop it, because it fixes the variance at layer
+one and the product over layers still drifts.
 
-The headline span of 4.0e+22 is also an artifact rather than a measurement. The
-true minimum is 0.000e+00, so the ratio is undefined and the number comes from
-the 1e-20 clamp the code applies so the point can be drawn. The subtitle says so.
-The headline does not.
+Batch norm stops the vanishing outright and overshoots into the opposite failure.
+At 65 layers plain with He and batch norm reads **4.013e+02**, two orders of
+magnitude above everyone else. **The largest number in that column is not the best
+setup in it**, and any summary that ranks these families by magnitude will name
+an exploding network the winner. Both failure modes live at the extremes; the
+answer is the family that stays in the middle.
 
-One more thing the table does not do. The notebook also prints the standard
-deviation of the logits at initialisation as a collapse diagnostic, with the
-reference value ln(10) = 2.3026 for a network that outputs the same thing for
-every image. Nothing collapses. The default-init family sits at 1.426e-01 at 65
-layers against 1.343e-01 at 5, essentially unchanged, while its gradient has
-gone to zero. The forward pass was healthy the whole time and the backward pass
-was already dead.
+That is the residual one, and it is the only family in a usable band the whole
+way, from 4.711e-01 to 3.778e+00 over a 13x change in depth. The identity term in
+the gradient product is why: it neither grows nor shrinks with depth, so it puts
+a floor and a ceiling on the whole expression at once.
+
+One diagnostic worth stealing. The notebook also prints the standard deviation of
+the logits at initialisation, with ln(10) = 2.3026 as the reference for a network
+that outputs the same thing for every image. Nothing collapses. The default-init
+family sits at 1.426e-01 at 65 layers against 1.343e-01 at 5, essentially
+unchanged, while its gradient has gone to zero. The forward pass was healthy the
+whole time the backward pass was dead, so a sane-looking activation histogram is
+not evidence that a deep network can train.
 
 ## Where the parameters live
 
@@ -165,12 +165,13 @@ batch size and seed:
 | small VGG | 218,490 | 0.8399 | **0.8310** | **0.6** | +0.0089 |
 | small ResNet | 42,938 | 0.8536 | 0.8231 | **1.3** | +0.0305 |
 
-The standard error on a test accuracy of 0.8310 over 10,000 images is 0.0037.
-5.1x the parameters bought +0.0079 accuracy, about two standard errors, and the
-model with the fewest parameters finished 0.0079 behind the model with the most.
-Per ten thousand parameters, above the weakest model, small ResNet returns
-+0.01213 against small VGG's +0.00275, a 4.4x difference in efficiency that the
-raw accuracy column completely hides.
+The standard error on a test accuracy of 0.8310 over 10,000 images is 0.0037, and
+the top two models are 0.0079 apart, close enough that this test set does not
+separate them. So the honest reading is that small VGG and small ResNet are the
+same accuracy here, reached with **5.1x the parameters** in one case and not the
+other. Per ten thousand parameters, above the weakest model, small ResNet returns
++0.01213 against small VGG's +0.00275. That ratio is the result, not the accuracy
+column, and it is what global average pooling buys.
 
 The seconds column disagrees with the parameter column outright. small VGG has
 the most parameters and the **fastest** epoch at 0.6 s. small ResNet has the
@@ -180,11 +181,27 @@ position, so the arithmetic bill follows feature map size, not weight count.
 
 The unflattering row is the second one. Swapping LeNet's `tanh` and average
 pooling for ReLU and max pooling, the substitution with the best claim to having
-unlocked everything that came after it, **lost 0.0208 test accuracy** here, which
-is 5.6 standard errors. At 8,000 images and five epochs on a 28x28 problem, the
-historic fix is not the fix. It is also the model everything else is normalised
-against in the per-parameter print, which is why its efficiency line reads
-+0.00000.
+unlocked everything that came after it, **lost 0.0208 test accuracy** here, 5.6
+standard errors, which is too large to wave away.
+
+The textbook result is not wrong, it is about a situation this network is not in.
+What ReLU fixes is saturation: `tanh` flattens at both ends, its derivative goes
+to zero there, and in a deep stack that shrinks the gradient multiplicatively.
+That is a claim about depth. LeNet is four layers with a 16-pixel receptive field,
+and four `tanh` layers have no vanishing gradient problem, so the fix is aimed at
+a disease this patient does not have.
+
+Two things then push the other way at this scale. ReLU zeroes about half its
+activations, cheap across hundreds of channels and expensive when the first
+convolution has six. And max pooling keeps one pixel in four where average
+pooling keeps a summary of all four, which suits a smooth greyscale silhouette
+whose signal is the shape of a region rather than the brightest edge in it.
+
+So: ReLU and max pooling are what make depth possible, and their advantage grows
+with depth, width and input size. At four layers on 28x28 greyscale they are not
+free. Adopt a modernisation when your network has the problem it solves. The
+25-layer stacks at the top of this page are where the same components earn their
+keep.
 
 ## Cheat sheet
 
@@ -200,9 +217,14 @@ against in the per-parameter print, which is why its efficiency line reads
 | **Do not** | Assume the skip connection worked by keeping gradient alive during training. At 25 layers the failing plain stack had 3.4x the gradient |
 | **Watch out** | PyTorch's default convolution init is not He. It underflowed to exactly zero at 65 layers while the forward pass still looked fine |
 | **Larger is not better** | Batch norm without skips gave the largest first-layer gradient at depth, 4.013e+02. That is the other failure, not the fix |
+| **Modernising** | Adopt a component when your network has the problem it solves. ReLU and max pooling cost LeNet 0.0208 here because four layers do not saturate |
+| **Where these backbones get used** | [Transfer learning](../05-transfer-learning/) reuses a trained one instead of starting over |
 | **Next** | [08-04 Data augmentation](../04-data-augmentation/), which changes the data instead of the architecture, and lost at every size it tried |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

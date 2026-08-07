@@ -7,7 +7,7 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 
 | | |
 |---|---|
-| **What you will learn** | How a mixture model differs from k-means, what expectation-maximisation does, what the covariance types buy, and how BIC picks the number of components |
+| **What you will learn** | How a mixture model differs from k-means, what expectation-maximisation does, what the covariance types buy, and what BIC does and does not tell you about the number of components |
 | **You should already know** | [k-Means](../01-k-means/) |
 | **Datasets** | UCI Dry Bean, plus the stretched blobs that broke k-means |
 | **Runtime** | About a minute on a laptop CPU |
@@ -54,27 +54,68 @@ know. k-means assigns every point with equal, unearned certainty.
 
 **spherical** is k-means with soft assignment. **diag** allows axis-aligned
 ellipses. **tied** shares one shape across clusters. **full** lets every cluster
-tilt freely, and costs the most parameters. Step down from `full` when you have few
-points per cluster: that is how a mixture model overfits.
+tilt freely, and costs the most parameters.
 
-## Choosing k, and where BIC misleads
+| Type | Parameters | ARI |
+|---|---|---|
+| spherical | 11 | 0.578 |
+| diag | 14 | 0.645 |
+| **tied** | **11** | **0.796** |
+| full | 17 | **0.796** |
+
+The extra freedom stopped paying halfway along. **`tied` matched `full` at ARI
+0.796 on 11 parameters instead of 17**, and beat `diag` while costing less than
+`diag` did.
+
+That is not a fluke of this run. `stretched` is three isotropic blobs put through
+one linear map, so all three clusters genuinely share a covariance, which is
+exactly what `tied` assumes. `tied` is the correctly specified model here and
+`full` is spending six extra parameters estimating three matrices that had to
+agree. `diag` loses to both because the shared shape is tilted and `diag` cannot
+tilt. The rule to carry away: **the cheapest covariance type whose assumption is
+true will match or beat every richer one.** Reach for `full` when you do not know
+the shapes and have data to spare, and check whether something cheaper got there
+first.
+
+## Choosing k, and the minimum that never arrived
 
 ![Choosing k](figures/fig-03-choosing-k.png)
 
 $$\text{BIC} = -2\log L + p \log n$$
 
-Unlike inertia, BIC can have a genuine minimum, because every extra component costs
-$p \log n$.
+The promise is that BIC can turn around where inertia never does, because every
+extra component costs $p \log n$. **On this dataset it did not turn around.**
 
-**But BIC did not pick 7.** It preferred **twelve** components with full
-covariance, and that is worth being straight about because it is the usual outcome.
+BIC fell at every step from k = 2 to k = 12, for both covariance types: diag from
+441,945 to 145,130, full from -697,488 to -1,074,464. There is no minimum in the
+range I swept, and the lowest value sits at k = 12 only because k = 12 is where I
+stopped. Reporting that as "BIC chose twelve" would be the same mistake as reading
+an elbow off the largest k on the axis.
 
-BIC answers "how many Gaussians describe this density best", which is a different
-question from "how many varieties of bean are there". Seven real varieties, each
-slightly non-Gaussian, are described better by twelve Gaussians than by seven, so
-BIC buys extra components to patch the shape mismatch.
+The last step shows how far off a turn is. Going from eleven to twelve
+full-covariance components adds 153 parameters, costing about **1,456** of BIC at
+n = 13,611, against a likelihood credit of about **19,871**, which is **13.6× the
+charge**. The penalty is not weak, it is outgunned, and nothing suggests the gap
+is closing by k = 12.
 
-Use it to narrow the range, then look at the clusters. At the true k of 7:
+Three things follow, and they are more useful than a tidy minimum would have been.
+
+**BIC is not a defence against runaway k by itself.** The penalty grows linearly in
+$k$; so does the likelihood, usually faster. Which wins is an empirical question
+about your data.
+
+**A minimum you did not observe is not a minimum.** If you want to say BIC chose
+something, the curve has to visibly turn inside your range.
+
+**BIC answers a density question, not your question.** Seven real varieties, each
+slightly non-Gaussian, are described better by twelve Gaussians than by seven, and
+better still by more. It is doing its job correctly and its job is not yours.
+
+The right panel is the contrast. Agreement with the true varieties **does** peak,
+at **k = 6, diag, ARI 0.705**, one component below the truth, falling away on both
+sides. The curve that knows the answer has the shape BIC was supposed to have.
+
+At the true k of 7:
 
 | Method | Adjusted Rand |
 |---|---|
@@ -89,10 +130,13 @@ Use it to narrow the range, then look at the clusters. At the true k of 7:
 | **Avoid it when** | Clusters are non-convex: crescents and rings need [DBSCAN](../04-dbscan-and-hdbscan/); very few points per cluster |
 | **Scaling needed** | Yes, as for k-means |
 | **Main dials** | `n_components`, `covariance_type`, `n_init` (EM finds local optima) |
-| **Choosing k** | BIC narrows the range. It does not answer your question for you |
+| **Choosing k** | BIC can turn around where inertia cannot. Check that yours did: mine fell at every k from 2 to 12 |
 | **Bonus** | `score_samples` gives a density, so it doubles as an [anomaly detector](../06-anomaly-detection/) |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

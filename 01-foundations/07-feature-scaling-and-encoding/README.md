@@ -94,7 +94,18 @@ none more correct than another, so I fitted all of them.
 | month, one-hot (12 columns) | 0.0739 |
 
 One-hot beats the *best* ordinal numbering of `season` by +0.0098 and is invariant
-to a naming choice that carries no information. The month rows are sharper:
+to a naming choice that carries no information.
+
+The dots in the right panel come in stacked pairs, and there are **12** distinct
+scores among the 24 numberings, each one landing twice. Least squares on a single
+column is invariant to any affine change of that column, and reversing a
+numbering (code c becomes K−1−c) is affine, so a numbering and its mirror fit the
+same line with the opposite slope and score identically. The ordinal encoding is
+not picking an order for the seasons, it is picking a set of gaps between them,
+and a set of gaps read backwards is the same set of gaps. Twenty-four arbitrary
+choices, twelve genuinely different models.
+
+The month rows are sharper:
 **calendar order lost to random relabellings**, scoring less than half the best
 arbitrary one. The yearly pattern is a hump, a straight line through a hump is
 nearly flat, and any numbering that splits busy months from quiet ones wins.
@@ -144,6 +155,9 @@ that never saw it. The out-of-fold column never leaves the baseline, 0.2891 to
 | **High cardinality** | Target encoding computed out of fold. `TargetEncoder` in a `Pipeline` does it for you |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

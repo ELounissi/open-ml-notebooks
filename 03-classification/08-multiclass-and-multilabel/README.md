@@ -76,6 +76,15 @@ The winner is `solid`, third of four. `boxy`, the last link and the only one
 handed three predicted labels, gained 0.0014. `round` lost. Whatever the chain is
 doing here, it is not the thing the ordering was built to do.
 
+The column moving in both directions is the part to carry forward, and it is about
+macro averages rather than about chains. Chaining is not a uniform improvement
+applied to four labels, it is a redistribution, and the macro F1 is an average of
+gains and losses that partly cancel. If one of these labels mattered more than the
+others to whoever reads the output, the macro number would be the wrong thing to
+optimise and this table would be the right one. The failure a macro average hides
+completely is a label the model has stopped predicting: it scores zero, the other
+three carry the average, and no summary line says a quarter of the output is dead.
+
 ![Per-label F1](figures/fig-05-per-label-f1.png)
 
 ## Why accuracy is the wrong word for a label matrix
@@ -180,8 +189,25 @@ rows the three are not close:
 | one-vs-one | 0.6132 |
 
 One-vs-rest is right on less than a third of the rows where the strategies part
-company, half the rate of the other two. That is the uncalibrated-scores problem
-showing up where the aggregate accuracy of 0.9148 hides it.
+company, half the rate of the other two. On 106 rows a proportion carries a
+standard error near 0.049, so the 0.31 gap is six of those and the 0.019 between
+native softmax and one-vs-one is less than half of one. Two of these are the same
+model. One is not.
+
+The mechanism is the one the maths section predicts. One-vs-rest picks a winner by
+comparing scores from `K` separately fitted binary models, and nothing ever put
+those scores on a common scale: each was trained against a different negative set,
+so a 2 from one and a 2 from another are not the same claim. When one model is
+confident and the rest are ambivalent that does not matter, which is why the
+aggregate accuracy of 0.9148 is fine. On a close call, which is what a contested
+row is, the comparison is between quantities that were never made comparable.
+
+**When two models score the same, look at the rows where they disagree before
+concluding they are the same model.** It costs one boolean mask, and here it is
+the difference between "pick the wrapper on cost" and "pick it on cost unless the
+close calls are the ones you are paid for".
+[03-09](../09-probability-calibration/) is the other route, since putting `K`
+scores on a common scale is exactly what calibration does.
 
 The mistakes are also redistributed rather than merely more numerous. Swapping
 native softmax for one-vs-rest moves one confusion cell by **0.029**, and the
@@ -210,6 +236,9 @@ one-vs-one are close to the same model. One-vs-rest is the odd one out.
 | **Next** | [Probability calibration](../09-probability-calibration/), which is what makes one-vs-rest scores comparable |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

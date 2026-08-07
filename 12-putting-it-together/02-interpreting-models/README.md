@@ -67,9 +67,13 @@ shows in their internal ordering and in how close `junk_normal` got to `Populati
 not in a headline inversion. The forest scored train R² **0.9672** against test R²
 **0.7674**, and that gap is why MDI misleads: it was computed on the set the model
 memorised. The figure's middle panel is the next trap: permutation importance on
-training rows inflates exactly the columns the model memorised. My hand-written
-grouped permutation matched scikit-learn on a group of one: `HouseAge` at **0.0588**
-against **0.0603**.
+training rows inflates exactly the columns the model memorised.
+
+My hand-written grouped permutation matched scikit-learn on a group of one:
+`HouseAge` at **0.0588** against **0.0603**. The two use different shuffles, so the
+notebook prints the standard deviation across repeats beside each one and the
+difference in units of that spread, rather than asking you to eyeball whether two
+numbers are close enough.
 
 ## Partial dependence, and what the average hides
 
@@ -83,10 +87,16 @@ against **0.0603**.
 
 A feature whose partial dependence is flat cannot be moving predictions much,
 whatever any importance chart says. `HouseAge` swings 0.31 across its whole range.
+I used `method="brute"` rather than sklearn's `"recursion"` default, because
+recursion averages over the training distribution baked into the tree weights rather
+than over the data you pass.
+
 The latitude-longitude panel is a map: the model rediscovered the California
-coastline from two unlabelled numeric columns. I used `method="brute"` rather than
-sklearn's `"recursion"` default, because recursion averages over the training
-distribution baked into the tree weights rather than over the data you pass.
+coastline from two unlabelled numeric columns. That panel is the mechanism behind a
+number in [the scoreboard](../01-the-scoreboard/), which measures California
+Housing's step advantage as the largest of the four house datasets and leaves every
+linear model well behind the ensembles on it. Price against latitude is not a slope,
+it is a coastline, and a linear model gets one coefficient for it.
 
 ![ICE curves](figures/fig-04-ice-curves.png)
 
@@ -161,9 +171,13 @@ exist as the features get more correlated.
 | **Local surrogate (LIME)** | Check the weighted fit and the kernel width before believing the bars |
 | **Shapley values (SHAP)** | Attributions that provably sum to the prediction. Exponential in feature count |
 | **All of them** | Describe the model, not the world. None of this is causal |
+| **Where these numbers reappear** | [12-05](../05-common-mistakes/) puts the MDI and the correlated-twin results on its ledger of what each mistake costs |
 | **Next** | [Pipelines, and never leaking again](../03-pipelines/) |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

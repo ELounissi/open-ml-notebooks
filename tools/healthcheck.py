@@ -51,8 +51,13 @@ BANNED_PATTERNS = [
 ]
 
 # From STYLE.md. Prose gets a colon, a comma, a semicolon or a full stop; a
-# range gets the word "to". Code cells are not checked, because a dash inside a
-# chart title or a string literal is code and changing it means re-running.
+# range gets the word "to".
+#
+# Code cells are checked too, and that is deliberate. A dash inside a chart title
+# is drawn into the figure, and a dash inside a print string is drawn into the
+# output a reader scrolls past. Both are prose as far as the reader is concerned,
+# even though they live in code. Fixing one means re-running the notebook, which
+# is the cost of having said it in a string.
 BANNED_CHARACTERS = [
     ("—", "em dash"),
     ("–", "en dash"),
@@ -119,6 +124,18 @@ def main() -> int:
         if "linkedin.com/in/elyes-lounissi" not in prose:
             problems.append(f"{where}: missing LinkedIn link")
         check_prose(prose, where, problems)
+
+        # A dash in a chart title is drawn into the figure and a dash in a print
+        # string is drawn into the output, so both reach the reader even though
+        # they live in code. Punctuation only: the banned-word list would fire on
+        # variable names and on the very lists this file defines.
+        source = "\n".join("".join(c["source"]) for c in code)
+        printed = "\n".join(
+            "".join(o.get("text", "")) for c in code for o in c.get("outputs", [])
+            if o.get("output_type") == "stream"
+        )
+        check_punctuation(source, f"{where} (code)", problems)
+        check_punctuation(printed, f"{where} (output)", problems)
 
         readme = path.parent / "README.md"
         if not readme.exists():

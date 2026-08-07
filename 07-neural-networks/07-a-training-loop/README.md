@@ -42,11 +42,19 @@ comparisons you are about to run, including the ones on this page.
 ![The complete loop](figures/fig-05-complete-loop.png)
 
 The complete loop reached **0.8227** test accuracy in **28 epochs and 2.5139 s**.
-The loop from section 1 reached **0.8020** in **40 epochs and 2.7196 s**. Early
-stopping saved **12 epochs**. The accuracy difference is real and it is smaller
-than the seed spread, so the defensible claim is the cheaper one: same result,
-fewer epochs, and a number chosen by a validation set the test data never
-touched.
+The loop from section 1 reached **0.8020** in **40 epochs and 2.7196 s**. The
+accuracy difference is inside the seed spread and I would not report it. The
+epoch count is not: early stopping saved **12 epochs** for the same result, and a
+saving in time is a saving whether or not the accuracy moved. So the defensible
+claim is the cheaper one, and it comes with a number chosen by a validation set
+the test data never touched.
+
+One clarification the table above deliberately withholds until later. "None of
+them clear the bar" is a statement about **accuracy**, which is the coarsest
+measurement in the notebook: it only notices a shifted probability when the
+probability crosses a decision boundary. Measured on validation loss instead, the
+schedules separate from a constant rate by a wide and consistent margin. Where
+two metrics disagree, say which one your sentence is about.
 
 ## Averaging a metric over batches
 
@@ -90,6 +98,18 @@ worst of them:
 Mean gain **+0.0119**, and it helped on **3 of 4 seeds**. On seed 3 the best
 epoch was the last one, so there was nothing to restore.
 
+That mean is smaller than the seed spread, so it is not evidence that restoration
+raises accuracy. What the per-seed column shows instead is that **it never
+loses**, and it cannot: it chooses between two sets of weights using a rule that
+never touches the test set, and the worst case is the seed where the two are the
+same run. A change with a gain inside the noise and no downside is a different
+object from one with a gain inside the noise and a real risk.
+
+The mechanism also says when it stops being marginal. The gap is the size of the
+overfitting tail, so a smaller training set, a larger model or a longer patience
+all widen it. Four thousand images on a small network is close to the least
+favourable setting for this piece, and it still never cost anything.
+
 ### What peeking at the test set is worth
 
 The same runs recorded test accuracy every epoch, which you must never do in real
@@ -113,9 +133,23 @@ Four ways to spend the same starting learning rate, same seed, same budget:
 | **cosine** | **0.4891** | 19 | 0.0006 | **0.8309** |
 | plateau | 0.4972 | 10 | 0.0062 | 0.8214 |
 
-Cosine won by **+0.0177** over a constant rate, against a seed spread of 0.0480.
-The reason to use a schedule is that it is cheap and rarely harmful, not that a
-single run improved by an amount smaller than the noise.
+Cosine came out **+0.0177** ahead of a constant rate on accuracy, against a seed
+spread of 0.0480, so that column separates nothing and I would not rank the three
+schedules on it either.
+
+The column that does separate is the validation loss. All three schedules reach a
+clearly lower best loss than the constant rate: **0.4891 against 0.5569**, a gap
+of 0.0678 where the three schedules sit within 0.008 of each other. That is the
+effect a schedule is meant to have, and the mechanism is the one the notebook
+derives: a large rate cannot settle into a minimum, it circles at a radius set by
+the step size, and shrinking it late is what lets the loss fall the last part of
+the way.
+
+Accuracy and loss disagree here because accuracy is the coarser measurement. It
+only notices a shifted probability when it crosses a decision boundary, so a real
+improvement in loss can register as nothing on 10,000 test rows. Use a schedule
+because it is cheap, has one dial you already chose, and demonstrably improves
+the quantity you are minimising. Not because of a single-run accuracy number.
 
 ## Gradient clipping, measured rather than assumed
 
@@ -199,6 +233,9 @@ largest difference of **0.000e+00**.
 | **Next** | [Convolution and pooling](../../08-computer-vision/01-convolution-and-pooling/), where the same loop trains a very different network |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

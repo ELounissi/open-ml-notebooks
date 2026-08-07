@@ -143,6 +143,9 @@ made after it, combined, and ReLU was the fastest of the five at 13.3 s.
 
 ---
 
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
+
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·
 [pilot.tun@gmail.com](mailto:pilot.tun@gmail.com)

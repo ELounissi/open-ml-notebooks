@@ -42,13 +42,24 @@ sample size:
 | 500 | +0.5656 | +0.5662 | +0.0006 | [-0.0037, +0.0050] |
 | 1000 | +0.6613 | +0.6599 | -0.0014 | [-0.0044, +0.0013] |
 
-**Three of the five intervals still contain zero, and at 120 rows the leak
-significantly made the score worse.** That row's interval excludes zero on the
-negative side.
+**Three of the five intervals still contain zero, and at 120 rows the interval
+excludes zero on the negative side**, which would say the leak improved the score.
+It cannot say that. A leak has no mechanism for making a model better on average,
+so the flip is a fact about the interval rather than about leakage.
+
+Here is what went wrong, and it is a trap worth more than the result it spoiled.
+Each row of that table uses one fixed subsample of that many rows, and the twelve
+repeats only reshuffle the folds inside it. So the interval measures fold-shuffle
+noise and stays silent about which rows I happened to draw, which at 120 rows is
+much the larger source of variation. An interval answers the question you built it
+to answer. It says nothing about anything you held constant. Widening it to cover
+the row draw would have made every one of those five intervals several times wider,
+and none of them would exclude zero.
 
 The honest reading, which is not the one I set out to write: **fitting a scaler
-before the split is a real leak and a trivial one.** Fix it because fixing it is
-free, not because it is what went wrong with your result.
+before the split is a real leak, and at these sizes it is small enough that
+ordinary sampling variation pushes it around and sometimes past zero.** Fix it
+because fixing it is free, not because it is what went wrong with your result.
 
 ![Three leaks](figures/fig-02-three-leaks.png)
 
@@ -176,6 +187,7 @@ to make the error go away. That fix is the leak.
 | **Expensive leaks** | Anything that reads the target. A selector fitted outside the loop reached 0.800 accuracy on random labels |
 | **The rule of thumb** | The best of p null columns correlates at about `√(2 ln p / n)`. It hit 0.1130 with 400 columns and 600 rows |
 | **Measuring a leak** | Paired differences over repeated cross-validation with an interval. One run cannot separate a small leak from fold noise, and one here pointed the wrong way |
+| **Reading an interval** | It covers only what you resampled. Mine reshuffled folds inside a fixed subsample, which is why a tiny effect changed sign down the size sweep |
 | **Mixed columns** | `ColumnTransformer`, with a `Pipeline` per block |
 | **Unknown categories** | `handle_unknown="ignore"`. Never fix the error by fitting the encoder on everything |
 | **Not an object** | Any decision made after looking at a plot of the whole dataset. Those cannot be piped and they leak the same way |
@@ -184,6 +196,9 @@ to make the error go away. That fix is the leak.
 | **Next** | [Saving and serving](../04-saving-and-serving/), where the thing you save is this whole object rather than the estimator |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

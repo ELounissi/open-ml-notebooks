@@ -36,7 +36,8 @@ the model measurably worse at every training set size I could afford.
 The one direction that did survive is the shape of the damage. The penalty grows
 monotonically with data, from -0.0190 at 250 images to -0.0505 at 4,000. So the
 scarcity story is half right and inverted: augmentation is least harmful when
-data is scarce, not most helpful.
+data is scarce, not most helpful. Hold that shape until the next section, because
+half of it turns out to be an artefact of how I budgeted the runs.
 
 ![Gain against baseline](figures/fig-03-gain-against-baseline.png)
 
@@ -54,7 +55,7 @@ case nobody writes is the one where the effect points the other way.
 
 ![Accuracy by training size](figures/fig-02-accuracy-by-training-size.png)
 
-## Why I think it lost, and why the notebook cannot prove it
+## Why it lost, split into the part that is my fault and the part that is not
 
 Every run gets **250 gradient steps of 128 images**, which is 32,000 image passes
 whatever the subset size, on a network of 105,866 parameters. Holding steps fixed
@@ -65,16 +66,35 @@ would be measuring optimisation effort.
 But the same choice quietly biases the other comparison. Augmented data is harder
 data. A model given a fresh random shift, rotation and scale on every draw is
 fitting a wider distribution, and it needs more steps to reach the same place. At
-a fixed 250 steps the augmented runs are being scored before they have finished
-converging, and the clean runs are not. That is the most likely reason the gain
-column is negative from top to bottom, and it also explains why the gap widens
-with data: more data makes the clean run better without making the augmented run
-any less under-trained.
+a fixed 250 steps the augmented run is scored before it has finished converging
+and the clean run is not.
 
-I cannot separate the two explanations from this notebook, because nothing here
-varies the step count. What I can say is that the measured result is a loss at
-every size, and that anyone quoting "augmentation helps on small data" should be
-made to show the budget they gave it.
+That is a testable claim, so the notebook tests it. Same 4,000 images, both
+pipelines, at 250 steps and at 1,000:
+
+| Gradient steps | No augmentation | Shift, rotate, scale | Gap |
+|---|---|---|---|
+| 250 | 0.8117 | 0.7612 | -0.0505 |
+| 1,000 | 0.8581 | 0.8322 | **-0.0259** |
+
+Quadrupling the budget recovered **+0.0246** of the penalty, nearly half of it,
+and left the rest. Both numbers matter. The budget was carrying half the result,
+so the sweep above overstates the damage and I would not quote its gain column
+without this table beside it. The other half survived a budget four times larger,
+so augmentation still cost real accuracy on this dataset.
+
+The residual has a mechanism, and it is about Fashion-MNIST rather than about
+augmentation. These images are already centred, already upright, already the same
+scale, and the test set is drawn the same way. Shifting and rotating the training
+images spends model capacity on variation the test set does not contain. There is
+nothing to win, so only the cost shows up. Photographs of products on a shelf do
+contain rotation, and there the same transform would pay.
+
+The rule I would carry out of this: augmentation pays in proportion to how much
+of the transform's range your test distribution actually contains, and any
+benchmark that fixes the step count has already handed the win to whichever run
+had the easier distribution. Ask for the budget before you look at the
+accuracies.
 
 ## What a false claim about your labels costs
 
@@ -170,10 +190,14 @@ chapter too.
 | **The other usual bug** | Augmenting the validation or test set, which hides the damage from the only measurement that can see it |
 | **Cost** | Per-image torchvision transforms ran 12x the training step on this model. Vectorise the cheap ones and the bill drops to 1.1x |
 | **Test time** | Averaging 4 views bought +0.0022 against a standard error of 0.0044, for 4x the inference. Measure before shipping it |
+| **When it pays** | In proportion to how much of the transform's range your test set actually contains. Fashion-MNIST is centred and upright, so shifting and rotating had nothing to win |
 | **Do not** | Quote "augmentation helps most when data is scarce" from a run like this one. Here it helped least at 250 images by helping nowhere |
-| **Next** | [Transfer learning](../05-transfer-learning/), which buys accuracy from somebody else's data rather than from your own |
+| **Next** | [Transfer learning](../05-transfer-learning/), which buys the same thing from somebody else's data rather than from your own, and unlike this chapter finds a real gain at small sizes |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

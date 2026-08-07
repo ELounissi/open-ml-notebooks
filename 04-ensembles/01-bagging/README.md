@@ -65,16 +65,33 @@ rule for deciding whether to reach for it.
 
 ![How many](figures/fig-03-how-many.png)
 
-| Estimators | Accuracy |
-|---|---|
-| 1 | 0.8918 |
-| 20 | 0.9232 |
-| 200 | 0.9251 |
+| Estimators | Accuracy | Against a single tree (0.8945) |
+|---|---|---|
+| 1 | 0.8918 | **-0.0027** |
+| 2 | 0.8913 | **-0.0032** |
+| 20 | 0.9232 | +0.0287 |
+| 100 | **0.9255** | +0.0310 |
+| 200 | 0.9251 | +0.0306 |
 
-Twenty gets almost all of it; going to 200 buys **+0.0019**. The floor exists
-because bootstrap samples overlap in roughly 63% of their rows, so the models share
-most of their mistakes. Pushing that correlation down is exactly what
-[random forests](../02-random-forest/) add.
+**"More never hurts" is wrong at both ends of this curve.** Going from one
+estimator to two, accuracy *falls*. And both sit **below the single tree** they are
+meant to beat. Bagging does not start paying until five estimators.
+
+The reason is the mechanism running in reverse. Each bootstrap sample leaves out
+about 37% of the rows, so every tree in the ensemble trains on less data than the
+single tree and is worse than it. Averaging is what buys that back, and with one or
+two models there is nothing to average. You have paid the cost of discarding rows
+and collected none of the benefit. **Bagging is a trade, and at small ensemble sizes
+the trade is a loss.**
+
+At the far end the curve reaches 0.9255 at 100 and returns to 0.9251 at 200. That
+is noise, not decline, which is the real point: past twenty estimators the curve
+moves by less than the fold-to-fold error, so more is neither helping nor hurting
+measurably.
+
+The ceiling exists because bootstrap samples overlap in roughly 63% of their rows,
+so the models share most of their mistakes. Pushing that correlation down is exactly
+what [random forests](../02-random-forest/) add.
 
 ## Out-of-bag scoring, for free
 
@@ -92,10 +109,13 @@ They agree within 0.0016, and the out-of-bag version is **3.8× faster**.
 | **Use it when** | Your base model is unstable: deep trees, small-k k-NN, anything that swings when the data shifts |
 | **Do not bother when** | The base model is already stable |
 | **What it fixes** | Variance. Bias is left exactly where it was |
-| **Estimators** | More never hurts accuracy. Twenty gets most of it |
+| **Estimators** | Too few is worse than not bagging: one and two both lost to a single tree here. Twenty gets most of it |
 | **Free extra** | `oob_score=True`, validation for one fit instead of five |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

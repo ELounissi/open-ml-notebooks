@@ -49,13 +49,25 @@ more honest verdict on corpus size than any hit rate.
 
 The prediction going in was that the inflection families would beat the semantic
 one, because `year` and `years` sit in nearly identical contexts while `king` and
-`queen` differ in contexts this corpus barely contains. Measured, the ordering
-reversed: for the best method, semantic scored 0.125 top-1 and 0.375 top-5 against
-plural's 0.025 and 0.350 and past tense's 0.025 and 0.075. It is one question out
-of eight, so I would not build anything on it, but the expectation did not survive
-and the notebook does not say so.
+`queen` differ in contexts this corpus barely contains. The measurement cannot
+settle it either way. Every cell in that table is a handful of questions, and one
+question is worth 0.025 in the plural family and 0.125 in the semantic one, which
+is larger than almost every gap between the rows. The semantic family's apparent
+lead is a single correct answer out of eight.
 
-## The oldest and dullest method won
+So the headline is the one nobody puts in a blog post: **at this corpus size,
+analogy arithmetic does not work.** Not for the count-based method, not for either
+trained model, not on the inflections that should be easiest. The same vectors
+carry real topical structure at the same time, which is what makes this worth
+measuring. Embeddings can be good enough to group words by subject and nowhere
+near good enough to do arithmetic on.
+
+If you are evaluating vectors of your own, borrow the purity task below rather
+than this one. It has hundreds of items instead of forty and it degrades
+gracefully, where an analogy score sits at zero and never tells you how far from
+working you are.
+
+## The oldest and dullest method matched the newest, at a fraction of the cost
 
 Three methods, 64 dimensions each, scored on whether a word's nearest neighbours
 among the 681 topical words share its topic. Chance for this set is 0.377,
@@ -63,15 +75,28 @@ computed exactly rather than assumed to be one third.
 
 | | k=1 | k=3 | k=5 | k=10 | k=20 |
 |---|---|---|---|---|---|
-| **PPMI + SVD** | **0.909** | **0.893** | **0.895** | **0.882** | **0.857** |
+| PPMI + SVD | 0.909 | 0.893 | 0.895 | 0.882 | 0.857 |
 | skip-gram | 0.893 | 0.884 | 0.870 | 0.856 | 0.827 |
-| GloVe | 0.720 | 0.673 | 0.660 | 0.617 | 0.572 |
+| GloVe | **0.720** | **0.673** | **0.660** | **0.617** | **0.572** |
 
-PPMI plus one call to `randomized_svd` wins every column. It has no training
-loop, no sampling, no epochs, and it took 3.0 s against skip-gram's 36 s and
-GloVe's 67 s. Skip-gram is close behind, within 0.030 at every k. GloVe is the
-one that struggled, and the gap between the two trained objectives, 0.239 at
-k=10, is larger than the gap between either of them and the linear algebra.
+One standard error over 681 topical words is about 0.012, so read the rows
+against that.
+
+**PPMI + SVD and skip-gram are tied.** They sit within 0.030 at every k, roughly
+two standard errors, which is not enough to rank two methods and I will not. The
+result is not that one beat the other. It is that one call to `randomized_svd`,
+with no training loop, no sampling and no epochs, matched a model that took 36 s
+of gradient descent, and took 3.0 s doing it. Section 4 explains why that is not
+luck: both are factorising the same table.
+
+**GloVe is well behind, by many standard errors at every k.** The mechanism is
+printed earlier in the notebook and it is about this corpus rather than about
+GloVe. Its weighting function caps at counts of 100 and nearly ignores small
+cells: **0.00% of cells here reach full weight and 97.45% get less than a tenth**.
+GloVe's loss assumes a corpus where common pairs occur hundreds of times. On 1,651
+newsgroup posts almost every cell is a small count, so almost every cell is thrown
+away, and the method is being run outside the regime it was designed for. On a
+corpus a thousand times larger this row moves.
 
 ![Neighbour purity](figures/fig-04-neighbour-purity.png)
 
@@ -138,7 +163,7 @@ The third panel is the one worth keeping. **0.00% of cells reach the full weight
 of GloVe's `f(x)`, and 97.45% get less than a tenth of it.** On a corpus this
 size the weighting function, the part of the method that gets discussed least, is
 throwing away nearly the entire matrix. That is a plausible reason GloVe finished
-last on purity.
+last on purity, and it is a fact about corpus size rather than about the method.
 
 ## Where the embeddings lose
 
@@ -167,33 +192,35 @@ saw, when order matters, or when the vectors came from a corpus orders of
 magnitude larger than the labelled task, which is the situation everyone is
 actually in when they download pretrained vectors.
 
-## One claim in the notebook I could not verify
+## One thing this chapter does not measure
 
-The notebook asserts, twice, that subsampling frequent words "changes the
-resulting vectors more than the choice between the two objectives does" and
-"more than most hyperparameters do". Nothing in the notebook varies the
-threshold. There is one value, t = 0.001, run once, keeping 169,115 of 219,893
-tokens. The comparison it is being measured against **was** run, and the gap
-between the two objectives is 0.239 purity at k=10. The subsampling claim is
-plausible and it is not evidence. Flagging it here so nobody quotes it as a
-measurement from this chapter.
+Subsampling frequent words is widely described as one of the most consequential
+choices in the word2vec recipe. This notebook runs a single threshold, t = 0.001,
+keeping 169,115 of 219,893 tokens, and never varies it. So nothing here is
+evidence about how much it matters, and the notebook now says so instead of
+asserting it. If you want the answer, sweep `t` and score each setting with the
+purity task above; that task is cheap and defined by the corpus, which makes it
+the right instrument for exactly this kind of question.
 
 ## Cheat sheet
 
 | | |
 |---|---|
 | **The assumption** | A word is characterised by the words around it. Every method here compresses one co-occurrence table |
-| **PPMI + SVD** | One linear algebra call, no training loop, and it won every purity column at 3.0 s against 36 s and 67 s |
+| **PPMI + SVD** | One linear algebra call, no training loop, and it tied skip-gram on purity at 3.0 s against 36 s. Try it before you train anything |
 | **Skip-gram** | Classify real pairs against sampled fakes, never build the matrix. Its dot products still land on shifted PMI at r = 0.832 |
 | **GloVe** | Weighted least squares on log counts. On a small corpus its weight function nearly ignores the matrix: 97.45% of cells under a tenth weight |
 | **Dimension** | Sweep it. The SVD peaked at 4 components here, and the conventional 64 cost 0.040 purity |
 | **Scoring** | Define the task from your own corpus and print the number. Nearest-neighbour lists will make anything look good if you pick the query |
-| **Analogies** | 3 of 88 at top-1 on 260,162 tokens. Average the questions, not the families, or the rate inflates by 70% |
+| **Analogies** | 3 of 88 at top-1 on 260,162 tokens, for every method. Too small to rank anything, and the honest read is that the task needs a far larger corpus. Average the questions, not the families, or the rate inflates by 70% |
 | **Before quoting a demo** | Check the words are in your vocabulary. `queen` and `woman` were not in this one |
 | **Downstream** | Check against TF-IDF before assuming the newer representation wins. It did not here, by 0.0311 |
 | **Next** | [Recurrent networks](../03-recurrent-neural-networks/), which read these vectors in order instead of averaging them away |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

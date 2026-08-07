@@ -14,6 +14,14 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 
 ---
 
+Where this sits in Part 11: [11-01](../01-the-setup/) showed that actions change
+the state you face next, and [11-02](../02-multi-armed-bandits/) took that away to
+study exploration on its own. This chapter puts the state back and hands you the
+transition model, so nothing has to be explored at all. Everything from
+[11-04](../04-q-learning/) onwards takes the model away again, and every
+difficulty those chapters have is a consequence of not having what this one is
+given.
+
 ## The result I would lead with
 
 Two exact planners on the same board, both finding the same optimal policy, timed
@@ -149,6 +157,11 @@ Nothing in the code knows what a wall is. It fell out of a lookahead over `P`.
 | cliff-edge plan | **24.43** | 1.22 | 9.30 |
 | slip-aware plan | 30.16 | **0.00** | 1.33 |
 
+These are the only sampled numbers on this page, over 2,000 rollouts each, so the
+notebook prints the standard error of every gap beside it. All three clear their
+own error bar by a wide margin, which is what makes the table worth reading as a
+difference rather than as two lists.
+
 **The confident plan is faster.** It reaches the goal in about six fewer steps,
 because the cliff edge is the short way and most of the time it works. It also
 falls 1.22 times per run, and every fall costs a hundred and returns the agent to
@@ -174,6 +187,9 @@ written into `P`.
 | **Next** | [Q-learning](../04-q-learning/), which is this chapter with `P` taken away |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

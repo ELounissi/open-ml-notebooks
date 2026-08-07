@@ -77,10 +77,17 @@ $1-p$ and its correlations by $\sqrt{1-p}$. With $p = 0.3014$ the predicted fact
 is **0.8358**. The standard deviation went 1.8998 to 1.5891, a ratio of 0.8365,
 and the correlation with the target went 0.6881 to 0.5760, a ratio of 0.8371.
 
-Those two land on the formula. The mean ratio across all eight correlations is
-**0.9412**, well above 0.8358, so the shrink is not uniform in practice. Treat
-$\sqrt{1-p}$ as a bound on the worst-affected relationships rather than a
-prediction for every pair.
+Those two land on the formula, and they are the two the derivation actually
+promises. The mean ratio across all eight correlations is **0.9412**, well above
+0.8358, and that average is the noisy number rather than the interesting one: a
+correlation that started near zero, divided by another near zero, is noise with a
+ratio attached. Apply $\sqrt{1-p}$ to a column you already know matters, not to a
+whole correlation matrix.
+
+The planning use is the point. Before filling a column you can already say how
+much of its relationship with the target you are giving away, and it does not
+depend on which imputer you pick. It is also why "that feature turned out not to
+matter" is a claim worth checking against the feature's missing rate.
 
 ## The missingness indicator
 
@@ -97,8 +104,11 @@ column and no thought, so it is still worth adding by default. It is not a repai
 
 ## Clever imputers, on a 3,000-row subsample
 
-This block runs on a subsample where the complete-data model scores R squared
-**-4.3744**, so read it as a ranking rather than as levels.
+One column of this table is broken and I want to say so before quoting any of it.
+The complete-data model on this subsample scores R squared **-4.3744**: a plain
+linear regression, on 3,000 California rows across 3 folds, losing to a flat line.
+A few districts have absurd `AveOccup` values, and on a subsample this size one of
+them landing in a validation fold is enough to swamp that fold.
 
 | Mechanism | Imputer | Fill error | Mean bias | R squared lost |
 |---|---|---|---|---|
@@ -107,15 +117,36 @@ This block runs on a subsample where the complete-data model scores R squared
 | MAR | median | 2.3019 | -0.3102 | 1.5486 |
 | MAR | KNN (k=5) | 1.1772 | -0.0205 | -0.0173 |
 | MNAR | median + indicator | 2.5239 | -0.4534 | 1.4274 |
-| MNAR | KNN (k=5) | 1.2723 | -0.1133 | **-0.6963** |
+| MNAR | KNN (k=5) | 1.2723 | -0.1133 | -0.6963 |
 | MNAR | iterative | **7.3979** | -0.1734 | 2.8929 |
 
-Two things here contradict the tidy version of this story. KNN under MNAR does
-not fail alongside the median; it beats every constant by a wide margin and cuts
-the mean bias from -0.4534 to -0.1133. And `IterativeImputer` under MNAR is the
-worst method on the table, with a fill error of 7.3979 against the median's
-2.5239. The cheap method is not always close, and the expensive method is not
-always safe.
+Look at the last column. Two rows are negative, which says a model missing 30% of
+its strongest feature beat the model that had all of it, by 0.70 of R squared in
+one case. That cannot happen. It is the outlier landing in different folds under
+different imputations, and it means **the R squared column here cannot rank
+anything**, so I have not used it to. Ranking off a column like that is the
+easiest paragraph in the chapter to write, which is why it is worth refusing.
+
+The other two columns are direct measurements over every deleted entry, they do
+not depend on a fold assignment, and they hold up. Two things in them contradict
+the tidy version of this story.
+
+**KNN under MNAR does not fail alongside the median.** Fill error 1.2723 against
+2.5239, and the mean bias cut from -0.4534 to -0.1133. It never sees a deleted
+income, but it can see that a district with those rooms, that occupancy and that
+location ought to earn more than the surviving average, and that is enough to push
+part of the tail back. The individual values stay wrong; the aggregate stops being
+systematically wrong. Those are different achievements and only the second one
+survives MNAR.
+
+**`IterativeImputer` under MNAR is the worst method on the table**, at 7.3979
+against the median's 2.5239. There is a mechanism. It regresses the missing column
+on the others, feeds its own guesses back in and repeats. Under MNAR the observed
+part of the column is the wrong part, so the regression is fitted to a truncated
+relationship, and each cycle re-imputes from a column its own guesses have already
+dragged downward. Nothing anchors the loop to the values that were deleted, so it
+converges confidently on the wrong answer. Do not reach for the cleverest imputer
+on a column you suspect is MNAR.
 
 ## Imputing inside the fold
 
@@ -140,14 +171,19 @@ when the data is large and the imputer is simple. It does not stay that way.
 | **First question** | Why is it missing? Ask the people who collected the data |
 | **MCAR** | Dropping is unbiased. Filling still cost 0.1061 R squared here |
 | **MAR** | Constants are biased. Imputers reading other columns recover it |
-| **MNAR** | Nothing recovers the tail. KNN still cut the bias 4x here |
+| **MNAR** | Nothing recovers the values. KNN still cut the aggregate bias 4x here |
 | **Dropping rows** | $(1-p)^k$ survive. Count them before you commit |
 | **Constant fill** | Variance times $1-p$, correlations times $\sqrt{1-p}$ |
 | **Indicator** | One boolean column, recovered 18% of the MNAR loss. Free, not a fix |
+| **IterativeImputer** | Came last under MNAR, worse than a median. Its loop refits on a column it has already pulled down |
 | **KNNImputer** | Scale first. It leaked +1.2226 R squared when fitted outside the fold |
 | **Always** | Imputer inside the `Pipeline`, refitted on every training fold |
+| **Next** | [Hyperparameter tuning](../09-hyperparameter-tuning/), where the same inside-the-fold rule decides whether a search result is real |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

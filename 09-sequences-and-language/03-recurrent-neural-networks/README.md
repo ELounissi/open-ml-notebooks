@@ -119,8 +119,9 @@ is further away than one hour back, and proximity beat seasonality.
 The RNN's whole margin comes from the commute. At 09:00 it scores 53.6 against
 193.3 for the linear model and 295.1 for persistence, 3.6x better in the hardest
 hour of the day. In the quiet hours it does not win at all: persistence is ahead
-at 02:00 and 04:00, the linear model at 05:00 and 19:00. A model that beats
-everything on average can still be third best where little happens.
+at 02:00 and 04:00, the linear model at 05:00 and 19:00. Even there it never drops
+below second: a model that beats everything on average can still be beaten hour by
+hour where little happens, and it is worth checking by how much.
 
 ![Forecast week](figures/fig-05-forecast-week.png)
 
@@ -144,6 +145,9 @@ temperature, humidity or holiday flags.
 | **Always** | Run persistence and a lag-based linear model first. Here the RNN beat both, and running them is how you find out |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

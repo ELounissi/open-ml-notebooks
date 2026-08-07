@@ -71,19 +71,31 @@ Four models on breast cancer, all scored out of fold.
 | SVM margin, min-max squashed | 0.9953 | 0.9754 | 0.0654 | **0.1927** |
 
 **The forest is under-confident.** Its score is the share of trees voting positive,
-and near a boundary a few always dissent, so 0 and 1 are unreachable: **38.8%** of
-its predictions sit strictly inside (0.02, 0.98), against 22.1% for logistic
-regression.
+and near a boundary a few dissent, so the prediction lands in between. It is
+tempting to conclude that 0 and 1 become unreachable. They do not: the forest's
+printed range is **min 0.0000, max 1.0000**, and 79.3% of its cases sat in the two
+end bins of the diagram above, because most breast cancer cases are nowhere near a
+boundary and all 300 trees agree on them.
+
+What the forest does is hedge *more often* than the others: **38.8%** of its
+predictions sit strictly inside (0.02, 0.98), against **22.1%** for logistic
+regression and **3.7%** for naive Bayes. The middle is fuller, not full, and that
+is enough to bend the reliability curve.
 
 **The SVM margin is not a probability.** `decision_function` returned a signed
 distance in [−2.765, 2.592]. Min-max squashing and a plain sigmoid both hold the AUC
 at exactly 0.9953 and both stay badly calibrated, at ECE 0.1927 and 0.1753: neither
 looked at a label.
 
-**Naive Bayes is over-confident by the widest margin here.** It counts correlated
-features repeatedly, as if they were independent: **95.6% of its predictions came out
-above 0.99 confidence** at a mean confidence of **0.9919**, against an overall
-accuracy of **0.9385**.
+**Naive Bayes has the widest confidence-versus-accuracy gap of the models that are
+actually estimating probabilities.** It counts correlated features repeatedly, as if
+they were independent: **95.6% of its predictions came out above 0.99 confidence** at
+a mean confidence of **0.9919**, against an overall accuracy of **0.9385**.
+
+It is not the worst-calibrated thing in the table, though. Naive Bayes scores ECE
+**0.0603**; the squashed SVM margin scores **0.1927**, three times worse. The two
+failures differ in kind: naive Bayes is badly wrong about a quantity it set out to
+estimate, while the margin was never estimating a probability at all.
 
 ## Platt scaling against isotonic regression
 
@@ -100,9 +112,16 @@ The SVM is the clean win: ECE from 0.1927 to 0.0159, a **12× reduction**, for 0
 of AUC. That is what calibration is for. Two results argue against reaching for it
 reflexively. Sigmoid on logistic regression made ECE **2.9× worse**: log loss is a
 proper scoring rule, so that model was already fine and the wrapper solved a problem
-that did not exist. And sigmoid on naive Bayes cost **0.0423 of AUC**; a calibrator
-is monotone and cannot reorder anything, so that came from the refitting inside
-`CalibratedClassifierCV`. Measure before you wrap.
+that did not exist. And sigmoid on naive Bayes cost **0.0423 of AUC**, 0.9877 down
+to 0.9454, which the usual "a calibrator is monotone and cannot reorder anything"
+does not cover. Monotone holds in the idealised case. In practice the map is
+*fitted*: a sigmoid fitted on scores already crushed against 0 and 1, which is
+exactly what naive Bayes produces, saturates and maps whole groups of distinct
+scores onto one output. Ties are not reorderings, but AUC counts them at half
+credit, so it falls. On top of that `CalibratedClassifierCV` refits the base
+estimator on each internal fold and averages, so the score being calibrated is not
+quite the one you started with. Measure AUC after wrapping rather than assuming it
+held.
 
 ### Where isotonic overfits
 
@@ -164,6 +183,9 @@ about that per model, always use held-out data.
 | **Where to fit it** | Never the training rows. Held-out split, or `CalibratedClassifierCV(estimator=..., cv=5)` to cross-fit. For a prefit model, `FrozenEstimator`: the old `cv="prefit"` is gone in scikit-learn 1.8 |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

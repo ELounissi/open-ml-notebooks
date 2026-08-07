@@ -214,12 +214,20 @@ label and nothing for the encoding to carry.
 
 That makes the permutation-equivariance claim testable rather than rhetorical.
 Shuffling the input positions moves the output logits by **1.907e-06** for the
-model trained without the encoding and by **2.6043** for the model trained with
-it. Both still score **1.0000** on the shuffled inputs. The first model is not
-merely indifferent to order, it is mathematically incapable of noticing it.
+model trained without the encoding and by **2.6043** for the model trained with it.
+Both still score **1.0000** on the shuffled inputs.
+
+Those two facts together are the finding. The first model is not merely indifferent
+to order, it is mathematically incapable of noticing it, so shuffled input is
+literally the same input as far as it is concerned. The second model does read the
+encoding, moves by a visible amount when the positions change, and answers exactly
+the same either way. The movement was entirely inside the margin between the winning
+logit and the rest. It found the markers by their token identity and then learned to
+be robust to a position signal it had been handed and could not use.
 
 So the rule is narrower than "transformers need positional encodings". They need
-them when the answer depends on order.
+them when the answer depends on order. On a task that is a bag of tokens, the
+encoding is a nuisance variable the model spends capacity learning to ignore.
 
 ## Which head does the work
 
@@ -321,6 +329,9 @@ with a larger effect on model sizes than most architecture papers.
 | **Next** | [Fine-tuning a pretrained transformer](../08-fine-tuning/), which pretrains one from nothing and then measures what the pretraining was worth |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

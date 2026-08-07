@@ -29,15 +29,28 @@ Five gradient estimators, identical in every other respect, each given the same
 
 The estimator is unbiased in every row. All five are computing the same gradient
 in expectation. The only thing that changes down the column is how much noise
-sits on top of it, and that alone is the difference between an agent that
-finishes at 101 steps and one that finishes at 458.
+sits on top of it, and that alone is the difference between an agent that finishes
+at 101 steps and one that finishes at 458.
 
 **Variance is not a tuning detail in policy gradients. It is the algorithm.**
+
+Read the last column before you read the ranking. The bottom three rows sit inside
+each other's seed spread, so **this experiment separates the estimators that have a
+variance problem from the ones that do not, and does not order the three fixes
+among themselves.** The notebook prints that verdict per row rather than leaving
+the bold text to imply one. Two seeds cannot do finer than that, and the finding
+does not need them to: the gap from 101.2 to the group above 380 is many times
+anything the seeds vary by.
+
+The noise-to-signal column is a different matter and it is nearly noiseless,
+because it is measured on one fixed pool of episodes rather than on a training run.
+That column can be ranked, and it is the one to tune on.
 
 The seed-spread column is the part I did not expect to be so clean. The best
 estimator is also the most reproducible, at 4.8 steps between seeds against 84.5
 for plain REINFORCE. Lower variance in the gradient showed up directly as lower
-variance in the outcome.
+variance in the outcome, which is the mechanism confirming itself: a noisy gradient
+does not merely learn less, it learns a different amount every time you run it.
 
 ![Variance](figures/fig-03-variance.png)
 
@@ -174,9 +187,13 @@ behaves. Its argmax is a different policy and is reported on its own line.
 | **Do not** | Reach for a lower gamma to control variance. It made the ratio 10x worse here |
 | **Watch out** | A single episode's gradient points the wrong way 47.2% of the time. Never update from one |
 | **Sanity check** | Plot the noise-to-signal ratio, not the variance. Variance alone will mislead you |
-| **Next** | Actor-critic, which replaces the baseline with a learned value function |
+| **Before ranking** | Two seeds separate a broken estimator from a working one and nothing finer. The three variance-reduced rows here are a tie |
+| **Next** | [Actor-critic and PPO](../08-actor-critic-and-ppo/), which replaces the baseline with a learned value function and then reuses each batch |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

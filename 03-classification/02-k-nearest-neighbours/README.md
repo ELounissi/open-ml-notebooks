@@ -56,18 +56,33 @@ scores 0.9063.
 **Left:** with 1,000 random points, the farthest is **4,572×** the distance of the
 nearest in one dimension. By 1,000 dimensions that ratio falls to **1.15**:
 every point is essentially equally far away, and "nearest" has stopped meaning
-anything.
+anything. The vertical axis is logarithmic on purpose. Linear, the single drop
+to 44.69 at two dimensions uses up the whole chart and the rest of the decline
+is invisible.
 
-**Right:** the practical consequence. Adding pure noise columns to Breast Cancer:
+**Right:** the practical consequence, and it is messier than the usual telling.
+Adding pure noise columns to Breast Cancer:
 
 | Noise columns added | k-NN | Logistic regression |
 |---|---|---|
 | 0 | 0.9649 | 0.9807 |
+| 10 | 0.9420 | 0.9683 |
+| 25 | 0.9210 | 0.9614 |
+| 50 | **0.9297** | 0.9508 |
+| 100 | 0.9138 | **0.9279** |
+| 200 | 0.8876 | **0.9473** |
 | 400 | 0.8559 | 0.9403 |
 
-k-NN loses 0.109, logistic regression 0.040. A linear model can give a useless
-feature a weight near zero. **k-NN has no weights, so it cannot ignore anything**:
-every column votes on what counts as "near", whether or not it knows anything.
+**Neither curve falls monotonically.** k-NN goes back up between 25 and 50
+columns; logistic regression sags at 100 and recovers at 200 to above where it
+sat at 50. Each cell is one five-fold cross-validation on 569 rows against one
+random draw of noise, so each carries its own sampling error. Read the sweep end
+to end and the trend is unambiguous: k-NN loses 0.109 across the range, logistic
+regression 0.040, roughly a third as much.
+
+A linear model can give a useless feature a weight near zero. **k-NN has no
+weights, so it cannot ignore anything**: every column votes on what counts as
+"near", whether or not it knows anything.
 
 ## Cheat sheet
 
@@ -81,6 +96,9 @@ every column votes on what counts as "near", whether or not it knows anything.
 | **Watch out** | `k=1` scores 1.000 on training data by construction. Never judge k-NN on training accuracy |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

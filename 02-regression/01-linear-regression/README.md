@@ -41,7 +41,7 @@ things that break it (cost grows as $O(n^3)$ in features, and correlated columns
 make the matrix uninvertible).
 
 **3. From scratch**: a 30-line NumPy implementation, agreeing with scikit-learn to
-**2.4 × 10⁻¹³**. It uses `lstsq` rather than inverting $X^\top X$, and the notebook
+**2.4e-13**. It uses `lstsq` rather than inverting $X^\top X$, and the notebook
 explains why that difference matters for numerical stability.
 
 **4. In practice**: scaling inside a `Pipeline` so the scaler never sees the test
@@ -50,9 +50,18 @@ fold, five-fold cross-validation, and reading the coefficients.
 ![Location outweighs income](figures/fig-02-coefficients.png)
 
 This one surprised me. I expected income to carry the largest weight; latitude
-(−0.90) and longitude (−0.87) both outrank it (0.83). The model is spending
-weight to say "the south-west coast is expensive" using two straight lines, a
-clumsy way to draw a coastline, and a preview of why trees do better here.
+(-0.90) and longitude (-0.87) both outrank it (0.83). Which of the two coordinates
+is nominally larger is not a finding, since they sit a few hundredths apart on
+weights near one. The finding is that the pair of them beat income.
+
+The mechanism is geography. Price falls off with distance from the coast, the
+California coast runs diagonally, and the only way a plane can approximate a
+diagonal boundary is by leaning hard on both coordinates at once. The model is
+drawing a map with two straight lines, which is a preview of why trees do better
+here: a tree splits on latitude, then on longitude, and gets the same boundary for
+free rather than paying for it in coefficients.
+[01-01](../../01-foundations/01-what-machine-learning-does/) reaches the same three
+numbers on an 80% split of the same data.
 
 ![Residual diagnostics](figures/fig-03-residuals.png)
 
@@ -62,10 +71,20 @@ exist, not a modelling failure.
 The right panel is the real finding, and it needed binning to see. A raw residual
 scatter looked like a formless smear. Averaging the error within each tenth of the
 price range shows the error sitting at **+0.33 across the cheaper half**, then
-falling through zero to **−0.96** in the dearest tenth. Overall the average error
+falling through zero to **-0.96** in the dearest tenth. Overall the average error
 is +0.06, which looks unbiased and is not: it is a large positive bias at the
 bottom cancelling a large negative one at the top. A summary number hid it; the
 chart did not.
+
+The cap is not the explanation, because those rows are excluded from that panel.
+The explanation is that a plane cannot bend. The target is right-skewed and its
+relationship with income flattens at the top, so least squares has to pick one
+slope for the whole range. It picks the compromise, too steep for the cheap end
+and too shallow for the dear end, and the decile plot is that compromise drawn
+out. Any monotone-but-curved relationship produces this same tilted line, which
+makes the plot a diagnostic rather than a curiosity.
+[02-03](../03-polynomial-regression/) lets the line bend;
+[Part 4](../../04-ensembles/) drops the straight-line assumption entirely.
 
 **5. When it wins, when it loses**: the same code on Bike Sharing, where R
 squared falls from 0.60 to 0.39.
@@ -78,19 +97,28 @@ It cannot say "up, down, up, down". No amount of fitting fixes that, because the
 shape is not available to the model.
 
 One-hot encoding the hour column, **changing nothing about the model**, takes it
-from 0.39 to 0.68, better than the same method managed on California Housing.
-That is the most reliable lesson in applied machine learning: the features are
-usually where the win is.
+from 0.39 to 0.68. That is a 0.30 gain against a fold spread of about 0.02, so it
+is not a close call. One-hot gives the model a separate weight per hour, so
+instead of one slope across the day it learns twenty-four independent levels, and
+"up, down, up, down" becomes expressible.
+
+The size of that gain is the point. Swapping linear regression for a gradient
+booster on the raw columns would buy far less, because the raw columns cannot
+express the shape for any model that treats `hr` as a magnitude. That is the most
+reliable lesson in applied machine learning: the features are usually where the
+win is.
 
 ## Results
 
 | | California Housing | Bike Sharing |
 |---|---|---|
-| Predict the mean (baseline) | RMSE 1.154 | R² 0.000 |
-| Linear regression | RMSE 0.726 (**37% better**) | R² 0.388 |
-| Linear regression, hours encoded | | R² **0.684** |
+| Predict the mean (baseline) | RMSE 1.154 | R squared 0.000 |
+| Linear regression | RMSE 0.726 (**37% better**) | R squared 0.388 |
+| Linear regression, hours encoded | | R squared **0.684** |
 
-R² on California Housing is 0.604, with folds spanning 0.594 to 0.618.
+R squared on California Housing is 0.604, with folds spanning 0.594 to 0.618. That
+fold spread is the yardstick for the rest of Part 2: a method claiming to beat a
+straight line here has to beat it by more than 0.024.
 
 ## Cheat sheet
 
@@ -105,6 +133,9 @@ R² on California Housing is 0.604, with folds spanning 0.594 to 0.618.
 | **Next** | [Ridge](../04-ridge-regression/) if features correlate, [Lasso](../05-lasso-regression/) for feature selection |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

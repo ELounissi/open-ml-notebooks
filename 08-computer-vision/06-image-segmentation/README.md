@@ -93,12 +93,20 @@ skips with capacity.
 | with skips | **0.9540** | **0.9349** | 6 | 117,073 |
 
 **Skips were worth +0.0121 IoU over the whole image and +0.0331 inside the
-boundary band**, which is 2.7x more where the argument says they should help.
-The bottleneck knows what is in the image because it has seen a large receptive
-field, and has thrown away where to two levels of pooling. The early encoder maps
-know exactly where every edge is and nothing about what it belongs to. The
-measured gap concentrating at the boundary is that division of labour showing up
-in a number.
+boundary band.** The direction is what the architecture predicts. The bottleneck
+knows what is in the image because it has seen a large receptive field, and has
+thrown away where to two levels of pooling. The early encoder maps know exactly
+where every edge is and nothing about what it belongs to. If skips do the job
+they are supposed to do, the gain has to concentrate where position is in doubt,
+which is the edge of a shape and not its interior, because the interior is easy
+for a coarse feature map too.
+
+I would report those two numbers and not their ratio. Both come from one pair of
+runs, so the notebook also scores every test image separately and pairs them,
+which gives a standard error on the difference for the price of no extra
+training. Read that line before deciding the skips won: the per-image differences
+carry both signs, and the count of images each network took is the honest summary
+of a gap this size.
 
 ## Where the skips lost
 
@@ -140,18 +148,23 @@ factor of twelve. Moving the threshold trades false positives against false
 negatives, and both are rare compared with the background pixel accuracy is busy
 getting right.
 
-The best cut-off is 0.80, worth **+0.0037 IoU** over the default. That is free,
-and it is roughly a third of what the skip connections were worth. Sweep it, and
-sweep it on data you did not train on. The 0.80 above was chosen on the test set
-and is quoted as an upper bound, not as a recommendation.
+The best cut-off is 0.80, worth **+0.0037 IoU** over the default, on the same
+order as the whole skip-connection difference and for no training at all. Sweep
+it, and sweep it on data you did not train on. The 0.80 above was chosen on the
+test set, so it is an upper bound on the gain rather than a recommendation, and
+that is the same reason the brightness baseline earlier got its cut-off the same
+way: a number picked on the test set is a ceiling, not a result.
 
 ## What this does not settle
 
 One seed, one small synthetic dataset, one architecture size. The
 skip-connection comparison is a single pair of runs, so +0.0121 is what those two
-runs produced rather than an estimate of what they would produce on average. A
+runs produced rather than an estimate of what they would produce on average. The
+per-image standard error printed in the notebook bounds one source of that
+uncertainty, the test set, and says nothing about the other, which is the seed. A
 serious version repeats each configuration over several seeds and reports the
-spread.
+spread; nothing here is a claim about skip connections in general, only about
+what these two runs did.
 
 The task is also easier than any real one. The masks are exact, the shapes come
 from two families, and there is no ambiguity about where a boundary is. That is
@@ -170,12 +183,15 @@ transfers. The numbers do not.
 | **Architecture** | Encoder halves resolution and doubles channels, decoder reverses it, skips carry the position information across |
 | **Skip control** | Concatenate zeros rather than removing the concatenation, so both networks have the same parameter count |
 | **Loss** | Per-pixel binary cross entropy to start. Dice loss or a weighted version when the foreground is very small |
-| **Threshold** | 0.5 is a convention. Sweeping it was worth +0.0037 IoU here, a third of what the skips were worth |
+| **Threshold** | 0.5 is a convention. Sweeping it was worth +0.0037 IoU here, the same order as the entire skip-connection difference |
 | **Boundaries** | Score inside a band around the true edge. It was 41.5% foreground here against 7.0% over the whole image |
-| **Watch out** | Aggregate IoU hides per-image losses. The better model lost on one of the four images shown |
-| **Next** | [Object detection](../07-object-detection/) |
+| **Watch out** | Aggregate IoU hides per-image losses. Score each image separately and you get an error bar for free |
+| **Next** | [Object detection](../07-object-detection/), which labels objects rather than pixels and has the opposite metric problem |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

@@ -20,8 +20,8 @@ One hour ahead, every fitted model beats the baseline and it is not close:
 
 | Model | MAE | RMSE | MASE |
 |---|---|---|---|
-| **gradient boosting** | **21.0281** | 33.9273 | **0.4131** |
-| neural network | 21.7334 | 32.3641 | 0.4270 |
+| gradient boosting | **21.0281** | 33.9273 | 0.4131 |
+| neural network | 21.7334 | **32.3641** | 0.4270 |
 | seasonal naive, last day | 54.4567 | 91.2879 | 1.0699 |
 | ARIMA(2,1,2) + Fourier | 55.7015 | 82.4968 | 1.0943 |
 | ARIMA(2,1,2) | 61.9838 | 87.2441 | 1.2177 |
@@ -30,6 +30,19 @@ One hour ahead, every fitted model beats the baseline and it is not close:
 Gradient boosting more than halves the seasonal naive error. **4 of 4 fitted
 models beat the baseline.** That is the table most forecasting write-ups stop at,
 and stopping there is the mistake this chapter exists to prevent.
+
+Before going further, note what the top two rows do not say. A MAE is a sample mean
+over 670 held-out hours, so it has a standard error, and the notebook prints one
+beside every row. Gradient boosting and the neural network are closer together than
+that error bar, and the two metrics disagree about the order: MAE puts boosting
+first, RMSE puts the network first. **Those two are one result, not two.** RMSE
+squares the errors before averaging so it is moved by the worst hours and MAE is
+not, which means the two models differ in the shape of their mistakes rather than
+in the size of them. Choose between them on fit time, or on whether a very bad hour
+costs you more than proportionally, and decide that before you look at the table.
+
+The gap from either of them down to the baseline is many times the same error bar.
+That comparison is real, and it is the one the section is for.
 
 Forecast further than one step and it reverses completely:
 
@@ -154,6 +167,9 @@ one.
 | **Sanity check** | If your model cannot beat the seasonal naive at your actual horizon, ship the seasonal naive |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

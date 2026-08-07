@@ -105,6 +105,25 @@ the silhouette collapsed, from 1.000 to 0.000.
 Averaging the three together produces a mean recovery falling from 83% to 67%,
 which is true and tells you almost nothing, because the whole fall is one method.
 
+The silhouette's collapse has a specific mechanism, and it is not "distances get
+noisy". A silhouette is a ratio, `(b - a) / max(a, b)`. Isotropic noise columns
+inflate `a` and `b` by nearly the same amount, because they add the same expected
+distance to a neighbour inside the cluster as to one outside it. The numerator's
+difference stays put while the denominator grows, so every point's score is
+squeezed toward zero, the curve over k flattens, and the argmax of a flat curve is
+whatever noise sat on top. It does not degrade gracefully. It stops being a
+maximum.
+
+The elbow is untouched for a reason in the rule rather than in the geometry.
+Isotropic noise raises the pooled dispersion at every k by roughly the same
+additive amount, and the chord rule min-max normalises both axes before measuring
+distance to the chord, so a constant added to the whole curve barely moves where it
+bends.
+
+**A criterion built on a maximum dissolves in a way that a criterion built on a
+shape does not.** That is the transferable version of this table, and it is worth
+more than the recovery percentages.
+
 Across every setting in both sweeps:
 
 | Criterion | Share of 72 runs recovering k = 4 |
@@ -113,16 +132,26 @@ Across every setting in both sweeps:
 | silhouette | 0.750 |
 | gap | 0.653 |
 
-The elbow wins. The elbow is also the one whose rule is closest to a heuristic:
-draw the chord between the endpoints of the normalised curve, take the point
-furthest from it. It cannot return the smallest k in the range, because both
-endpoints lie on the chord at distance zero, so it can never say "no clusters"
-either. It is the least principled of the three and it recovered the right answer
-more often than either of the others.
+The elbow wins, and it wins by enough to mean it: a share over 72 runs carries a
+standard error near 0.05, and 0.917 against 0.653 is five of those.
+
+The elbow is also the one whose rule is closest to a heuristic: draw the chord
+between the endpoints of the normalised curve, take the point furthest from it. It
+cannot return the smallest k in the range, because both endpoints lie on the chord
+at distance zero, so it can never say "no clusters" either. It is the least
+principled of the three and it recovered the right answer more often than either of
+the others.
+
+Do not read that as "use the elbow". Read it as the sweep only asking one question.
+Every dataset in it had exactly four clusters, so a criterion that is structurally
+incapable of answering 1 was never penalised for it, and section 5 is the sweep
+this one cannot run. The gap statistic's 0.653 is bought with the conservatism that
+makes it the only criterion able to fail honestly.
 
 Both of the gap statistic's weak spots are visible in the first table: it scored
 0.000 at separations 3 and 4, where the other two were already perfect, and only
-reached 1.000 at 8 sigmas.
+reached 1.000 at 8 sigmas. That is the same conservatism costing it here and paying
+for it there. One property, two prices.
 
 ## Watching it work, when it works
 
@@ -183,11 +212,20 @@ labels in hand:
 | 7 (the true count) | 0.679 |
 | **8** | **0.705** |
 
-Agreement with the botanical varieties peaks at k = 8, not at 7. So the k that
-best reproduces the real varieties is not quite the k that best reproduces the
-geometry the varieties happen to have, and no criterion reading only the geometry
-could have known. Two varieties that overlap in shape space are one cluster no
-matter how you count them.
+Agreement with the botanical varieties peaks at k = 8, not at 7, and 0.705 against
+0.679 is a small gap on 3,000 beans. The direction is the interesting part rather
+than the size: even with the labels in hand, and free to try every k, the best
+geometric partition of these beans is not the botanical one.
+
+**A clustering criterion answers a question about geometry, and your labels answer
+a question about the world.** Those coincide only when the thing the classes were
+named after is the thing the measurements capture. Two varieties that overlap in
+shape space are one cluster however you count, and one that splits into large and
+small specimens is two. No criterion reading only the geometry could have found 7,
+because 7 is not what the geometry says.
+
+That reframes the three answers above. They were not failing to find 7. They were
+answering a different question correctly and being marked against the wrong key.
 
 ## What DBSCAN adds, and what it does not
 
@@ -221,6 +259,9 @@ produced 0 clusters on one null produced 5 on another.
 | **Next** | [Hierarchical clustering](../03-hierarchical-clustering/), which gives every k at once and moves the decision to where you cut the tree |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

@@ -71,14 +71,47 @@ of rows, plain least squares was fine here.
 
 ![Path](figures/fig-02-path.png)
 
-Every weight shrinks toward zero and **none of them reaches it**. That is the L2
-signature. [Lasso](../05-lasso-regression/) is the version that sets weights to
-exactly zero.
+I captioned this "every weight shrinks toward zero and none reaches it". The
+second half is right. The first half is not, and the printout says so: **6 of the
+9 weights do not fall monotonically at all**, and **4 change sign** somewhere on
+the path.
+
+| Coefficient | Smallest alpha | Largest magnitude, and where | Largest alpha |
+|---|---|---|---|
+| `MedInc` | −0.329 | 0.415 at alpha 265 | +0.1151 |
+| `HouseAge` | +0.119 | 0.160 at alpha 2,360 | +0.0256 |
+| `Longitude` | −0.870 | 0.870 at alpha 0.001 | −0.0122 |
+
+What *is* monotone is the quantity the penalty actually charges for: the length of
+the whole weight vector, **1.788 down to 0.169, falling at every step**. Ridge is
+free to reshuffle weight between correlated features while the total shrinks, so a
+path with a rising line in it is not a broken solver.
+
+The twins do that reshuffling in the open. They start at −0.329 and +1.158, an
+uneven split of the same 0.830, and converge: 0.394 and 0.436 by alpha 10, both
+**0.322** by alpha 10,000. That is the **grouping effect**, and it is why the
+squared penalty prefers spreading weight evenly across identical features
+(2 × 0.5² beats 1²). It returns in [elastic net](../06-elastic-net/).
+
+Nothing reaches zero: the smallest coefficient at the largest alpha is
+**0.003863**. Ridge shrinks; it does not select.
+[Lasso](../05-lasso-regression/) is the version that sets weights to exactly zero.
 
 ![Choosing alpha](figures/fig-03-choosing-alpha.png)
 
-Cross-validation picked **alpha ≈ 11.7**. Push it to 10⁵ and the model degrades to
-RMSE 1.02, so much penalty it is nearly a constant.
+This chart has no U in it. Across every alpha from 0.001 to 100 the
+cross-validated RMSE moves by **0.000219 in total** and never leaves the ordinary
+least squares line by more than **0.000184**. Cross-validation picks **alpha
+11.690**, which beats plain OLS by **0.000035** RMSE, about three dollars fifty on
+a target measured in hundreds of thousands. The curve does not start climbing
+until **alpha 194.149**; push it to 10⁵ and RMSE degrades to 1.02, so much penalty
+the model is nearly a constant.
+
+So the shape is a flat line followed by a cliff, not a valley. Seeing a real
+minimum needs enough features relative to rows that unregularised least squares
+overfits, and 20,640 rows against 9 columns is not that. The procedure is still
+right; it just has nothing to find here, and reporting "nothing to find" is the
+procedure working.
 
 ## The scaling argument, which surprised me
 
@@ -116,6 +149,9 @@ promises the penalty responds to usefulness rather than to measurement units.
 | **Watch out** | Choose `alpha` inside cross-validation, never by peeking at the test set |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

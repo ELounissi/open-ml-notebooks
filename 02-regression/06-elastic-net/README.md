@@ -54,14 +54,44 @@ Four near-identical income columns. Ridge at `alpha=1.0`, the rest at `alpha=0.0
 
 Read the individual columns, not the count. Lasso puts **0.777 of 0.777** on one
 twin and leaves the rest at zero. It picked a winner. Elastic Net at 0.5 spreads
-0.808 across four weights that sit between 0.185 and 0.212, within 0.027 of each
-other. That even split is the grouping effect, and neither parent penalty produces
-it.
+0.808 across four weights that sit between 0.185 and 0.212, a span of **0.028**.
+That even split is the grouping effect, and neither parent penalty produces it.
 
-Ridge keeps all four too, but unevenly, and one comes out **negative**: a column
-that is a noisy copy of a positive predictor is given a negative weight so the
+Ridge keeps all four and makes a mess of them: a span of **0.844**, wider than
+lasso's, with one copy of a positive predictor handed a **negative** weight so the
 others can be larger. It also keeps all 20 noise columns. Elastic Net at 0.5 keeps
 6, at 0.9 keeps 2.
+
+That row was invisible in the first version of this figure, which was a stacked
+bar. A stacked bar draws −0.343 *downward* from the running total, painting over
+the segment beneath it, so the rendered ridge bar showed no negative anywhere and
+left only about a third of `copy0`'s segment visible, reading as a small positive
+rather than as 0.501. Grouped bars and a zero line,
+and the row says what it always said. A chart that hides the thing the prose is
+pointing at gets redrawn, not recaptioned.
+
+### Ridge does group, once it is paying attention
+
+Ridge's row is drawn at `alpha=1`, and that is a statement about alpha rather than
+about L2. Raise it on the same four columns:
+
+| alpha | MedInc | copy0 | copy1 | copy2 | Span | Sum |
+|---|---|---|---|---|---|---|
+| 1 | +0.284 | +0.501 | **−0.343** | +0.387 | 0.844 | 0.830 |
+| 10 | +0.220 | +0.289 | +0.063 | +0.259 | 0.227 | 0.830 |
+| 100 | +0.210 | +0.219 | +0.190 | +0.215 | **0.028** | 0.834 |
+| 1000 | +0.208 | +0.210 | +0.206 | +0.209 | **0.004** | 0.833 |
+
+The L2 penalty charges for the *length* of the weight vector, and four weights of
+0.2 cost a quarter of what one weight of 0.8 costs, so an even split is the cheap
+way to deliver a given total. At `alpha=1` on 20,640 rows the penalty is a
+rounding error next to the data term and what you see is least squares picking an
+arbitrary point on a flat ridge.
+
+So the top row of that chart is a **weak penalty against a strong one**, labelled
+by penalty. What Elastic Net genuinely has is that it reaches the grouped solution
+at an alpha two orders of magnitude smaller, and zeroes noise on the way, which
+ridge never does at any alpha.
 
 The `twin sum` column is the check that everyone is solving the same problem: the
 total income weight runs 0.777 to 0.830 across every row. They differ only in how
@@ -98,10 +128,12 @@ A 6 × 25 grid (`l1_ratio` in {0.1, 0.3, 0.5, 0.7, 0.9, 0.99}, `alpha` on
 | Best on the grid (`alpha=0.00316`, `l1_ratio=0.9`) | **0.7265** |
 | Worst on the grid | 1.1539 |
 
-The full span is 0.4274 RMSE, and essentially all of it is the `alpha` axis. The
-valley is broad and flat along `l1_ratio`, so getting the mix approximately right
-is enough while getting `alpha` wrong costs you more than half the error again.
-Tune `alpha` carefully, `l1_ratio` casually.
+The full span is 0.4274 RMSE, and essentially all of it is the `alpha` axis.
+Holding `alpha` at its best value and sweeping `l1_ratio` across all six settings
+moves RMSE by **0.0003**; holding `l1_ratio` and sweeping `alpha` across all 25
+moves it by **0.4274**. Tune `alpha` carefully, `l1_ratio` casually. And note what
+the flat axis implies: cross-validation has almost nothing to go on when it picks
+`l1_ratio`, which is what the next section pays for.
 
 ## Is any of it worth it?
 
@@ -112,14 +144,18 @@ landed on 10 noise columns and 2 twins, **identical to `LassoCV`**, and nothing
 like the 4-twin even split that Elastic Net produced at `l1_ratio=0.5`.
 
 That is not a bug, it is the same trap as [`LassoCV` not being a feature
-selector](../05-lasso-regression/). Cross-validation chose the pair that minimises
-prediction error, and the grid says that pair is `l1_ratio=0.9` with
-`alpha=0.00316`, L1-heavy and very weak. At that setting Elastic Net *is* Lasso,
-grouping effect and all its stability included.
+selector](../05-lasso-regression/), arriving one chapter later by a different
+route. Cross-validation searched for the pair minimising prediction error, the
+`l1_ratio` axis is flat to within 0.0003 so it had almost nothing to go on there,
+and the flat stretch it settled into is the L1-heavy end: `l1_ratio=0.9` with
+`alpha=0.00316`. At that setting Elastic Net *is* Lasso for practical purposes,
+which means **the grouping effect is lost, and the stability that came with it is
+lost too**. That is the one thing you reached for Elastic Net to get.
 
 So: if you want the grouping effect, you have to ask for it. Pick a lower
-`l1_ratio` yourself, or restrict the search range. Letting CV pick freely on this
-data cost 0.0003 RMSE and gave the behaviour back to Lasso.
+`l1_ratio` yourself, or restrict the search range, and pay the RMSE it costs,
+which here is fractions of a thousandth. Letting CV choose freely hands the
+behaviour back to Lasso while the score stays flat enough that nothing warns you.
 
 ## Cheat sheet
 
@@ -129,11 +165,14 @@ data cost 0.0003 RMSE and gave the behaviour back to Lasso.
 | **Prefer Lasso when** | Features are largely independent and you want the smallest model |
 | **Prefer Ridge when** | You want stable coefficients and have no interest in dropping columns |
 | **Scaling** | Required, as for both parents. The penalty is unit-blind |
-| **Main dials** | `alpha` for strength, `l1_ratio` for the mix. `alpha` spanned 0.4274 RMSE here; `l1_ratio` barely moved it |
+| **Main dials** | `alpha` for strength, `l1_ratio` for the mix. Sweeping `alpha` spanned 0.4274 RMSE here; sweeping `l1_ratio` spanned 0.0003 |
 | **Watch out** | `ElasticNetCV` optimises prediction, so it drifted to `l1_ratio=0.9` and selected exactly like Lasso. Constrain the range if grouping is the goal |
 | **Watch out more** | Two hyperparameters is twice the chance of tuning on the test set. Keep the search inside the outer folds, and expect to raise `max_iter` |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

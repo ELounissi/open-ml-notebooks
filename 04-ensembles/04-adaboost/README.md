@@ -45,11 +45,11 @@ $\alpha = \frac{1}{2}\ln\frac{1-e}{e}$ falls out.
 
 | Weighted error | Vote $\alpha$ | Wrong rows get |
 |---|---|---|
-| 0.05 | +2.944 | 19.00× heavier |
-| 0.20 | +1.386 | 4.00× heavier |
-| 0.40 | +0.405 | 1.50× heavier |
-| 0.50 | +0.000 | 1.00× heavier |
-| 0.60 | **−0.405** | 0.67× heavier |
+| 0.05 | +2.944 | 19.00x heavier |
+| 0.20 | +1.386 | 4.00x heavier |
+| 0.40 | +0.405 | 1.50x heavier |
+| 0.50 | +0.000 | 1.00x heavier |
+| 0.60 | **-0.405** | 0.67x heavier |
 
 A coin flip gets a vote of exactly zero. A learner worse than chance gets a negative
 vote, meaning it is used backwards, which is correct.
@@ -111,11 +111,18 @@ later stump is paid anything for getting them right.
 | Depth 3 | 200 | 0.0779 | 2.4715 | 0.9813 | 0.9132 |
 | Unlimited | **1** | **0.0000** | 1.0000 | 1.0000 | 0.8922 |
 
-An unlimited tree memorises the training set, its weighted error is zero, $\alpha$
-is undefined, and scikit-learn stops after one tree. The ensemble is a single
-overfitted tree wearing an ensemble's name, and it is the worst of the four.
-Depth 2 won here, and an ensemble of stumps is why: each stump touches one feature,
-so the total is a sum of one-dimensional step functions with no interaction terms.
+The last row is the result. An unlimited tree memorises the training set, its
+weighted error is zero, $\alpha$ is undefined, and scikit-learn stops after one
+tree. The ensemble is a single overfitted tree wearing an ensemble's name, and at
+0.8922 it sits about four standard errors below the rest on 1,855 test rows. Boost
+something strong enough to fit the training set and there is nothing left to boost.
+
+The first three rows are not a result. 0.9137, 0.9186 and 0.9132 span less than one
+standard error, so **depth 1 to 3 are indistinguishable here** and I would not read
+depth 2's nominal lead as a reason to use it. What the table does support is the
+shape of the advice: start at depth 1, go to 2 or 3 only if you have reason to
+think the problem needs feature interactions, since an ensemble of stumps is a sum
+of one-dimensional step functions and cannot represent any. Never unpruned.
 
 ## Label noise, mechanism and cost
 
@@ -126,18 +133,44 @@ last round those rows hold **35.7% of the total weight**, each flipped row carry
 on average **5× the weight of a clean one**.
 
 So most late stumps are indeed fitted to rows whose labels are wrong. What did not
-follow is the accuracy collapse. See the table at the top. The forest was the one
-that gave ground, dropping 0.0751 against AdaBoost's 0.0054.
+follow is the accuracy collapse. The forest was the one that gave ground, dropping
+0.0751 against AdaBoost's 0.0054, a difference of fourteen times.
 
-One warning if you open the notebook: the left panel's title was written before the
-run and reads that AdaBoost gives up ground faster. The curves it plots say the
-opposite. Trust the printed numbers. The reasonable reading is that concentrating
-weight on 36% of the mass is survivable when the clean signal is this separable, and
-that the textbook failure needs harder noise, more rounds, or less headroom. The
-mitigations still apply: fewer rounds, a smaller `learning_rate`, or logistic loss,
-which grows linearly in the margin so a hopeless row plateaus instead of exploding.
-The weight vector doubles as a label-error detector: rows AdaBoost pushes to the
-top of the ranking are worth reading by hand.
+The notebook prints that comparison paired, with both methods seeing the same
+flipped labels in each of three repeats and the spread of the paired difference
+alongside it, because three repeats is not many and a fourteen-fold claim deserves
+its own error bar.
+
+The textbook warning is not wrong, it is conditional, and this run fails three of
+its conditions at once.
+
+**Not enough rounds.** The damage is cumulative and bites once the ensemble has
+fitted every real pattern and only noise is left, which takes far more than a few
+hundred rounds.
+
+**A base learner that cannot reach one row.** A stump makes one axis-aligned cut
+across the whole dataset. It cannot carve out a single mislabelled point however
+heavy that point gets, so the weight changes which threshold is chosen and little
+else. Give AdaBoost deeper trees and it can isolate flipped rows one at a time, and
+then the weights turn into memorised noise.
+
+**Classes that do not overlap.** When a flipped row sits deep inside the wrong
+class, chasing it costs a stump more on the rows around it than it gains, so the
+greedy search declines. These two bean varieties give the noise nowhere useful to
+hide.
+
+The forest's larger drop has the mirror explanation: its trees are unpruned, so
+each fits the flipped rows it was handed, and at high noise enough of them agree
+near the boundary to move the vote. An additive model of stumps could not represent
+that noise if it wanted to.
+
+Run the same sweep with unpruned base learners, thousands of rounds, or genuinely
+overlapping classes and I would expect the familiar result. The mitigations still
+apply whenever it does bite: fewer rounds, a smaller `learning_rate`, or logistic
+loss, which grows linearly in the margin so a hopeless row plateaus instead of
+exploding. And either way the weight vector doubles as a label-error detector,
+since the rows AdaBoost pushes to the top of the ranking are often the rows that
+were entered wrong.
 
 ## Cheat sheet
 
@@ -154,6 +187,9 @@ top of the ranking are worth reading by hand.
 | **Next** | [Gradient boosting](../05-gradient-boosting/), which lets you choose the loss |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

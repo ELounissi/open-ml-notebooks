@@ -196,3 +196,17 @@ point of the book is that you finish it knowing *why*, not just *which*.
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·
 [pilot.tun@gmail.com](mailto:pilot.tun@gmail.com)
+
+---
+
+## Using this, and helping it reach people
+
+The code is MIT licensed. Copy it, adapt it, put it in your own projects or
+your teaching, no permission needed and no attribution required. If a chapter
+saves you an afternoon, that is what it was for.
+
+If you find it useful, **a star helps other people find it**, which is the only
+way a book like this travels. Corrections and disagreements are welcome in the
+issues, especially if you re-run something and get a different answer.
+
+---

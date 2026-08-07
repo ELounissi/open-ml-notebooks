@@ -97,9 +97,28 @@ need a picture for a human.
 | **Main dials** | `perplexity` (5 to 50, try several), `init="pca"` for stability |
 | **Cost** | Slow. Subsample above ~10,000 points, 3,000 beans took 12 s |
 | **Read from it** | Which points are neighbours. Nothing else |
-| **Do not read** | Cluster sizes, between-cluster distances, or empty space |
+| **Do not read** | Cluster sizes, between-cluster distances, or empty space. The objective cannot see any of them |
+| **Next** | [UMAP](../04-umap/), which buys some of PCA's properties back and measures how many |
+
+## Where this sits in Part 6
+
+[PCA](../01-principal-component-analysis/) is the opposite trade in every respect:
+a duller picture, axes that mean something, an exact inverse, safe inside a
+pipeline, and in its own chapter no measurable accuracy gain from reducing at all.
+This chapter buys a far better picture by giving up every one of those properties.
+
+That is the trade to keep in your head for the rest of Part 6. Neither
+[UMAP](../04-umap/) nor t-SNE looks at a distance again once the neighbour graph
+exists, which is exactly why their pictures separate clusters so cleanly and
+exactly why the sizes and gaps in them mean nothing. UMAP's chapter measures how
+much of the coarse arrangement survives instead of repeating the claim, and
+[feature selection](../05-feature-selection/) is the branch of Part 6 that keeps
+your column names rather than mixing them.
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

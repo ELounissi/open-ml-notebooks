@@ -8,7 +8,7 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 | | |
 |---|---|
 | **What you will learn** | Why a trained autoencoder cannot invent an image even though it reconstructs beautifully, what changes when the encoder returns a mean and a log-variance, why sampling has to be rewritten as `mu + sigma * epsilon` before a gradient can pass through it, what the weight on the KL term buys and costs at both extremes, and how to sample and interpolate once the space has no holes in it |
-| **You should already know** | [Autoencoders](../01-autoencoders/), [the PyTorch training loop](../../07-neural-networks/03-the-same-net-in-pytorch/), [maximum likelihood](../../04-probability/02-maximum-likelihood/) |
+| **You should already know** | [Autoencoders](../01-autoencoders/), [the PyTorch training loop](../../07-neural-networks/03-the-same-net-in-pytorch/) |
 | **Datasets** | Fashion-MNIST, the same 12,000 training and 5,000 test images used in [10-01](../01-autoencoders/) |
 | **Runtime** | Five to seven minutes on a laptop CPU, about two on a GPU |
 
@@ -76,7 +76,7 @@ at the batch sizes anyone uses.
 
 ![Beta sweep](figures/fig-03-beta-sweep.png)
 
-Five models in 53 seconds. Real images: 3.980 and 0.2739 on the last two columns.
+Five models in 26 seconds. Real images: 3.980 and 0.2739 on the last two columns.
 
 | beta | Recon | KL | Mean sigma | Active dims | Recon spread | Sample to real | Sample spread |
 |---|---|---|---|---|---|---|---|
@@ -138,11 +138,14 @@ a rounding error. The real difference is upstream, in the sampling table.
 | **Avoid it when** | Sharpness is the deliverable. A per-pixel likelihood averages away the detail people judge an image by |
 | **The encoder** | Two heads on a shared trunk, `mu` and `logvar`. Predict the log-variance so the layer output can be any real number |
 | **The sampler** | `z = mu + exp(0.5 * logvar) * randn_like(mu)`. Never `Normal(mu, sigma).sample()`, which detaches |
-| **beta** | 1 is the ELBO. At 0 you get the plain autoencoder back; at 4 half the dimensions are already dead |
+| **beta** | 1 is the ELBO. At 0 you get the plain autoencoder back; at 4 only 4 of 16 dimensions are still active, so three quarters are already dead |
 | **Diagnose collapse** | Active dimensions and reconstruction spread. The loss looks respectable at every beta in the sweep |
 | **Diagnose samples** | Distance to real data and spread together. The lowest distance here belongs to a model drawing one garment |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

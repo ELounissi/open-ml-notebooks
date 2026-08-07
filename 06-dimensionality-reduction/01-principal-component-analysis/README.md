@@ -62,24 +62,34 @@ yourself. When it works it is a real insight.
 
 ![Does it help](figures/fig-04-does-it-help.png)
 
-| Dataset | All raw columns | Best PCA result |
-|---|---|---|
-| UCI Dry Bean | 0.9234 (16 cols) | 0.9239 at 10 components |
-| Breast Cancer | 0.9807 (30 cols) | 0.9807 at **30** components |
+| Dataset | All raw columns | Best PCA result | Difference |
+|---|---|---|---|
+| UCI Dry Bean | 0.9234 (16 cols) | 0.9239 at 10 components | +0.0005 |
+| Breast Cancer | 0.9807 (30 cols) | 0.9807 at **30** components | 0.0000 |
 
-**PCA never beat using every column.** Both curves climb toward the baseline and
-flatten onto it; neither rises above it.
+Both differences are ten-thousandths, and the spread across the five folds is an
+order of magnitude larger. So the honest sentence is not that PCA lost, and not
+that it won by a hair. **PCA did not change the accuracy on either dataset**, and
+the sign of a gap that size carries no information at all.
 
-I expected Breast Cancer to show a clear gain: thirty correlated columns against
+I expected Breast Cancer to show a clear gain. Thirty correlated columns against
 only 569 rows is exactly the crowded regime where dropping dimensions is supposed
-to pay. It did not. The best score came from keeping all thirty components, which
-is just a rotation and no reduction at all.
+to pay, and the best score came from keeping all thirty components, which is a
+rotation and no reduction at all.
 
-What PCA *did* buy is **compression at no cost in accuracy**: six components match
-all sixteen exactly on Dry Bean, so ten columns can go for free. That is worth
-having when a model is slow, when storage matters, or when you need a
-two-dimensional picture of something with sixteen axes. It is not an accuracy
-trick, and material presenting it as one is overselling it.
+The reason is the useful part, because it says when the textbook case would have
+turned up. Reducing dimensions helps a model starved of rows relative to its
+parameters. Logistic regression on thirty scaled columns fits thirty-one numbers
+from 569 rows, and scikit-learn regularises it by default on top of that. The
+regularisation is already doing PCA's job and doing it better, because it shrinks
+the directions that do not help the classes rather than the directions that
+happen to have small variance. Turn the penalty off, or push the row count down
+towards the column count, and the picture changes.
+
+What PCA *did* buy is **compression at no measurable cost**. That is worth having
+when a model is slow, when storage matters, or when you need a two-dimensional
+picture of something with sixteen axes. It is not an accuracy trick, and material
+presenting it as one is overselling it.
 
 ## Cheat sheet
 
@@ -90,8 +100,26 @@ trick, and material presenting it as one is overselling it.
 | **Scaling needed** | Yes, whenever units differ. Otherwise the largest-unit column becomes PC1 |
 | **Main dials** | `n_components`, an integer, or a variance fraction like `0.95` |
 | **Watch out** | Fit PCA **inside** the pipeline. Fitting on all data before splitting leaks test information |
+| **Before believing a gain** | Put the difference next to the spread across folds. Both of this chapter's gains vanish under that test |
+
+## Where this chapter sits in Part 6
+
+PCA is the linear answer, and the rest of Part 6 is what you reach for when it is
+not enough. Come back here when the non-linear methods start looking impressive.
+
+- [Kernel PCA, ICA and NMF](../02-kernel-pca-ica-nmf/) keep the matrix machinery
+  and change what is being maximised.
+- [t-SNE](../03-t-sne/) and [UMAP](../04-umap/) give up the rotation entirely.
+  They make far better pictures, and you are allowed to read far less into them:
+  neither objective can see a distance once the neighbour graph exists.
+- [Feature selection](../05-feature-selection/) does the opposite of all of these
+  and drops columns rather than mixing them, which is the option to take when
+  somebody has to explain the model afterwards.
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

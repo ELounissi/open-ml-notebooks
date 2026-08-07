@@ -32,7 +32,7 @@ is smaller than the noise. Stacking is not useless, but on a well-tuned gradient
 booster with five look-alike friends this is how the numbers come out, and nobody
 prints the "broke 54" line on a leaderboard.
 
-## The six members, and why soft voting is the better rule
+## The six members, and the vote that hard voting won
 
 | Member | Test accuracy | Fit time | Mean confidence in its own winner |
 |---|---|---|---|
@@ -43,33 +43,63 @@ prints the "broke 54" line on a leaderboard.
 | Decision tree | 0.8844 | 0.16 s | **1.000** |
 | Naive Bayes | 0.7493 | 0.01 s | 0.902 |
 
-Hard voting matched the best member exactly at **0.9185 (+0.0000)**, soft voting came
-in at **0.9181 (-0.0004)**, and the two rules disagreed on only **58 of 2,700 rows**
-with the hard vote tied on **53**.
+The textbook rule is that soft voting beats hard voting, because averaging
+probabilities keeps the confidence that counting labels throws away.
 
-Test row 69 shows why confidence is information. True class SIRA; hard voting said
-HOROZ 4-2 and was wrong, soft voting said SIRA and was right. Three of those four HOROZ
-votes were cast at **0.508**, **0.520** and **0.607** (barely leaning) against SIRA
-votes of **0.667** and **0.998**. The confidence column is the caveat in the other
-direction: the decision tree reports **1.000** on every row it names, and a loud member
-drags a soft vote toward itself regardless of skill. Stacking can discount it.
+**Hard voting won.** It matched the best member exactly at **0.9185 (+0.0000)**;
+soft voting came in at **0.9181 (-0.0004)**. Neither beat the best single member.
+The two rules disagreed on only **58 of 2,700 rows**, with the hard vote tied on
+**53**, so everything here is decided by a handful of beans.
 
-## Diversity is the whole requirement
+The mechanism does work where it is supposed to. Test row 69: true class SIRA, hard
+voting said HOROZ 4-2 and was wrong, soft voting said SIRA and was right. Three of
+those four HOROZ votes were cast at **0.508**, **0.520** and **0.607**, barely
+leaning, against SIRA votes of **0.667** and **0.998**.
+
+It loses elsewhere for the reason in the confidence column. **Confidence is only
+information if it is honest.** The decision tree reports **1.000** on every row it
+names, because an unrestrained tree's leaves are pure by construction, while
+scoring 0.8844. Naive Bayes averages **0.902** while scoring **0.7493**. Soft
+voting hands both a megaphone sized to a confidence neither earned; hard voting
+caps every member at one vote, which on these six is the safer cap.
+
+So the rule is conditional: **soft voting beats hard voting when the members are
+calibrated**, and two of these six are badly uncalibrated. See
+[probability calibration](../../03-classification/09-probability-calibration/).
+Calibrate first, then measure both rules. It costs one line. Stacking has a third
+answer, since a meta-model can learn to discount a loud member.
+
+## Diversity is necessary, and this split could not show it
 
 ![Error correlation](figures/fig-01-error-correlation.png)
 
 Mean pairwise correlation between members' error indicators: **0.540**. Most alike were
 logistic and k-NN at **0.740**, least alike gradient boosting and naive Bayes at
-**0.287**. Across every three-member subset the best trio gained **+0.0037** and the
-worst **lost 0.0159**, at **r = 0.36** between trio similarity and trio gain.
+**0.287**.
+
+The control was meant to confirm the rule. **It came out backwards.**
 
 | Family mix | Mean error correlation | Vote | Best member | Gain |
 |---|---|---|---|---|
-| Five k-NN variants | **0.888** | 0.9144 | 0.9137 | +0.0007 |
-| Six different families | **0.540** | 0.9181 | 0.9185 | -0.0004 |
+| Five k-NN variants | **0.888** | 0.9144 | 0.9137 | **+0.0007** |
+| Six different families | **0.540** | 0.9181 | 0.9185 | **-0.0004** |
 
-Five k-NN models with different $k$ are five views of one geometry. Averaging cannot
-cancel an error every member makes. Check the correlation matrix first.
+The near-identical set, about as undiversified as five models can be, is the only
+one of the two that gained. The trio scatter agrees: the rule predicts a negative
+slope, less gain as members get more alike, and the fitted correlation is
+**r = 0.36**, the wrong sign. The chart title says so honestly.
+
+Before rewriting the theory, check the scale. The best trio gained **+0.0037** and
+the worst lost **0.0159**, while one standard error at 2,700 test rows is
+**0.0053**. Almost every number here is smaller than its own error bar, and the
+twenty trios are not independent, being drawn from the same six models on the same
+rows. An r of 0.36 across twenty overlapping points is not evidence either way.
+
+The honest reading: this experiment **could not resolve** the effect it was built
+to show. Low error correlation really is necessary, since averaging cannot cancel a
+mistake every member makes, and that is arithmetic rather than a measurement. What
+this split shows is that it is not sufficient. Check the correlation matrix first,
+because a high one rules the ensemble out and a low one does not rule it in.
 
 ## The out-of-fold rule, and the leak done on purpose
 
@@ -103,8 +133,22 @@ the model, you build a worse one.
 | **Gradient boosting** | **+0.44** | **+1.86** | BOMBAY (+1.11) |
 | Naive Bayes | +0.58 | +0.52 | BOMBAY (+1.33) |
 
-Read the decision tree row across: **+0.36** honest, **+1.88** leaky, five times as
-much, because in-sample it scored 1.0000. That inverted weighting is what gets shipped.
+**Read the table, not the summary statistic.** The obvious way to describe a leak is
+that trust piles onto one member, and the spread of trust refuses to say that:
+**1.39 honest against 1.37 leaky**, essentially unchanged. On that diagnostic alone
+you would conclude nothing happened.
+
+What the leak does is **reorder** who gets believed. Honestly, the meta-model leans
+on logistic (**+1.75**) and k-NN (**+1.66**), the two members that cannot memorise,
+and trusts the decision tree (**+0.36**) and gradient boosting (**+0.44**) least.
+Feed it in-sample columns and that inverts: the tree jumps to **+1.88** and boosting
+to **+1.86**, both now above everything else, while logistic falls to **+0.81**. The
+three members that scored a perfect 1.0000 on their own training rows are exactly
+the ones the leak promotes. That inverted weighting is what gets shipped.
+
+The lesson is about diagnostics as much as leakage: a statistic that averages over
+the thing you are hunting will hide it.
+
 Per-class weights are also what voting cannot express: a vote gives every member the
 same say on every class forever, and can never subtract a member. `StackingClassifier`
 reproduced my hand-built version to **0.0000** difference.
@@ -122,22 +166,27 @@ of a vote, managed **0.7224**, worse than boosting alone, because it counted rid
 ![Cost and gain](figures/fig-04-cost-and-gain.png)
 
 Stacking with $k$ folds and $M$ members costs $M(k+1)$ base fits plus the meta-model,
-and every member has to be trained, versioned, loaded and served. Soft voting is nearly
-free once the members exist and rarely hurts, so it is a reasonable default. Stacking
-earns its cost when the members are genuinely different.
+and every member has to be trained, versioned, loaded and served. Voting is nearly
+free once the members exist and rarely hurts much, so it is a reasonable default,
+but pick hard or soft by measuring both rather than by reputation. Stacking earns
+its cost when the members are genuinely different, and here its 0.0022 win is 0.4
+standard errors, which is a result to report as "no measurable difference".
 
 ## Cheat sheet
 
 | | |
 |---|---|
-| **Hard voting** | Counts labels. Tied on 53 of 2,700 rows here. Use only when a member cannot give probabilities |
-| **Soft voting** | Averages probabilities. Default choice, but an overconfident member dominates it. Calibrate first |
-| **Diversity** | Check pairwise error correlation first. Five k-NN variants sat at 0.888 and gained +0.0007 |
+| **Hard voting** | Counts labels and ties on an even number of members (53 of 2,700 rows here), but caps every member at one vote, which won: 0.9185 against 0.9181 |
+| **Soft voting** | Averages probabilities. Better in theory and only in practice once members are calibrated: an overconfident member dominates it. Calibrate first, then try both |
+| **Diversity** | Check pairwise error correlation first. High rules the ensemble out; low does not rule it in. Five k-NN variants at 0.888 gained +0.0007 while six families at 0.540 gained -0.0004 |
 | **Stacking** | A small meta-model, logistic or ridge, learns per-class weights and may weight a member negatively |
 | **The rule** | Meta-model features must be out-of-fold. The leak invented +0.0793 and cost -0.0078 |
 | **Cost** | $M(k+1)$ fits. Compare the gain to one standard error (0.0053 here) before believing it |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

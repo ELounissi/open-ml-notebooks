@@ -10,7 +10,7 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 | **What you will learn** | How masked language modelling turns unlabelled text into supervision, what a pretrained checkpoint actually contains, how fine-tuning compares against a frozen feature extractor and against random initialisation across a sweep of labelled-set sizes, how much of the pretraining objective fine-tuning destroys, and whether discriminative learning rates fix it |
 | **You should already know** | [The Transformer, built from scratch](../07-the-transformer/). [Transfer learning](../../08-computer-vision/05-transfer-learning/) runs the same three-way comparison on images |
 | **Datasets** | A synthetic language defined in the notebook: 24,000 sentences of 9 tokens, 216,000 tokens in all, over a vocabulary of 73. Nothing is downloaded and no pretrained weights are used |
-| **Runtime** | Three to four minutes, torch 2.11.0+cu128. Pretraining takes 13 s on 71,616 encoder parameters and the 36-run sweep takes 57 s |
+| **Runtime** | Three to four minutes, torch 2.11.0+cu128. Pretraining takes 13 s on 71,616 encoder parameters and the 36-run sweep takes 55 s |
 
 ---
 
@@ -248,6 +248,9 @@ that the backbone is wrong.
 | **The caveat** | One small synthetic language and two seeds, with a largest seed spread of 0.0567. The mechanisms transfer, the exact margins do not |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

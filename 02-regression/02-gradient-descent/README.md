@@ -18,11 +18,11 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 
 Everyone repeats that stochastic gradient descent is the fast one. Counted in seconds
 rather than passes over the data, here it was the slow one *and* the inaccurate one.
-Full batch finished 1,500 updates in **0.205 s** and landed **1.000e-16** from the best
-achievable loss; stochastic descent spent **0.366 s** on 41,250 updates and stopped
-**3.699e-02** away, fourteen orders of magnitude worse, for 78% more wall-clock time.
-That is not an argument against small batches, it is an argument about what makes them
-fast: memory pressure and model shape, neither of which applies here.
+Full batch finished 1,500 updates in **0.181 s** and landed **1.000e-16** from the best
+achievable loss; stochastic descent spent **0.355 s** on 41,250 updates and stopped
+**3.699e-02** away, fourteen orders of magnitude worse, for **96% more wall-clock
+time**. That is not an argument against small batches, it is an argument about what
+makes them fast: memory pressure and model shape, neither of which applies here.
 
 ## Why iterate when a formula exists
 
@@ -30,16 +30,30 @@ fast: memory pressure and model shape, neither of which applies here.
 
 | Features | Form $X^\top X$ | Solve | One gradient step |
 |---|---|---|---|
-| 100 | 0.0027 s | 0.1555 s | 0.00052 s |
-| 400 | 0.0089 s | 1.1905 s | 0.00093 s |
-| 1600 | 0.0830 s | 1.2883 s | 0.00392 s |
+| 100 | 0.00162 s | 0.00940 s | 0.00028 s |
+| 200 | 0.00561 s | 0.08703 s | 0.00048 s |
+| 400 | 0.00602 s | 0.27528 s | 0.00067 s |
+| 800 | 0.02150 s | 0.58247 s | 0.00147 s |
+| 1600 | 0.07450 s | 0.73075 s | 0.00384 s |
 
-Fitted exponents against theory: forming $X^\top X$ came out at **1.61** (theory says
-2), one gradient step at **1.04** (theory says 1), and the solve at **0.06** against a
-theoretical 3. Say that last one plainly: at these sizes a multithreaded BLAS solve is
-nowhere near its asymptotic regime, so the exponent is meaningless and the time
-projection built on it is nonsense. The memory projection is not: **$X^\top X$ alone
-would need 80 GB** at 100,000 features.
+Theory says every doubling of the feature count multiplies the solve by 8. Measured,
+the four doublings gave **9.3×, 3.2×, 2.1×, 1.2×**, and the exponent fitted on the
+largest three sizes came out at **0.70** against a theoretical 3. Forming $X^\top X$
+fitted **1.81** (theory 2) and one gradient step **1.25** (theory 1).
+
+Say the solve one plainly: at these sizes a multithreaded LAPACK solve is nowhere near
+its asymptotic regime, so the exponent is meaningless and any time projection built on
+it is nonsense. The notebook prints both projections to 100,000 features so you can
+see how bad it gets: **0.00 hours** from the measured exponent against **50 hours**
+from the theoretical one, off the same last data point. The memory projection is the one that
+survives, because it is arithmetic on the shape rather than a fitted slope:
+**$X^\top X$ alone would need 80 GB** at 100,000 features.
+
+The two exact-solution columns also never cross. `solve` is above `form XtX` at every
+width measured, 5.8× at 100 features, 45.7× at 400, 9.8× at 1600. Forming the Gram
+matrix is $O(mn^2)$ with 5,000 rows against an $O(n^3)$ solve, so below about 5,000
+features the forming should dominate and it never does. At this scale you are timing
+constants and parallel efficiency, not exponents.
 
 Cost is the reason people quote. Rank is the reason that stops you. Duplicate one
 column and the matrix has 9 columns at **rank 8**; numpy refused with `Singular
@@ -91,20 +105,34 @@ at ±5 touches **282 of 20,640 rows** and brings the max to **70.8**. Each metho
 gets the largest step safe for its own gradient estimate, so this compares batch sizes
 and not learning rates.
 
-| Method | Updates | Seconds | Final gap | Uphill steps | Wobble |
-|---|---|---|---|---|---|
-| Batch, all 20,640 rows | 1,500 | **0.205** | **1.000e-16** | 21 / 299 | 0.808 |
-| Mini-batch, 256 rows | 16,000 | 0.377 | 1.711e-05 | 85 / 319 | 0.281 |
-| Stochastic, 1 row | 41,250 | 0.366 | 3.699e-02 | 140 / 274 | 0.293 |
+| Method | Updates | Seconds | Final gap | Uphill steps | Uphill above 1e-15 | Wobble |
+|---|---|---|---|---|---|---|
+| Batch, all 20,640 rows | 1,500 | **0.181** | **1.000e-16** | 21 / 299 | **0** | 0.808 |
+| Mini-batch, 256 rows | 16,000 | 0.352 | 1.711e-05 | 85 / 319 | 85 | 0.281 |
+| Stochastic, 1 row | 41,250 | 0.355 | 3.699e-02 | 140 / 274 | 140 | 0.293 |
 
 Per pass over the data the stochastic curve is far ahead, and the right panel shows it:
 that is why nobody trains a network full-batch. Per second the ordering reverses,
 because one batch step is a single BLAS call across every core on a cached matrix while
-41,250 single-row steps are 41,250 trips through the Python interpreter. The wobble
-column is the spread of the remaining gap on a log scale over the last 40% of each run,
-so batch's 0.808 is large because that run was still falling through orders of
-magnitude, not because it was noisy. And at a constant learning rate stochastic descent
-never converges to a point; it settles into a cloud, and decaying the rate shrinks it.
+41,250 single-row steps are 41,250 trips through the Python interpreter.
+
+**Two of those columns lie, and the sixth one is there because of it.** Read the raw
+uphill count and the wobble on their own and full batch looks like the twitchiest of
+the three, 21 uphill moves and the largest wobble at 0.808. Batch descent under the
+stable ceiling is monotone and cannot do that. The sixth column says what happened:
+**none** of batch's 21 uphill moves happened while a gap above 1e-15 remained, and the
+largest of them is 1.220e-16. Batch is the only run that reached the exact minimum, so
+for its last 50 recorded points the plotted "distance from the best achievable loss" is
+a subtraction of two doubles agreeing to every bit, and rounding goes up as often as
+down. The wobble column, being the spread of the log of that quantity, then hands its
+biggest number to the run that converged best.
+
+The general form is worth keeping: **a convergence diagnostic measured against a known
+optimum stops meaning anything once the difference reaches machine precision**, and it
+gives no warning, it just starts printing numbers that read like instability.
+Mini-batch's 85 and stochastic's 140 are real. And at a constant learning rate
+stochastic descent never converges to a point; it settles into a cloud, and decaying
+the rate shrinks it.
 
 ## What scaling saves
 
@@ -135,6 +163,9 @@ solution. The moment you walk downhill, units decide whether the walk finishes a
 | **Stopping rule** | Relative gradient length, plus an iteration cap, plus a finite-loss check |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

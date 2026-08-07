@@ -26,12 +26,19 @@ The tree tries **every feature at every threshold** and keeps the best. Greedy:
 it never looks ahead.
 
 The notebook implements that search from scratch. Starting impurity is **0.8271**,
-and the single best question in the whole dataset turns out to be:
+and the best question it finds is:
 
 > is `MajorAxisLength` ≤ 278.90 ?
 
 which removes **0.1423** of impurity and cleanly separates small varieties from
 large ones. One question, chosen by arithmetic alone.
+
+That threshold is approximate, and the notebook says why. The scratch search
+scores **40 quantiles per feature** rather than all 13,611 distinct values, the
+same shortcut scikit-learn's histogram splitters take. It lands near the optimum
+rather than on it. Fit a real tree and its exhaustive search picks **280.704**
+for the same feature, which is what you see at the root of the diagram below.
+The question is the finding; the third decimal place is not.
 
 ## Reading the tree
 
@@ -40,6 +47,12 @@ large ones. One question, chosen by arithmetic alone.
 Eight leaves, and every path from root to leaf is a rule you can state in a
 sentence and check against common sense. Almost nothing else in this book offers
 that.
+
+Each box carries the question, the share of beans reaching it, and the class it
+predicts. The seven-number class-distribution array `plot_tree` draws by default
+is removed: with seven varieties it is the widest line in every box, and it
+pushed the eight leaves into each other until their text clipped. A diagram that
+claims to be readable has to be readable.
 
 ## Depth is the whole story
 
@@ -89,6 +102,9 @@ the building block for the ensembles that follow.
 | **Watch out** | Unconstrained trees always hit 100% training accuracy, and they are unstable: reshuffle and the tree changes shape |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

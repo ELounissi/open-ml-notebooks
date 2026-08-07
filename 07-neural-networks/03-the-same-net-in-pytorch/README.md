@@ -74,9 +74,21 @@ appear, evaluating in training mode gives quietly wrong numbers.
 | 4 | 14,023 | 0.9324 |
 
 Adding layers is now a one-character change, and on this dataset it buys nothing:
-the four results span 0.005, which is noise. Depth pays when the data has
-hierarchical structure: edges into shapes into objects, characters into words into
-meaning. Sixteen geometric measurements of a bean do not.
+the four results span **0.0047**, and the [previous
+notebook](../02-mlp-and-backpropagation/) measured 0.0041 of movement on the same
+split from a hidden width that provably does not matter. Note that the deepest
+model scored *highest*, at 0.9324. Read that as what a null result looks like when
+you rank four numbers, rather than as evidence for depth.
+
+The y-axis on that chart is fixed rather than auto-scaled for exactly this reason.
+Left alone, matplotlib fits the axis to a 0.005 range, the depth-4 point leaps off
+the top of the panel, and the picture argues for a result the numbers do not
+support.
+
+Depth pays when the data has hierarchical structure: edges into shapes into
+objects, characters into words into meaning. Sixteen geometric measurements of a
+bean do not, so the flat line is the expected outcome rather than a disappointing
+one.
 
 **A framework makes any architecture cheap to try, and cheap to try is not the same
 as worth trying.**
@@ -92,6 +104,9 @@ as worth trying.**
 | **Reproducibility** | `torch.manual_seed` is necessary and not sufficient: GPU reductions are non-deterministic unless you ask otherwise |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

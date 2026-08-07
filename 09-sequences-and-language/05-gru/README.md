@@ -50,11 +50,14 @@ is twice as hard. A curve that goes down and back up is not describing an
 architecture, and any table built from one seed per point contains several of
 these.
 
-One result does survive the noise check, and it is the one that matters for the
-chapter's argument: **the equal-parameter GRU carried lag 64 at 1.000 where both
-other models sat near the chance level of 0.25.** Its longest lag at 90% is 64
-against 32 for the other two. The difference between the two GRU columns is not
-architecture at all. It is 5 units of hidden state.
+One cell of that table is worth flagging without promoting it: **the
+equal-parameter GRU carried lag 64 at 1.000 where both other models sat near the
+chance level of 0.25.** That is a large gap, but it is one seed at one lag, and
+the LSTM row two lines above it is proof that one seed at one lag can do anything.
+I repeated the seed check at lag 32, not at 64, so I cannot tell you whether the
+lag-64 result would hold. Take it as the reason to run the experiment, not as its
+result. What is worth noticing either way is what separates the two GRU columns:
+not architecture, since they are the same cell, but 5 units of hidden state.
 
 ![Copy task](figures/fig-04-copy-task.png)
 
@@ -106,15 +109,25 @@ difference. Neither matching is right on its own. Printing both is the point.
 |---|---|---|---|---|
 | LSTM | 64 | 24,714 | 0.854 | 0.51 |
 | GRU, equal hidden | 64 | 18,698 | 0.851 | 0.50 |
-| **GRU, equal parameters** | 76 | 24,938 | **0.856** | 0.52 |
+| GRU, equal parameters | 76 | 24,938 | 0.856 | 0.52 |
 
-**The spread across all three is 0.0050 accuracy**, against a chance level of
-0.10. The epoch-time ratios are 1.02x and 0.98x, which is to say nothing.
+The spread across all three is 0.0050 accuracy. One standard error on a
+proportion measured over 2,000 test rows is 0.0079, so the spread is smaller than
+the error bar on any single entry in the column. **These are one model as far as
+this task can tell**, and the order they came out in is a fact about which 2,000
+images landed in the test split. The epoch-time ratios, 1.02x and 0.98x, say
+nothing either.
 
-Report only the first two rows and you have "the GRU is 2% faster and 0.003 less
-accurate", which sounds like a trade. Add the third row and both halves of that
-sentence disappear: the GRU that costs the same as the LSTM is the most accurate
-model in the table and takes 0.01 s per epoch longer.
+That is the expected outcome rather than a disappointment. Twenty-eight steps is
+short enough that no state has to survive more than a few steps, so the memory
+machinery that distinguishes these two cells is barely being asked for. A task
+that cannot exercise the difference cannot measure it, which is why the copy task
+above exists.
+
+The trap here is the missing third row. Report only the first two and you have
+"the GRU is 2% faster and 0.003 less accurate", which reads like a trade-off.
+Both halves are inside the noise, and the row that would have told you so is the
+one a hidden-size comparison never prints.
 
 ## The speed argument, measured, and it does not hold
 
@@ -130,12 +143,14 @@ One forward and one backward pass over a fixed batch, in milliseconds:
 
 The GRU is supposed to be the faster cell because it is doing three quarters of
 the arithmetic. **At equal hidden size it was faster at three sequence lengths
-and slower at three**, and the printed ratio spans 0.92x to 1.14x. At 400 steps,
-where the recurrent work should dominate most clearly, the smaller model was the
-slower one: 5.81 ms against 5.32.
+and slower at three**, and the printed ratio spans 0.92x to 1.14x. A band that
+straddles one is not a small effect in one direction, it is no effect: I would not
+read the individual orderings, only the fact that they do not agree with each
+other.
 
-The equal-parameter GRU is worse still, running 8.52 ms at 400 steps against the
-LSTM's 5.32.
+The equal-parameter GRU is the one column where a difference is large enough to
+believe, 8.52 ms at 400 steps against the LSTM's 5.32, and it runs the wrong way
+for the folklore.
 
 The explanation is in the last printed line: **the LSTM's cost rose 1.7x for a
 40x longer sequence.** Per-step arithmetic is not what the clock is measuring at
@@ -202,6 +217,9 @@ hour looking for a bug that is not there.
 | **Next** | [Sequence to sequence with attention](../06-seq2seq-with-attention/), which uses a GRU as both encoder and decoder |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

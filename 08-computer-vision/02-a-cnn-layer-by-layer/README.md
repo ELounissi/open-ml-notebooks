@@ -46,8 +46,8 @@ shifts.
 
 | Model | Parameters | Test accuracy | Seconds/epoch |
 |---|---|---|---|
-| Convolutional | **105,866** | **0.8964** | **7.5** |
-| Dense | 118,282 | 0.8678 | 9.6 |
+| Convolutional | **105,866** | **0.8876** | **7.7** |
+| Dense | 118,282 | 0.8678 | 8.1 |
 
 The CNN wins on accuracy, parameter count, **and** speed. This is not extra
 capacity; it is better assumptions. The convolution knows the input is a grid and
@@ -89,6 +89,9 @@ real.** Errors scattered evenly across the matrix would suggest it had not.
 | **Watch out** | The flatten into the first dense layer usually holds most of the parameters. That is where overfitting starts |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

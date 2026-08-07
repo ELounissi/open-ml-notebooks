@@ -29,8 +29,11 @@ broken at the first level where its mean absolute slope error crosses 0.25.
 
 **Against high-leverage points Huber breaks at exactly the same contamination as
 plain least squares.** At 10% bad rows in x, Huber's slope error is **2.153** and
-ordinary least squares' is **2.124**, so the resistant loss is a shade worse than
-the loss it was brought in to replace.
+ordinary least squares' is **2.124**, against a true slope of 2.0. Those two are
+the same number as far as eight samples can tell, and that is the finding: not
+that Huber is worse, but that the resistant loss bought nothing at all over the
+loss it was brought in to replace. Both are off by more than the slope they were
+estimating.
 
 The mechanism is not a bug in the implementation. Huber downweights rows with
 large *residuals*. A leverage point sits far out in x, the line rotates to reach
@@ -51,15 +54,25 @@ top of the sweep, which the published breakdown points do not tell you:
 | 40% | 2.333 | 2.347 | 2.220 | **1.519** |
 | 45% | 2.342 | 2.346 | 2.262 | **1.747** |
 
-RANSAC is near-perfect up to 30% and then snaps. Theil-Sen degrades on a
-gradient from the first level and is never as good as RANSAC early, but it is
-**ahead of RANSAC by 0.70 at 40%** and by 0.52 at 45%. Whichever one you want
-depends on whether you would rather have an excellent answer that might be
-catastrophic or a mediocre answer that stays mediocre.
+RANSAC is near-perfect up to 30% and then snaps. Theil-Sen degrades on a gradient
+from the first level, is never as good as RANSAC early, and is **ahead of RANSAC
+by 0.70 at 40%** and by 0.52 at 45%.
+
+The shapes matter more than the crossing point. RANSAC either finds the right
+consensus or it does not, so past its breakdown its errors are close to bimodal
+and its mean over eight samples is really a mixture of successes and disasters.
+Theil-Sen takes a median over pairs, so contamination moves it a little at a time
+and it has no cliff to fall off. Choosing between them is choosing between an
+excellent answer that might be catastrophic and a mediocre answer that stays
+mediocre, and in a pipeline nobody is watching, the second is usually what you
+want.
 
 Theil-Sen's measured breakdown of 20% also sits below the 29% usually published
-for it, which is what an asymptotic adversarial number does when you meet it on
-200 rows with a specific kind of outlier.
+for it. That is not the textbook being wrong. A published breakdown point is an
+asymptotic worst case over all possible contaminations, and this is 200 rows with
+one specific kind of outlier, so agreement to within a level is about as close as
+the two definitions can get. Measuring it on your own data is worth more than
+quoting it, because the number you get is the one that applies to your adversary.
 
 ## One bad row, where Huber looks like the hero
 
@@ -130,11 +143,21 @@ can explain.
 | Theil-Sen | 75.75 | 55.13 | 104.63 | 479.44 | 420 | 18.43 |
 
 Huber and least squares disagree about which is better and both are right. Huber
-is **9.39 hires closer on the median hour** and 3.25 closer on MAE, and it pays
-**2.28 more on RMSE**, because RMSE punishes exactly the busy hours Huber decided
-to stop chasing. RMSE and the least squares objective are the same function, so
-on that column one of the contestants wrote the exam. Name the cost before you
-pick the metric.
+is **9.39 hires closer on the median hour**, 16% of OLS's median error, and 3.25
+closer on MAE. It pays **2.28 more on RMSE**, about 2%.
+
+The direction needs no repeats, because it follows from which objective each
+estimator minimises: RMSE and the least squares objective are the same function,
+and Huber's loss is much closer to an absolute error. On this comparison each
+contestant wrote one of the exams.
+[01-06](../../01-foundations/06-regression-metrics/) proves the same pairing on a
+constant predictor, where it is exact.
+
+The sizes are a different matter. They come from one 75/25 split with no repeats,
+so the 16% on the median column is worth acting on and the 2% on RMSE is not
+worth an argument. Name the cost before you pick the metric, and if the honest
+answer is that a busy hour and a quiet hour cost the same per bicycle, the median
+column is the one you are choosing on.
 
 ![Bike Sharing](figures/fig-05-bike-sharing.png)
 
@@ -156,17 +179,20 @@ problem wearing an outlier costume.
 | | |
 |---|---|
 | **Huber** | Outliers in y, and a minority of them. One dial, `epsilon`, default 1.35 scales. Held to 35% contamination in y here |
-| **Huber, do not** | Use it against high-leverage points. It broke at 5%, the same level as plain least squares, and at 10% it was 0.030 worse |
+| **Huber, do not** | Use it against high-leverage points. It broke at 5%, the same level as plain least squares, and at 10% the two were indistinguishable |
 | **RANSAC** | Best resistance in x up to 30%, then it snaps. Set `residual_threshold` yourself; the default guessed wrong on real demand data and cost 29.26 hires of MAE against Huber |
-| **Theil-Sen** | No threshold to choose and it degrades gradually, which put it 0.70 ahead of RANSAC at 40% contamination. Costs 18.43 s against 0.03 s for OLS |
+| **Theil-Sen** | No threshold to choose and no cliff to fall off, which put it 0.70 ahead of RANSAC at 40% contamination. Costs 18.43 s against 0.03 s for OLS |
 | **First question** | Are your outliers in x or in y? The two need different methods, and only one of them is what tutorials demonstrate |
-| **Measure, do not quote** | Breakdown points are asymptotic and adversarial. Theil-Sen's published 29% measured at 20% here |
+| **Measure, do not quote** | Breakdown points are asymptotic and adversarial. Theil-Sen's published 29% measured at 20% here, which is agreement, not a contradiction |
 | **Watch every coefficient** | The OLS intercept broke a full level before its slope did |
-| **Do not test on one bad row** | One leverage point left Huber at 1.942 of a true 2.0. Ten of them left it at 2.153 of error |
-| **Pick the metric first** | Resistant fits lose on RMSE by construction. Huber won the median by 9.39 and lost RMSE by 2.28 |
+| **Do not test on one bad row** | One leverage point left Huber at 1.942 of a true 2.0. Ten of them left it as broken as OLS |
+| **Pick the metric first** | Resistant fits lose on RMSE by construction. Huber won the median by 16% and lost RMSE by 2% |
 | **Next** | [Quantile regression](../08-quantile-regression/), then [Poisson regression](../09-generalised-linear-models/) for the negative predictions |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

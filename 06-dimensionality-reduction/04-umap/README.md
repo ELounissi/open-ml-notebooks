@@ -100,14 +100,24 @@ no method here promises to preserve distances on a linear scale, only their orde
 | t-SNE | 0.8516 | **0.9875** |
 | Isomap | 0.9499 | 0.9445 |
 
-The whole trade sits in six numbers. t-SNE wins the local column by 0.0430 and loses
-the global column by 0.1008. The neighbour-graph method lands within **0.0025** of
-PCA on global structure while giving up 0.0430 locally.
+The whole trade sits in six numbers, and only one method is on the far side of it.
+t-SNE wins the local column by 0.0430 over PCA and loses the global column by
+0.1008. Both movements are large. The neighbour-graph method lands within
+**0.0025** of PCA globally and **0.0011** locally, which on a rank correlation
+over a thousand points is not a difference I would report, let alone rank.
+
+So the trade-off this section exists to show is real and has exactly one method
+producing it. That is the thing to know before shopping for a non-linear reducer:
+whether you get a genuinely different picture depends on whether the objective
+gives up distances, and not every neighbour-graph method does. Isomap minimises
+error on distances, so it has no reason to lose the global column at all, and it
+did not.
 
 Two caveats worth more than the table. This is one dataset at one setting:
-`n_neighbors=15` against `perplexity=30` is one point on two different curves. And a
-strong global score means different things for different methods: for Isomap it is the
-objective, not a discovery.
+`n_neighbors=15` against `perplexity=30` is one point on two different curves,
+and `n_neighbors` moves the global score directly, which is what the dial is for.
+And a strong global score means different things for different methods: for
+Isomap it is the objective, not a discovery.
 
 ## It has a transform, so it can go in a pipeline
 
@@ -129,10 +139,24 @@ Being allowed in a pipeline is not the same as earning a place in one.
 | PCA to 2D | 0.9578 | 0.0 s |
 | Isomap to 2D | 0.9561 | 0.4 s |
 
-Squeezing 30 features into 2 costs **0.0211** accuracy, and the neighbour-graph
-reduction finishes **0.0017 behind plain PCA** while taking several times as long. The
-reducer was refit inside every fold, on that fold's training rows only, a loop you
-can only write because it has a `transform`.
+Two readings, and only one of them holds.
+
+Squeezing 30 features into 2 costs **0.0211** accuracy, several times the fold
+spread. Two dimensions is a picture and a picture is lossy by construction; the
+reason to print the number anyway is that people reach for a reducer as a
+preprocessing step on the assumption that it is free.
+
+Which reducer is better, this does not say. The two two-dimensional pipelines are
+**0.0017** apart, inside the fold spread, so the linear projection and the
+neighbour graph are the same model here and only the timing separates them. The
+mechanism is in the data: Breast Cancer is close to linearly separable in its
+original thirty columns, so a linear projection already captures nearly all the
+class-relevant variance and leaves nothing for a non-linear method to recover.
+That is the same reason the two tied on both structure scores above. A reducer
+that unfolds curvature wins where there is curvature.
+
+The reducer was refit inside every fold, on that fold's training rows only, a loop
+you can only write because it has a `transform`.
 
 ## What is still true about UMAP
 
@@ -157,6 +181,9 @@ them because its loss is defined on distances. Do not carry that result across.
 | **Before quoting the global claim** | Run the rank-correlation test on your own data, at the settings you plan to use |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

@@ -30,9 +30,37 @@ when it was 0? Push them **away**. Got it right? Change nothing.
 
 ![Convergence](figures/fig-01-convergence.png)
 
-**Rosenblatt's convergence theorem**: if a straight line separates the classes,
-the perceptron finds one in finite steps. If none exists, it cycles forever, with
-no warning that it is doing so.
+**It did not converge.** The loop has a `mistakes == 0` break and the break never
+fired. Fifty epochs ran because fifty was the cap, and the last one still made 18
+mistakes on its way past. After epoch 1 the count bounces between 8 and 25 with no
+trend: a flat line with noise on it.
+
+**Rosenblatt's convergence theorem**: if a straight line separates the classes, the
+perceptron finds one in finite steps. If none exists, it cycles forever, with no
+warning that it is doing so.
+
+So the tempting reading of that chart is that the data is not separable. It is
+wrong, and the real answer is more useful.
+
+| Check | Result |
+|---|---|
+| Hard-margin linear SVM, training accuracy | **1.0000** |
+| A separating hyperplane exists | **True** |
+| Widest margin any hyperplane achieves | 0.00133 |
+| Largest sample norm R | 20.57 |
+| Novikoff mistake bound, $(R/\gamma)^2$ | **239,890,695** |
+
+The data **is** linearly separable, so the precondition holds and the perceptron
+will find a line in finite steps, exactly as promised. The catch is what "finite"
+is worth. Novikoff bounds the mistakes by $(R/\gamma)^2$, and on data separable
+only by a sliver that comes out near **240 million**. Fifty epochs made nowhere
+near that many.
+
+**Convergence in finite time and convergence in useful time are different claims,
+and the theorem only makes the first one.** That generalises past the perceptron:
+when a training loop stops improving, "the model cannot represent this" and "the
+model can, but the optimiser will take longer than you have" look identical from
+inside the loop.
 
 ## The XOR problem
 
@@ -77,11 +105,14 @@ have output. Solving that is [backpropagation](../02-mlp-and-backpropagation/).
 | | |
 |---|---|
 | **Use it when** | Almost never in production: it is here because everything else descends from it |
-| **Guarantee** | Converges in finite steps **if** linearly separable. Otherwise cycles forever, silently |
+| **Guarantee** | Converges in finite steps **if** linearly separable, bounded by $(R/\gamma)^2$ mistakes. That was ~240 million here, so it ran out the epoch cap on separable data. Otherwise cycles forever, silently |
 | **Versus logistic regression** | Same weighted sum. The perceptron thresholds hard and gives no probabilities |
 | **Watch out** | It stops at the *first* separating line, which may sit right against the data. An [SVM](../../03-classification/05-support-vector-machines/) picks the best one |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

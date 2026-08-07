@@ -62,7 +62,7 @@ variety is SIRA at 0.877 recall, and it is one of the most common.
 
 **Class size and class difficulty are different things.** Check, do not assume.
 
-## Where the straight line runs out
+## Where the errors actually come from
 
 Finding the genuinely confused pair takes care. The two varieties with the lowest
 recall are not automatically confused *with each other*; each may be losing beans
@@ -72,13 +72,21 @@ both directions: **DERMASON and SIRA**.
 
 ![Decision boundary](figures/fig-04-decision-boundary.png)
 
-The two clouds overlap along a curved seam, and a straight line cuts through it.
-On two components those 6,182 beans separate at only **0.910**. Every point on the
-wrong side is an error the model cannot fix by adjusting weights, because the
-shape it needs is not a line.
+The obvious suspicion is that a straight line is the wrong shape here. The
+picture says otherwise. The two clouds are ordinary ellipsoidal blobs, the gap
+between them is a straight diagonal band, and the fitted boundary runs along the
+middle of it. Nothing is curved, and the line is in the right place.
 
-On this dataset, though, bending does not help much either. See
-[random forests](../../04-ensembles/02-random-forest/), which tie at 0.924.
+What it runs into is **overlap**. On two components those 6,182 beans separate
+at **0.910**, and the beans it gets wrong sit inside the band, where DERMASON
+and SIRA of the same size and shape are not distinguishable from these sixteen
+measurements by a boundary of any shape at all.
+
+The distinction matters because the two failures ask for opposite repairs. A
+curved seam asks for a model that bends. Overlap asks for a better measurement.
+On this dataset bending does not help: see
+[random forests](../../04-ensembles/02-random-forest/), which tie at 0.924
+against logistic regression's 0.9235.
 
 ## Cheat sheet
 
@@ -92,6 +100,9 @@ On this dataset, though, bending does not help much either. See
 | **Watch out** | scikit-learn regularises by default. `LogisticRegression()` is not the textbook model; `C=1e6` is |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

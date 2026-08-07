@@ -46,14 +46,18 @@ is just a mask.
 ## Check the gradients before trusting them
 
 A backprop bug does not crash. It trains slightly worse, and you never find out.
-The notebook compares every analytic gradient against a numerical estimate:
+The notebook compares analytic gradients against numerical estimates. Each
+parameter costs two full forward passes, so it **samples**: up to twelve entries
+per tensor, drawn at random, which came to **34 of the 66 parameters**.
 
 ```
+sampled 34 of the 66 parameters
 worst gap between analytic and numerical gradient: 1.947e-10  →  the derivation is correct
 ```
 
 **Always do this once on a new implementation.** It is slow, impractical for
-training, and decisive as a one-off test.
+training, and decisive as a one-off test. Sampling is enough because a wrong
+derivation is wrong across a whole tensor, not in one entry of it.
 
 ## Training
 
@@ -61,7 +65,11 @@ training, and decisive as a one-off test.
 
 ![Width](figures/fig-02-width.png)
 
-Wider helps until it stops mattering.
+Wider helps until it stops mattering: 2 units score 0.8099, 4 units 0.9151, and
+after that nothing much. Keep the tail of that sweep in mind, because it is the
+noise floor for the next section: **across widths 8 to 256, held-out accuracy
+still wandered from 0.9248 to 0.9289, a spread of 0.0041**, from a knob the same
+chart shows does not matter.
 
 ## The comparison, and why I do not trust it
 
@@ -74,14 +82,17 @@ Wider helps until it stops mattering.
 | Random forest | 0.9251 |
 | Logistic regression | 0.9245 |
 
-Two hundred lines of NumPy came out **ahead of scikit-learn's boosted trees**,
+About seventy lines of NumPy came out **ahead of scikit-learn's boosted trees**,
 which was not what I expected to be writing.
 
-Before celebrating, read the gap properly. The difference is about half a point,
-on a **single** held-out quarter. Every other notebook in this book used five-fold
-cross-validation, and the fold-to-fold spread on this dataset ran to roughly that
-size on its own. The honest reading is **a tie measured badly**, not a win. A
-single split is a sample of size one.
+Before celebrating, read the gap properly. The lead is **0.0049**, on a **single**
+held-out quarter. The width sweep above moved **0.0041** on its own, from a knob
+that does not matter. The claimed win and the known noise are the same size.
+
+The honest reading is **a tie measured badly**, not a win. A single split is a
+sample of size one, and I would not defend an ordering built on it. If the ordering
+mattered I would rerun all four under repeated cross-validation and quote the
+spread.
 
 It also does not change the advice. Gradient boosting needed one line and no
 tuning; the network needed a derivation, an initialisation scheme, a learning rate,
@@ -99,6 +110,9 @@ structure a tree cannot exploit: the grid of an image, the order of a sequence.
 | **Always** | Gradient-check once. A wrong gradient trains quietly and badly |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

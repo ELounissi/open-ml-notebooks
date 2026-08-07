@@ -27,11 +27,29 @@ vocabulary, the same tokeniser, the same counts. Only the weighting changes.
 | **TF-IDF, stop words + `min_df=2`** | 10,396 | 0.545% | **0.9233** | 0.9236 | 0.7 |
 | TF-IDF + bigrams | 20,790 | 0.354% | 0.9224 | 0.9226 | 1.3 |
 
-Best to worst is **+0.0557 accuracy, a 42.1% cut in the error rate**. The bigram
-row is the one worth staring at: doubling the columns to 20,790 bought **−0.0009**.
-On topic classification the words alone carry the topic and the extra columns are
-noise the model has to regularise away. On sentiment, where `not good` and `good`
-mean opposite things, the same experiment comes out differently.
+Best to worst is **+0.0557 accuracy, a 42.1% cut in the error rate**. One standard
+error on 1,095 test documents is 0.0080, so read each step against that.
+
+**Filtering pays, by about three standard errors, and it removes columns rather
+than adding them.** Dropping the terms seen once cut the vocabulary 53% and the
+text 5.5%, which is the point: what left was the part a model could only memorise.
+
+**TF-IDF pays about as much again on exactly the same columns.** No new
+information enters between rows two and three. The tokeniser, the vocabulary and
+the counts are identical and only the weighting changes, which is the strongest
+evidence available that the reweighting is doing real work, because no other
+explanation is on the table when the feature set is held fixed.
+
+**Bigrams did not pay.** Doubling the columns to 20,790 moved accuracy by
+**-0.0009**, about a tenth of a standard error. That is not a small loss, it is
+nothing, and I would not keep the columns.
+
+That last result is conditional, and the condition is the task. This is topic
+classification: a baseball post says "pitcher", a space post says "orbit", and
+single words already carry the answer. Word order earns its columns where meaning
+inverts between adjacent words, which is sentiment. `not good` and `good` point in
+opposite directions and no unigram model can tell them apart. Run these four rows
+on a sentiment corpus and the bigram row moves.
 
 ![Classifier comparison](figures/fig-04-classifier-comparison.png)
 
@@ -159,6 +177,9 @@ unigrams, and the ones each class leans on hardest turn out to be `of the`,
 | **Next** | [Word embeddings](../02-word-embeddings/), which drop one-column-per-word entirely |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

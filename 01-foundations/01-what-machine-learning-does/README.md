@@ -39,9 +39,15 @@ and underprices the dearest tenth by more than a whole one. Those two errors
 have opposite signs and roughly equal weight, so averaging them produces
 +0.0104 and the failure disappears.
 
+This is what a straight line does to a skewed target. It cannot bend, so it
+raises the floor to pay for the ceiling. The bottom row has a second cause on top
+of that: 992 districts were recorded at the 5.0 cap when they were worth more, so
+a model predicting below 5.0 for them is penalised for being right.
+
 **Break the error down by something, always.** It cost one `groupby`, and it
 turned a model that looked unbiased into one that is wrong in a predictable
-direction at both ends of the range it will actually be used on.
+direction at both ends of the range it will actually be used on. The thing to
+group by is usually the target itself, a segment you will be judged on, or time.
 
 ![Where it is wrong](figures/fig-04-where-it-is-wrong.png)
 
@@ -117,7 +123,7 @@ deviation of that column.
 
 | Feature | Weight |
 |---|---|
-| **Latitude** | **-0.9004** |
+| Latitude | -0.9004 |
 | Longitude | -0.8706 |
 | MedInc | +0.8262 |
 | AveBedrms | +0.2904 |
@@ -126,10 +132,19 @@ deviation of that column.
 | AveOccup | -0.0306 |
 | Population | -0.0086 |
 
-I expected income to carry the largest weight. Latitude and longitude both beat
-it. The model is spending its two largest weights drawing the California
-coastline with a pair of straight lines, which is a clumsy use of a linear model
-and a preview of why trees do better on this data.
+I expected income to carry the largest weight. Both location columns beat it.
+Which of the two location columns is nominally larger is not a finding: they are
+0.0298 apart on weights near 0.9, and a different split seed would reorder them.
+The finding is that location carries 1.77 of weight against income's 0.83.
+
+The mechanism is geography. Price falls off with distance from the coast, the
+California coast runs diagonally, and a linear model can only approximate a
+diagonal boundary by leaning hard on both coordinates at once. That is a clumsy
+way to encode a map, and it is why trees do better here: a tree splits on
+latitude, then on longitude, and gets the same shape for free. The gradient
+boosting row above is that advantage cashed in.
+[02-01](../../02-regression/01-linear-regression/) reaches the same coefficients
+and works through it in more detail.
 
 **A coefficient describes the model, not the world.** It does not say that moving
 a district north would lower its house prices.
@@ -189,11 +204,14 @@ anything.
 | **R squared** | Already a margin over the mean. The shippable baseline scored -0.0003, not 0, because the reference mean is the test set's |
 | **Accuracy** | Unreadable without the majority-class rate beside it. 0.9825 against 0.6316 is the result, not 0.9825 |
 | **Split** | Hold rows back before fitting. One split shows the idea; it is not enough to trust a close comparison |
-| **Coefficients** | Latitude outweighed income here. Read that as a fact about the fit, never as a cause |
+| **Coefficients** | Location outweighed income, 1.77 to 0.83. Read that as a fact about the fit, never as a cause |
 | **Do next** | `groupby` a column and look at the signed error inside each group. It found a +0.33 to -1.14 swing hiding under an average of +0.01 |
 | **Next chapter** | [Train, validation, test](../02-train-validation-test/), which is why one held-out set is not enough |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

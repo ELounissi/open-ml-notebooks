@@ -26,13 +26,16 @@ the speed one survived the measurement.
 
 Every optimiser after SGD fixes one of two named failures. **Ravines:** when the
 surface is far steeper in one direction than another, the gradient points across
-the valley rather than along it and the step bounces between the walls, the normal
-case, produced by correlated features or features on different scales. **One rate
-for every parameter:** a rate safe in the steepest direction is far too small for
-the flattest. Momentum averages past gradients, so reversing components cancel and
-consistent ones accumulate. RMSProp divides each step by the square root of that
-parameter's own running squared gradient, a per-parameter rate. Adam runs both,
-plus a bias correction for the cold start.
+the valley rather than along it, and the textbook account has the step bouncing
+between the walls. The normal case, produced by correlated features or features on
+different scales. **One rate for every parameter:** a rate safe in the steepest
+direction is far too small for the flattest. Momentum averages past gradients, so
+reversing components cancel and consistent ones accumulate. RMSProp divides each
+step by the square root of that parameter's own running squared gradient, a
+per-parameter rate. Adam runs both, plus a bias correction for the cold start.
+
+Section 3 of the notebook counts what each optimiser does on such a surface instead
+of describing it, and the count contradicts the account above.
 
 ## Four rules on a 20:1 ravine
 
@@ -40,19 +43,44 @@ plus a bias correction for the cold start.
 
 The bowl is `0.05x² + y²`, 60 steps, same learning rate of 0.28 for all four.
 
-| | Final loss | Distance from the minimum |
-|---|---|---|
-| SGD | 0.134093 | 1.6376 |
-| Momentum | 0.011805 | 0.3918 |
-| RMSProp | **0.009567** | **0.0978** |
-| Adam | 0.009721 | 0.4345 |
+| | Final loss | Distance | Along the flat axis | Along the steep axis | Crossings of the valley floor |
+|---|---|---|---|---|---|
+| SGD | 0.134093 | 1.6376 | 1.6376 | 0.0000 | **0** |
+| Momentum | 0.011805 | 0.3918 | 0.3862 | 0.0659 | **15** |
+| RMSProp | **0.009567** | **0.0978** | 0.0002 | 0.0978 | 14 |
+| Adam | 0.009721 | 0.4345 | 0.4341 | 0.0173 | 5 |
 
-SGD ends at **11× the loss of momentum** and four times further out, having spent
-its steps crossing the valley rather than descending it. RMSProp lands essentially
-on the minimum. The pair worth staring at is Adam and momentum: Adam finishes
-**further from the minimum** (0.4345 against 0.3918) and yet at a **lower loss**,
-because what is left of its error lies along the cheap flat direction. Distance
-and loss are not the same ruler on a stretched surface.
+**SGD did not zig-zag. It crossed the valley floor zero times.** The path that
+swings high above the floor, dives below it and overshoots the minimum on the far
+side is momentum, with 15 crossings. The classic ravine picture is real, and at
+this learning rate it belongs to the wrong optimiser.
+
+The arithmetic is two lines. The steep direction has curvature 2, so SGD's update
+there is $y \leftarrow y - 0.28 \cdot 2y = 0.44y$: a positive multiplier under one,
+a monotone contraction that **cannot change sign**. Oscillation would need
+$\eta > 1/\text{curvature} = 0.5$, and 0.28 is not it. The flat direction has
+curvature 0.1, so the same rate gives $x \leftarrow 0.972x$, and sixty of those get
+$-9$ only as far as 1.6376. **All** of SGD's final distance is flat and none of it
+is steep. Its loss is high because it never crossed the valley, not because it
+spent its steps crossing it. It is slow, not bouncy.
+
+Momentum is the unstable one. Its velocity is $v \leftarrow 0.9v + g$, so the
+steady-state step is $\eta/(1-\beta) = 2.8$, and $2.8 \times 2 = 5.6$ is past the
+heavy-ball stability limit of $2(1+\beta) = 3.8$. That it still finishes at **11×
+lower loss than SGD** is the finding: an oscillating optimiser that covers ground
+beats a stable one that barely moves.
+
+RMSProp is SGD's mirror image. It ends 0.0002 out along the flat axis and 0.0978
+along the steep one, all of its error in the direction where SGD had none. Adam
+finishes **further from the minimum** than momentum (0.4345 against 0.3918) and yet
+at a **lower loss**, because what is left of its error lies along the cheap flat
+axis. Distance and loss are not the same ruler on a stretched surface.
+
+**The honest version of the ravine lesson: the classic picture needs a learning
+rate large enough for the steep direction to oscillate.** Below that threshold
+plain gradient descent does not zig-zag, it crawls, and the failure you get is the
+slow flat direction rather than the bouncing steep one. Same underlying problem,
+one rate for two curvatures, and the same fix.
 
 ## The same four on Fashion-MNIST
 
@@ -90,14 +118,17 @@ is inside the noise; the speed difference is not.
 
 Each optimiser swept across its own sensible range, 3 epochs per rate.
 
-| Rate | SGD | Test acc | Adam | Test acc |
+| Position | SGD rate | Test acc | Adam rate | Test acc |
 |---|---|---|---|---|
-| much too small | 0.005 | **0.589** | 0.0001 | 0.791 |
-| small | 0.02 | 0.724 | 0.0005 | 0.843 |
-| default | 0.05 | 0.797 | 0.001 | 0.854 |
-| large | 0.2 | 0.801 | 0.005 | **0.865** |
-| much too large | 0.5 | **0.812** | 0.02 | 0.860 |
+| 1 | 0.005 | **0.589** | 0.0001 | 0.791 |
+| 2 | 0.02 | 0.724 | 0.0005 | 0.843 |
+| 3 | 0.05 | 0.797 | 0.001 | 0.854 |
+| 4 | 0.2 | 0.801 | 0.005 | **0.865** |
+| 5 | 0.5 | **0.812** | 0.02 | 0.860 |
 | **spread** | | **0.223** | | **0.073** |
+
+The chart's x-axis carries the rates rather than words like "default" and "much too
+large", because the run does not support those words. See the two wrinkles below.
 
 **SGD's spread is 0.223 across its sweep. Adam's is 0.073, three times tighter.**
 Adam's worst rate, off by 10× in the wrong direction, still scored 0.791, within
@@ -118,12 +149,15 @@ SGD with momentum still wins many vision benchmarks, and it won here too.
 |---|---|
 | **Start with** | Adam at `lr=1e-3`. It is the default because it is forgiving, not because it is best |
 | **Switch to SGD + momentum when** | You are tuning carefully, training a vision model, or chasing the last fraction of accuracy. It took the top accuracy here |
-| **Momentum fixes** | Zig-zagging in ravines, by averaging directions that keep reversing |
+| **Momentum fixes** | The slow flat direction, by accumulating a consistent gradient. It damps zig-zag only when the rate is high enough to cause one: at lr=0.28 on my ravine, momentum was the one zig-zagging, 15 crossings against SGD's 0 |
 | **RMSProp fixes** | One learning rate for all parameters, by scaling each by its own gradient history |
 | **Adam** | Both at once, plus bias correction for the cold start. Use AdamW instead whenever you want weight decay |
 | **Watch out** | The learning rate matters more than the optimiser. The 0.223 spread from the rate dwarfs the 0.007 gap between optimisers. Tune it first |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

@@ -86,8 +86,13 @@ genuinely adds is arbitrary shapes and the ability to emit a noise label.
 | **Main dials** | `eps` and `min_samples` (rule of thumb: twice the dimensions) |
 | **Choosing eps** | The sorted k-distance elbow. Not trial and error |
 | **Watch out** | Label `-1` means noise, not a cluster. Never treat it as one |
+| **If you want the noise** | [Anomaly detection](../06-anomaly-detection/) gives you a ranked score rather than a yes or no, which is what you need when the cutoff is a decision about alert volume |
+| **If the groups overlap** | [Gaussian mixture models](../05-gaussian-mixture-models/), the method for the case this chapter lost |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

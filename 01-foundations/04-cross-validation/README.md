@@ -42,18 +42,29 @@ luckiest and unluckiest seed. Two honest people would disagree and both be right
 | k | Train rows | Mean | Fold sd |
 |---|---|---|---|
 | 2 | 450 | 0.8522 | 0.0189 |
-| 5 | 720 | 0.8844 | 0.0181 |
+| 3 | 600 | **0.8844** | 0.0113 |
+| 5 | 720 | **0.8844** | 0.0181 |
 | 10 | 810 | 0.8778 | 0.0492 |
 | 20 | 855 | 0.8711 | 0.0514 |
 
 `k = 2` is the clear loser at 0.8522, because each model only sees half the data.
-Above that the mean barely moves and the cost grows linearly in k.
+After that I expected the estimate to climb toward the full-data score as the
+training folds grew. It falls instead: 0.8844 at k=3 and k=5, then 0.8778, then
+0.8711, while the training set goes from 600 rows to 855.
 
-The fold sd column is the one people misread. It **rises** with k, 0.0189 to
-0.0514, because each test fold is smaller and noisier, a property of fold size,
-not evidence that large k is unreliable. Those scores are also correlated, since
-any two training sets share about (k−2)/(k−1) of their rows, so sd/√k is not a
-valid standard error. Treat the spread as a smell test.
+That whole k=3 to k=20 range is 0.0133 wide, and the table above it measured the
+seed-to-seed sd of a single 5-fold mean at 0.0074, with a 0.0200 gap between the
+luckiest and unluckiest run. **Past k=3, changing k moves the answer less than
+changing the seed does.** The column that behaves is the time, which grows
+linearly in k, and that is the real reason to stop at five or ten.
+
+The fold sd column is misread twice. It rises from k=3 onwards, 0.0113 to 0.0514,
+because each test fold is smaller and its score noisier, a property of fold size
+and not evidence that large k is unreliable. But it is not monotone: k=2 sits at
+0.0189, above k=3, because a standard deviation of two numbers is barely a
+standard deviation. Those scores are also correlated, since any two training sets
+share about (k−2)/(k−1) of their rows, so sd/√k is not a valid standard error.
+Treat the spread as a smell test.
 
 ## Choosing a splitter
 
@@ -92,6 +103,18 @@ on a fifth of the history, fold 5 on nearly all of it.
 The mean is fine. Everything else is not. LeaveOneOut's fold scores take exactly
 **2 distinct values, 0 and 1**, because a one-row test set is either right or
 wrong. The one thing cross-validation gives you beyond a point estimate is gone.
+
+And it costs 569 fits with no bulk discount: the notebook prints milliseconds per
+fit alongside the totals, and they are the same for all three schemes, so
+LeaveOneOut takes about what 114× as many fits should take.
+
+That timing needed a second attempt. My first version timed everything with
+`n_jobs=-1` and reported that 569 fits finished faster than five, which is not a
+fact about LeaveOneOut. It is the fixed cost of standing up joblib's worker pool
+and shipping the data to it, paid once per `cross_val_score` call and spread over
+five fits in one case and 569 in the other. The notebook now times on one thread
+and keeps the parallel run beside it, because **benchmarking a cheap operation
+under `n_jobs=-1` measures the scheduler**, and that is worth seeing once.
 
 Repeating fixes a different problem. Across ten repeats of 5-fold on the bean
 slice, the best single run scored 0.8889 and the worst 0.8689: that **0.0200 gap
@@ -138,6 +161,9 @@ sits above their true values by construction. The gap grows with grid size.
 | Any preprocessing at all | `Pipeline`, every time, no exceptions |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

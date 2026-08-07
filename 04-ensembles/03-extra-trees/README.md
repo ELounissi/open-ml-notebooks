@@ -153,11 +153,17 @@ the sort. The gap is smallest on the smallest dataset, 1.40x on Breast Cancer's
 | 200 | 0.9251 | 0.9212 | -0.0038 |
 
 The single-tree row is the cost of random splitting with none of the benefit
-collected yet, and it is the biggest gap in both tables. Most of it closes by
-five trees. What does not happen is the crossover the decorrelation story leads
-you to expect: Extra Trees never pull clearly ahead on either dataset at any tree
-count, and on Dry Bean the one positive difference, at 25 trees, is +0.0012 and
-does not survive to 50.
+collected yet, and it is the biggest gap in both tables by a wide margin. Most of
+it closes by five trees, which is the decorrelation argument working exactly as
+advertised.
+
+The far end of both curves is the part to resist reading. These are single splits,
+and the differences past 25 trees are a few thousandths on one partition. The
+crossover the decorrelation story leads you to expect does not appear, but the
+honest way to put that is that this experiment cannot see a difference this small.
+The scoreboard below repeats each dataset over three splits and prints the spread,
+and two of its four rows turn out to be smaller than their own spread. Treat these
+two tables as being about the shape of the curves, not about which one ends higher.
 
 ## The sign flips
 
@@ -201,6 +207,9 @@ California Housing that means Extra Trees give up 0.0013 R² and finish in
 | **Next** | [AdaBoost](../04-adaboost/), which builds trees in sequence and attacks bias rather than variance |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

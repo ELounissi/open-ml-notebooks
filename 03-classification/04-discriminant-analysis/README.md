@@ -205,6 +205,14 @@ The bottom two rows are the section. Gaussian naive Bayes is QDA with every
 off-diagonal covariance entry forced to zero, and it fits this data without
 complaint at 0.7641, because a diagonal matrix with positive entries is never
 singular. The assumption everybody calls naive is the thing keeping it alive.
+[03-03](../03-naive-bayes/) measures the same model on the same folds and gets
+0.8972 with the features scaled, which is the `var_smoothing` trap that chapter is
+about; the 0.7641 here is the unscaled default.
+
+Ignore the small gaps at the top of that table. Logistic regression's 0.9234
+against QDA-on-components' 0.9175 is about two standard errors on 13,611 rows, and
+the four rows between 0.90 and 0.93 are one cluster. The result is the gap between
+that cluster, naive Bayes, and the row that produced no model at all.
 
 ## LDA as a projection, against PCA
 
@@ -222,19 +230,33 @@ by a 15-nearest-neighbour classifier:
 | 5 | **0.9247** | 0.9241 | +0.0006 |
 | 6 | 0.9231 | 0.9240 | -0.0009 |
 
+An accuracy over 13,611 rows carries a binomial standard error near 0.0026, which
+the notebook prints, so the top four rows of that difference column are between
+twelve and nineteen standard errors wide and the bottom two are inside one. That
+splits the table cleanly into a part that says something and a part that says
+nothing.
+
 The row to read first is the second one. **At two components PCA wins, and by
 -0.0495, the largest margin anywhere in the column**, larger than LDA's own lead
 at one component. Access to the labels is not worth a constant amount and it is
 not concentrated where the budget is tightest either. It is worth +0.0312 at one
-direction, worth less than nothing at two, worth roughly its one-component lead
-again at three and four, and worth nothing either way past that: at five and six
-components the two methods are within a thousandth of each other, once in each
-direction. The column changes sign twice on the way down.
+direction, worth less than nothing at two, and worth roughly its one-component
+lead again at three and four. The sign genuinely reverses twice inside those four
+rows.
 
 LDA maximises separation between class means relative to within-class scatter,
 which is not the same objective as leaving the 15 nearest neighbours of a point
 inside the same variety, and at two directions the two objectives disagree enough
 to decide the comparison.
+
+Past four components the labels buy nothing: LDA and PCA land within a thousandth
+of each other, well inside that standard error, so the last two rows are one
+result written twice rather than two more sign changes. That has a cause worth
+keeping. Sixteen heavily correlated bean measurements do not contain sixteen
+independent things to find, so a handful of principal components eventually span
+whatever subspace LDA was picking out, and once you span the subspace the route
+you took to it stops mattering. **The supervised projection is worth having only
+while the budget is smaller than the data's real dimensionality.**
 
 All 16 standardised columns with no projection score 0.9232. LDA with one
 component scores 0.6373 and PCA needs two components to reach that. Two caveats
@@ -267,10 +289,17 @@ covariances are shared:
 | unequal covariance | 0.6768 | **0.8507** | QDA |
 
 The notebook checks its own prediction and prints `each method won where its
-assumption holds: False`. QDA took the regime built for LDA by +0.0009, which at
-this sample size is a margin worth nothing except as a reminder that a correct
-assumption is not a guarantee of a win. With 3,000 rows per class, QDA can afford
-its extra parameters and there is nothing left for the shared assumption to buy.
+assumption holds: False`. Read the two margins in the standard errors the notebook
+prints beside them: on 10,000 test points that is about 0.005, so +0.1739 in the
+unequal regime is a real win and +0.0009 in the shared regime is nothing at all.
+
+The claim worth making is therefore the weaker one. **QDA did not lose on data
+designed for LDA.** With 3,000 rows per class its extra covariance parameters are
+pinned down well enough that estimating a covariance it did not need cost nothing
+measurable. The textbook is right that a wrong assumption costs you; what it does
+not say is that the cost scales with how badly the extra parameters are estimated,
+and at this sample size they are estimated well. Which is exactly why the next
+sweep shrinks the sample.
 
 ![Sample size](figures/fig-07-sample-size.png)
 
@@ -327,6 +356,9 @@ what ruins an afternoon, and QDA is ahead on both.
 | **Next** | [Support vector machines](../05-support-vector-machines/), which drop the density model and fit the boundary directly |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

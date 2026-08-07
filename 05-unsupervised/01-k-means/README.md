@@ -57,9 +57,23 @@ you would probably have chosen wrong.
 |---|---|
 | Adjusted Rand index | 0.669 |
 | Normalised mutual information | 0.714 |
+| Weakest variety's share in its own cluster | 0.800 (CALI) |
+| Largest share landing anywhere else | 0.165 (CALI into C6) |
 
-Respectable for a method that was never shown a single label. Some varieties map
-cleanly onto one cluster; others get split across two.
+Respectable for a method that was never shown a single label, and the mistakes
+are not the ones you would guess. **No variety got split.** Every row of the
+crosstab puts most of its beans in one cluster, the weakest at 0.800.
+
+The damage is on the other axis. **BARBUNYA and CALI both peak in C1**, so two
+varieties were merged into a single cluster, and **C6 is nobody's peak**: it
+collects the CALI and HOROZ beans near a boundary without ever standing for a
+variety. Seven centres, spent badly, by doubling up rather than by cutting a
+group in half.
+
+That failure is invisible from the inside. A merged pair still looks like a
+compact, well-behaved cluster, and inertia is perfectly happy with it. Only the
+labels, which real clustering does not have, show that one cluster is doing two
+jobs.
 
 ## The failure k-means cannot see
 
@@ -93,6 +107,9 @@ answer is meaningless. That check is your job.
 | **Watch out** | Converges to a *local* minimum, so seeds change the answer. And it clusters pure noise without complaint |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

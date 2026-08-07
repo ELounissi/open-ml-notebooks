@@ -58,14 +58,16 @@ and checked against `nn.LSTM`, the largest disagreement is **5.960e-08**.
 
 | Cell | Parameters at hidden 64 | ms per step | vs RNN |
 |---|---|---|---|
-| RNN | 4,736 | 4.29 | 1.00 |
-| LSTM | 18,944 | 10.25 | 2.39 |
-| GRU | 14,208 | **2.50** | **0.58** |
+| RNN | 4,736 | 1.03 | 1.00 |
+| LSTM | 18,944 | 1.46 | 1.42 |
+| GRU | 14,208 | 1.51 | **1.46** |
 
 Four weight blocks against the RNN's one, so four times the parameters at the same
-hidden size: at hidden 32 it is 1,344, 4,032 and 5,376. The clock does not
-follow: the GRU carries three times the RNN's parameters and runs in **58% of its
-time**, because fused kernels decide it rather than arithmetic.
+hidden size: at hidden 32 it is 1,344, 4,032 and 5,376. The clock does not follow.
+The GRU carries three quarters of the LSTM's parameters and is the **slowest of
+the three**, at 1.46x the RNN against the LSTM's 1.42x, because fused kernels
+decide it rather than arithmetic. A 4.0x parameter gap turns into a 1.42x clock
+gap, and the cheaper cell is not the faster one.
 
 ## The copy task did not separate them
 
@@ -74,7 +76,7 @@ time**, because fused kernels decide it rather than arithmetic.
 ![Copy task](figures/fig-03-copy-task.png)
 
 One flagged symbol at step 1, a run of distractors, name the flagged symbol at
-the end. Four symbols, so chance is 0.25. Eighteen models, 66 seconds.
+the end. Four symbols, so chance is 0.25. Eighteen models, 36 seconds.
 
 | Lag | RNN | LSTM | GRU |
 |---|---|---|---|
@@ -105,8 +107,8 @@ train, **3,471** test, scaling from the training hours only (mean 174.72, sd
 | Linear on 24 lags | 25 | 81.77 |
 | Last value | 0 | 129.72 |
 
-The LSTM came third of three sequence models. The spread across all three is
-**4.87 RMSE**, which from one seed is not a ranking: the recurrence barely
+The LSTM came second of three sequence models, behind the GRU. The spread across
+all three is **4.87 RMSE**, which from one seed is not a ranking: the recurrence barely
 mattered here, and the gap that did matter is the **38.4%** between the best
 sequence model and the linear one. Predicting the next hour from the last
 twenty-four is close to a fixed weighted average, which 25 coefficients already
@@ -139,11 +141,14 @@ distractors out. Nobody designed these traces, and they only partly match it.
 | **The update** | `c = f * c_prev + i * g`, then `h = o * tanh(c)`, giving $\partial c_t / \partial c_{t-1} = \operatorname{diag}(f_t)$: no weight matrix, no $\tanh'$, so the decay rate is learned |
 | **Forget bias** | Set it to 1 yourself. At PyTorch's default the per-step factor is 0.641 against a plain RNN's 0.568 |
 | **Gate order** | PyTorch stacks $[i, f, g, o]$ in `weight_ih_l0`, a GRU stacks $[r, z, n]$. Slice `H:2H` is the memory gate in both |
-| **Cost** | Four times an RNN's parameters and 2.39x its time per step, while a GRU ran at 0.58x. Fused kernels, not arithmetic |
+| **Cost** | Four times an RNN's parameters and 1.42x its time per step, while a GRU with three quarters of the LSTM's parameters ran slower still, at 1.46x. Fused kernels, not arithmetic |
 | **Clipping** | Still worth having. Gating fixes vanishing, not exploding |
 | **Choosing** | Run the linear baseline first. Here it decided more than the choice of cell did |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

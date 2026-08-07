@@ -44,15 +44,28 @@ Our from-scratch version and scikit-learn's disagreed badly on identical data:
 | `GaussianNB()`, default, **scaled** | 0.8951 |
 
 Not a bug in either. Both add a small constant to every variance to avoid dividing
-by zero: ours a flat `1e-9`, scikit-learn's **`1e-9 × the largest variance across
-all features`**.
+by zero: ours a flat `1e-9`, scikit-learn's **`1e-9` times the largest variance
+across all features**.
 
-On Dry Bean the largest variance is 8.87×10⁸ (`ConvexArea`), so the smoothing is
-0.886. The smallest feature variance is 3.55×10⁻⁷. **The smoothing is 2,496,841×
-that feature's entire variance**, flattening it into uselessness.
+On Dry Bean the largest variance is 8.87e+08 (`ConvexArea`), so the smoothing is
+0.886. The smallest feature variance is 3.55e-07. **The smoothing is 2,496,841
+times that feature's entire variance**, flattening it into uselessness.
 
 **The textbook says Naive Bayes needs no feature scaling. The textbook is right
-about the maths and wrong about the library.** Scale before `GaussianNB`.
+about the maths and wrong about the library.** The maths is scale-invariant; the
+implementation is not, because a single global smoothing constant on features
+spanning fifteen orders of magnitude cannot be small for all of them. Scale before
+`GaussianNB`.
+
+This is worth knowing because it shows up elsewhere in the book.
+[03-04](../04-discriminant-analysis/) scores Gaussian naive Bayes at 0.7641 on the
+same folds of the same data, because its leaderboard runs every estimator
+unscaled. That is the same trap, not a disagreement.
+
+The habit worth taking is broader than this one default. When a from-scratch
+version and a library version of the same equations disagree by thirteen points,
+the gap is a default you did not know about, and chasing it teaches more than
+agreement would have.
 
 ## Where it lands
 
@@ -64,11 +77,27 @@ about the maths and wrong about the library.** Scale before `GaussianNB`.
 
 ![Comparison](figures/fig-03-comparison.png)
 
-It trails, but stays in the conversation on data where its core assumption is
-violated about as badly as it can be. **Classification only needs the right
-*ranking*, not the right probabilities.** Correlated features make it count the
-same evidence repeatedly, which usually pushes it further toward the class that
-evidence already supported. The decision survives.
+The bars carry fold standard deviations, and they decide which of those columns
+can be read. Dry Bean has 13,611 rows, so the 0.03 that Naive Bayes trails by is
+several times the fold spread and is a real gap. Logistic regression against
+gradient boosting on the same column is 0.0037 apart, which is not, so do not read
+that pair as an ordering. Breast Cancer has 569 rows split five ways, and only
+logistic regression's lead there is wide enough to survive its own error bar.
+
+The finding is the Dry Bean column, because that is where the independence
+assumption is violated hardest. Naive Bayes trails, and it trails by far less than
+a model built on a false premise has any right to.
+
+**Classification only needs the right *ranking*, not the right probabilities.**
+Correlated features make it count the same evidence several times, which pushes it
+further toward the class that evidence already supported. The argmax is invariant
+to that inflation. The probability is not.
+
+That gives a rule with a condition rather than a slogan. Naive Bayes is fine
+wherever the decision is the output and the probability is discarded: routing,
+filtering, a first-pass triage. It stops being fine the moment something
+downstream multiplies its probability by a cost, thresholds on it, or shows it to
+a person.
 
 ## The probabilities do not survive
 
@@ -94,8 +123,13 @@ four times over.
 | **Scaling needed** | Not by the maths, **but yes for `sklearn.GaussianNB`**. Unscaled it cost 13 points here |
 | **Cost** | One pass over the data. Nothing iterates |
 | **Watch out** | Wildly overconfident when features correlate |
+| **If you need probabilities** | [Logistic regression](../01-logistic-regression/), or run this through [calibration](../09-probability-calibration/) |
+| **Next** | [Discriminant analysis](../04-discriminant-analysis/), which keeps the generative idea and drops the independence assumption |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

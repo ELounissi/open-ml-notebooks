@@ -52,7 +52,12 @@ the opposite trade: it will never chain, and it will never find the crescents.
 The height of a bar is the distance at which that merge happened, and nothing else in
 the picture carries information: leaf order is only constrained by the tree. On sixty
 points from three blobs, the largest gap in the last twelve merges runs from **27.492
-to 56.750**, so the cut goes at **42.121**, leaving **2 clusters**.
+to 56.750**, so the cut goes at **42.121**, leaving **2 clusters**. Exactly one of the
+59 merges sits above that line.
+
+Three blobs in, two clusters out. The largest gap is real, and it is not the same
+question as how many clusters there are: the second-largest gap, 5.260 to 27.492, is
+the one that would have said three.
 
 ![Merge heights](figures/fig-03-merge-heights.png)
 
@@ -65,11 +70,16 @@ gave 2 clusters, asking for 3 gave 3 clusters, `same partition: False`.
 `criterion="distance"` states a claim about distance and accepts the count that follows;
 `criterion="maxclust"` states a claim about $k$ and hides the height.
 
-Chaining seen from that side, single linkage on 340 noisy blob points: cutting at 0.450
-gives **35 clusters**, largest **196 of 340**, 26 singletons; at 0.826, **12 clusters**,
-largest **325 of 340**; at 1.534, **3 clusters**, largest **337 of 340**. Wherever you
-put the line you get one cluster holding almost everything and singletons peeling off
-the edge. Asking for exactly three clusters does not fix that, it hides it.
+Chaining seen from that side, single linkage on 340 noisy blob points: cutting at 1.534
+gives **3 clusters**, largest **337 of 340**; at 0.826, **12 clusters**, largest **325 of
+340**; at 0.450, **35 clusters**, largest **196 of 340**, 26 of them singletons.
+
+The giant cluster is not there at every height. Cut low enough and it does come apart,
+and at 0.450 it holds well under 60% of the points. The problem is what it comes apart
+*into*: 26 of those 35 clusters are a single point. No height on this tree returns three
+groups of roughly a hundred points, which is what the data contains. You get one lump, or
+a lump plus dust. Asking for exactly three clusters lands you near the 1.534 cut, so what
+you get is 337 points together and three strays, reported as "3 clusters".
 
 ## On real beans, against k-means
 
@@ -143,6 +153,9 @@ sizes [3986, 3036, 2353, 1918, 1679, 522, 117]. Both beat the unconstrained samp
 | **Cost** | $O(n^2)$ memory, always. 0.69 GB at 13,611 rows, 37 GB at 100,000 |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

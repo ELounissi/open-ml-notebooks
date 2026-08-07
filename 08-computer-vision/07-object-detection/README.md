@@ -198,9 +198,12 @@ above, which is why this chapter spends most of its length there.
 | **AP** | Area under the interpolated precision-recall curve, detections pooled across images and ranked by confidence |
 | **Always state** | The matching IoU threshold. The same boxes scored 0.9604 and 0.3423 on this page |
 | **Never report** | Grid-slot accuracy. A silent detector scores 0.9809 on it |
-| **Next** | [Text preprocessing](../../09-sequences-and-language/01-text-preprocessing/), which starts Part 9 |
+| **Next** | [Text preprocessing](../../09-sequences-and-language/01-text-preprocessing-and-tfidf/), which starts Part 9 |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

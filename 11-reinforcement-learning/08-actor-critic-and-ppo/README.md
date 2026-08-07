@@ -10,7 +10,7 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 | **What you will learn** | What a critic buys once it supplies the target and not only the baseline, how GAE turns bias against variance with one number, how PPO's clipped objective is written, and a measurement showing the clip cannot stop the failure it is usually credited with stopping |
 | **You should already know** | [Policy gradients](../07-policy-gradients/): the score-function estimator, reward-to-go, and why variance is the whole problem |
 | **Environment** | Cart-pole, written from scratch, the same class as [11-06](../06-deep-q-networks/) and [11-07](../07-policy-gradients/). No `gymnasium` |
-| **Runtime** | Around five minutes on a laptop CPU. The four-estimator comparison is 131.7 s, the lambda sweep 66.0 s, the PPO runs 72.0 s |
+| **Runtime** | Around five minutes on a laptop CPU. The notebook prints the seconds each of the three sweeps took |
 
 ---
 
@@ -84,9 +84,16 @@ At a learning rate of 0.03 the unclipped reuse moves the policy 0.4606 in KL and
 takes the score from 400 to **127.1**. The clipped version moves 0.02896, a
 **16x smaller** distance, and finishes at **400**, untouched.
 
-Read the clip-fraction column alongside it. It is 0 in the two rows where the
-two objectives agree, and it climbs to 0.1862 in the row where they diverge most.
-The clip does nothing until the ratio leaves the window, and everything after.
+Read the clip-fraction column alongside it. It is zero or near zero in the rows
+where the two objectives agree, and it climbs to 0.1862 in the row where they
+diverge most. The clip does nothing until the ratio leaves the window, and
+everything after.
+
+That column is also the diagnostic worth logging in your own runs. Near zero and
+the clipped objective is the plain surrogate, so whatever you are attributing to
+PPO is coming from somewhere else. Very high and most of your samples contribute
+no gradient at all, so the extra epochs are burning compute. The middle of the
+range is where the method is doing its job.
 
 ## The three-way training comparison
 
@@ -156,15 +163,24 @@ Then the outcome, which does not follow the noise:
 
 ![Lambda sweep](figures/fig-03-lambda-sweep.png)
 
-**The two quietest gradients produced the two worst runs.** λ = 0.5 has nearly
-the lowest noise-to-signal ratio in the table and finishes at 192.667, less than
-half of what the noisiest estimator achieves. The ranking by noise and the
-ranking by outcome are close to reversed over the bottom half of the dial.
+**The quietest gradients produced the worst runs.** λ = 0 has the lowest
+noise-to-signal ratio in the table and finishes at 348.883; λ = 0.99 has twice the
+noise and finishes at 433.850. Over the bottom half of the dial the ranking by
+noise and the ranking by outcome point in opposite directions.
 
-A quieter gradient is not automatically a better run, and this is the table I
-would show anybody who has just measured a variance reduction and is about to
-report it as an improvement. The bias the critic introduces is a real cost, and
-below λ = 0.9 it dominates.
+I would rest that claim on the two ends of the sweep and not on the λ = 0.5 row.
+That row is 192.667 with quiet neighbours on both sides, which is not the shape of
+a response curve, and the notebook prints the spread between the two seeds at every
+lambda so you can see it is comparable to the whole range of the column. Two runs
+of cart-pole per point cannot resolve a dip that size. **Do not tune λ by reading
+that scatter.**
+
+What the sweep does establish is the direction, and the mechanism behind it is not
+subtle. Lowering λ removes variance and adds bias, in fixed proportion, and a
+variance measurement cannot see the bias. This is the table I would show anybody
+who has just measured a variance reduction and is about to report it as an
+improvement. It is the same trap [11-07](../07-policy-gradients/) found with gamma,
+where the missing quantity was the signal instead of the bias.
 
 The best value here is 0.99, one step above the conventional 0.95, and it beats
 λ = 1 by 1.3 steps, which is inside anything I would call a difference on two
@@ -181,16 +197,22 @@ seeds.
 | GAE, λ = 0.95 | 415.43 | 477.9 | **12.07** | 55.5 | **476.50** |
 | one-step TD, λ = 0 | 343.92 | 435.4 | 92.30 | 74.0 | 323.50 |
 
-**Bootstrapping moved the final score by +21.6 steps** against 11-07's estimator,
-measured on fresh episodes. The two rows disagree about which is better, though:
-λ = 1 leads the last-quarter column by 30 steps and trails the fresh-episode
-column by 21.6.
+Bootstrapping moved the fresh-episode score by +21.6 steps against 11-07's
+estimator, and I am not going to call that a win. The two criteria disagree on
+which of the two critic rows is better, λ = 1 leading the last-quarter column by
+about 30 and trailing the fresh column by 21.6, and both gaps sit in the same range
+as the seed spreads in the table beside them. **Two seeds can separate a
+configuration that fails from one that works. They cannot order four that all
+work**, and the notebook prints the tie list rather than leaving the reader to
+divide the columns.
 
-The seed-spread column is the cleaner result. GAE at λ = 0.95 finishes at
-**12.07** steps between seeds against **193.80** for the no-critic estimator, a
-16x reduction in how much the outcome depends on the random seed. That is the
-same pattern 11-07 found: a lower-variance gradient shows up as a more
-reproducible run, even where it does not show up as a higher score.
+The seed-spread column is the cleaner result and the one I would report. GAE at
+λ = 0.95 finishes at **12.07** steps between seeds against **193.80** for the
+no-critic estimator, a 16x reduction in how much the outcome depends on the random
+seed. That is a gap nothing here could have invented, and it is the same pattern
+[11-07](../07-policy-gradients/) found: a lower-variance gradient shows up as a
+more reproducible run, whether or not it shows up as a higher score. Reproducibility
+is the thing the critic reliably buys.
 
 ## The detail that quietly corrupts a critic
 
@@ -219,9 +241,35 @@ apart, and it is the single change between this chapter's λ = 1 configuration a
 | **Main dials** | Learning rate, epochs per batch, clip width, λ, episodes per batch |
 | **Watch out** | A clip fraction near zero means the clip never fired and you are running plain surrogate reuse. PPO's was 0.031 here |
 | **Sanity check** | Log KL from the collecting policy every batch. Unclipped reuse hit 0.7498, which is the range that destroys a policy |
+| **Before ranking** | Two seeds separate a failure from a success and nothing finer. Print the spread beside every mean |
 | **Next** | [Part 12](../../12-putting-it-together/), where every method in the book goes on one scoreboard |
 
+## Where Part 11 ends up
+
+Eight chapters, each one there because of something the one before it could not do.
+
+| Chapter | What it could not do, that the next one addresses |
+|---|---|
+| [11-01 The setup](../01-the-setup/) | Nothing is learned. Every policy is priced by hand |
+| [11-02 Bandits](../02-multi-armed-bandits/) | No state, so no credit to assign across time |
+| [11-03 MDPs](../03-markov-decision-processes/) | Needs the transition model handed to it |
+| [11-04 Q-learning](../04-q-learning/) | Reports one number and does not say whether it describes the policy or the training run |
+| [11-05 SARSA](../05-sarsa/) | Needs a table, so the state space has to be small enough to enumerate |
+| [11-06 DQN](../06-deep-q-networks/) | Cannot represent a policy whose best answer is stochastic, and its `argmax` is brittle |
+| [11-07 Policy gradients](../07-policy-gradients/) | On-policy, so every batch is used once and thrown away |
+| **11-08 Actor-critic and PPO** | Reuses the batch, and the clip is what makes reuse survivable |
+
+One thread runs through all of it and it is not a method. Every chapter reports a
+number produced by a procedure, and the recurring mistake is reading it as if it
+came from a different one: a training curve read as a policy evaluation, a variance
+read as gradient quality, a mean over two seeds read as a ranking.
+[12-05](../../12-putting-it-together/05-common-mistakes/) collects that habit and
+what it costs across the whole book.
+
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

@@ -45,9 +45,17 @@ against a promise of eight. The marginal number gives no hint of it, because the
 other twenty-three hours quietly absorb the damage. The linear model, which is
 worse on every loss in the table above, never drops below 0.712 in any hour.
 
-**A single coverage number is an average, and an average over hours is exactly
-the thing a planning problem cannot use.** The hour you care about is the one
-where the number went wrong.
+That gap is not sampling noise. Each hour holds about 181 held-out rows, so one
+hour's coverage carries a standard error near 0.030, and 0.406 sits thirteen of
+those below 0.80. The linear model's worst hour, 0.712, is three.
+
+The mechanism is the sharpness the trees were praised for two paragraphs ago,
+landing somewhere specific. Midnight hires sit near the floor, so the conditional
+spread genuinely is small, and the boosted model narrows its band accordingly. It
+narrows it too far. The linear model cannot narrow that hard, because its band
+width is a linear function of the same one-hot columns everywhere, so it is
+protected from this failure by being unable to commit it. **Sharpness is bought
+somewhere, and marginal coverage will not tell you where.**
 
 ![Coverage by hour](figures/fig-04-coverage-by-hour.png)
 
@@ -123,14 +131,34 @@ Held-out coverage on Bike Sharing, with the width alongside it:
 | linear | 25%-75% | 0.5000 | 0.4863 | 131.1 | -0.0137 |
 | boosted trees | 25%-75% | 0.5000 | **0.4967** | 83.6 | **-0.0033** |
 
-The pattern is mostly the one you would expect. Narrower bands catch fewer
-points, and the linear model is closer to its promise on the two outer
-intervals. On the innermost band it reverses: the trees are 83.6 hires wide,
-**36% narrower** than the linear model's 131.1, and still closer to the target,
-missing by 0.0033 against 0.0137.
+Coverage is a proportion, so before ranking anything in that table, note that it
+carries a binomial standard error of about 0.005 at the 90% band, 0.006 at 80%
+and 0.008 at 50%. The notebook prints all three.
 
-Any model can buy coverage by widening. A coverage number printed without a
-width next to it is not a result, and this table is why the notebook prints them
+Two things clear that bar and one does not.
+
+**The trees under-cover on the wide bands, measurably.** Misses of -0.0128 and
+-0.0161 are between two and three standard errors. Both models come in under
+their promise, which is the direction to expect when each quantile is fitted
+independently on finite data, and the trees do it harder.
+
+**The trees are much sharper, everywhere.** 175.7 hires against 233.8 on the
+10-90 band, and 83.6 against 131.1 on the 25-75, which is 36% narrower. That is
+not a marginal effect and it holds at every level.
+
+**Which model is closer to its promise on any single band is not settled here.**
+On the innermost band the trees miss by 0.0033 and the linear model by 0.0137, a
+difference of about one standard error, so I am not going to call that a
+reversal. The reason a ranking could flip between bands at all is structural and
+worth knowing even when the flip is small: a band's miss is the upper quantile's
+error minus the lower one's, so two errors of the same sign cancel and two of
+opposite sign stack. Nothing ties the 25 and 75 fits to the 5 and 95 fits. There
+is no mechanism forcing one model to be closer on every band, which is why a
+single headline verdict about a quantile model is not available and would not
+become available with ten times the test set.
+
+Any model can buy coverage by widening. A coverage number printed without a width
+next to it is not a result, and this table is why the notebook prints them
 together.
 
 ## Crossing is countable, so count it
@@ -151,10 +179,17 @@ must have, which is order. Over 26,070 neighbouring-pair checks:
 | 0.90 vs 0.95 | 0.0532 | 0.1399 |
 | **overall** | **3.07%** (801) | **10.76%** (2,806) |
 
-The flexible model crosses **3.5x more often**, and the linear model's crossings
-concentrate in the tails where its two fitted lines are nearly parallel. The
-trees cross everywhere, including 7.6% of the time between the 25th and 50th
-percentile, where the two levels are far apart.
+The flexible model crosses **3.5x more often**, and that gap is enormous next to
+anything sampling could produce on 26,070 checks.
+
+The two patterns have different causes. The linear model's crossings concentrate
+in the tails, where two quantile levels five points apart produce nearly parallel
+fitted lines, so a small difference in slope is enough to make them swap
+somewhere in the input space. Its 0.25-vs-0.50 rate of 0.0005 is what a well
+separated pair looks like. The trees cross everywhere, including 7.6% between the
+25th and 50th percentile where the levels are far apart, because each quantile is
+a separately grown forest with its own splits and there is no shared structure
+holding them in order at all. Flexibility here means freedom to disagree.
 
 One held-out row makes it concrete. Row 1 of the test set, boosted trees, all
 seven levels in order of q:
@@ -192,12 +227,16 @@ link function, which is [the next chapter](../09-generalised-linear-models/).
 | **Linear version** | `QuantileRegressor`. Exact, solved as a linear program, and slow: 77.0 s for seven fits here |
 | **Non-linear version** | `GradientBoostingRegressor(loss="quantile", alpha=q)`. One model per quantile, so n quantiles cost n fits |
 | **Always measure** | Held-out coverage next to interval width. Coverage alone can always be bought by widening |
-| **Then measure again** | Coverage conditioned on something. A marginal 0.784 here hid an hour sitting at 0.406 |
+| **Then measure again** | Coverage conditioned on something. A marginal 0.784 here hid an hour sitting at 0.406, thirteen standard errors below the promise |
+| **Before ranking** | A coverage estimate carries binomial noise. On 4,345 rows that is about 0.006 at the 80% band, which is wider than several of the misses in the table |
 | **Watch out** | Independent fits cross. 10.76% of neighbouring pairs for the boosted model. Sort the row before shipping it |
 | **Does not fix** | A target with a hard bound. 1,011 negative bicycle counts need a link function, not a loss |
 | **Next** | [Generalised linear models](../09-generalised-linear-models/) |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

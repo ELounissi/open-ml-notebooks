@@ -27,17 +27,27 @@ only difference is which repair is switched on.
 | neither | 19.8 | **10.2** | 24.0 | 0.3 |
 
 **Removing the target network is what ends the run, not removing replay.** The
-no-target agent finishes at 10.4 steps, below the 18.5 it started at, and
-statistically indistinguishable from removing both repairs (10.2). It did not
-learn and then destabilise. It never got off the ground.
+no-target agent finishes at 10.4 steps, below the 18.5 it started at, and its gap
+to removing both repairs (10.2) is well inside the seed spread, so those are one
+result rather than two. It did not learn and then destabilise. It never got off
+the ground.
 
 The no-replay agent, by contrast, still climbed: 19.2 to 89.2, with a best window
 of 153.8. That is a third of the full agent's score and nearly five times its own
 starting point. It is damaged, not dead.
 
-The seed spread column says the same thing from the other side. The unstable
-configuration is **no replay, at 34.8 spread between seeds**. The no-target runs
-agree with each other perfectly (spread 0.0) because both seeds sat flat.
+Two seeds is not much, and it does not have to be much for this. Every comparison
+on this page is between a run that learned and a run that did not, and the notebook
+prints each pairwise gap against the wider of the two seed spreads so you can see
+which comparisons it licenses. What two seeds cannot do is rank configurations that
+all work, and nothing here asks them to.
+
+The seed spread column also says the same thing from the other side, and it is a
+trap worth naming. The widest spread belongs to **no replay, at 34.8**, and the
+narrowest to the no-target runs, at 0.0. That reads backwards if you take a narrow
+band for stability. Two seeds that both stopped learning early have nothing left to
+disagree about. **Agreement between dead runs is not reliability**, and a band is
+only worth comparing among runs that are still moving.
 
 If you take one operational rule from this notebook: when a DQN never leaves its
 starting return, check that the target network is actually frozen before you
@@ -125,13 +135,34 @@ is also rotating right, and the slope is the exchange rate between lean and
 rotation. A table would have needed a separate number for every box along that
 line and no way to know they belonged together.
 
-One caveat the notebook prints and does not discuss. Running that same network
-greedily with exploration off gives `[11, 9, 9, 11, 11, 12, 11, 11, 12, 10]`,
-**mean 10.7 of a possible 500**, worse than the random policy above. The surface
-is a snapshot of a network taken at the end of training, and its shape is more
-readable than its performance. Treat the picture as an illustration of what
-function approximation can represent, not as evidence that this particular
-checkpoint balances the pole.
+## The result I would rather not have got
+
+Take the best configuration by training return, the one that reads 247.5 in the
+leading table, and run its final weights greedily with exploration off:
+
+`[11, 9, 9, 11, 11, 12, 11, 11, 12, 10]`, **mean 10.7 of a possible 500.**
+
+That is worse than the random policy. The two are not measuring the same thing and
+the difference is not subtle. Last-50 mean return averages fifty episodes of an
+epsilon-greedy policy whose weights were changing throughout, and the weights that
+survive to the end of the loop are whichever ones happened to be in memory when the
+episode budget ran out. Deep Q-learning does not improve monotonically, so those
+final weights are a sample from a wobbling process rather than the best of it.
+
+The repair is dull and standard: evaluate greedily every so often during training,
+keep the best checkpoint, and stop treating the last one as the result. I left it
+out to keep the ablation loop readable and this is the bill.
+
+[11-07](../07-policy-gradients/) scores the same checkpoint against a
+policy-gradient agent and reports the same failure from the other side, rather than
+either chapter quietly using the flattering number. The general shape of the
+mistake, a number read as if it came from a different procedure than the one that
+produced it, is on the ledger in
+[12-05](../../12-putting-it-together/05-common-mistakes/).
+
+So read the Q surface above as an illustration of what function approximation can
+represent, and not as evidence that this checkpoint balances the pole. The number
+under it already settled that.
 
 ## Cheat sheet
 
@@ -144,8 +175,14 @@ checkpoint balances the pole.
 | **Loss** | Huber rather than squared error, so one bad bootstrap cannot dominate a batch |
 | **Watch out** | The `max` inflates values by 1.538 over ten actions. Double DQN costs one line |
 | **Sanity check** | Return stuck at its starting level means the target network or a missing `(1 - done)`, not the learning rate |
+| **Do not trust** | A narrow seed band on its own. Failed runs agree with each other perfectly |
+| **Before you ship it** | Run the weights greedily. The best configuration by training return scored 10.7 of a possible 500 that way |
+| **Next** | [Policy gradients](../07-policy-gradients/), which optimise the policy directly and handle continuous actions, where the `max` in this target has nowhere to go |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

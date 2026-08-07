@@ -37,8 +37,8 @@ other three quarters was the test set being mined.
 
 ![Tuning against test](figures/fig-02-tuning-against-test.png)
 
-Now the part I did not expect. Compare the two procedures by the quality of the
-model each one picked, rather than by the number each one reported:
+Now compare the two procedures by the quality of the model each one picked,
+rather than by the number each one reported:
 
 | | Score reported | Honest score | Optimism |
 |---|---|---|---|
@@ -46,11 +46,18 @@ model each one picked, rather than by the number each one reported:
 | tune on validation, report test | 0.8805 | 0.8768 | +0.0037 |
 | no tuning, first candidate | 0.8480 | 0.8457 | +0.0023 |
 
-Tuning against the test set 120 times produced a model **0.0021 worse** in
-honest accuracy than tuning against a validation set, and a reported number
-**0.0288** too high. Almost the entire cost landed on the number rather than on
-the model, which is the harder failure to notice: nothing about the model looks
-wrong until it disappoints somewhere you cannot rerun it.
+The two tuned models are the same model in every way that matters. 0.8747 against
+0.8768 is a fifth of a percentage point, and the notebook prints the paired
+standard error across the 15 sessions beside it so you can see it is noise. It
+should be noise. Both rules take the maximum of the same 120 candidates scored on
+a 250-row set, so they are solving an identical selection problem and there is no
+mechanism by which one would find better trees than the other.
+
+What differs is the number: **+0.0288 against +0.0037**. The whole cost of tuning
+against the test set landed on the report, not on the model. That is the harder
+failure to notice, because there is nothing wrong with the model to find when it
+disappoints somewhere you cannot rerun it. The artefact of the mistake is a figure
+in a document, and figures in documents do not throw exceptions.
 
 ![Three procedures](figures/fig-03-three-procedures.png)
 
@@ -128,15 +135,31 @@ own day sitting in training.** Not most of them. All of them.
 | TimeSeriesSplit | **0.2693** | **-0.0421** | 0.4651 | can you handle next month? |
 
 Same model, same rows, same metric. Only the definition of a held-out row
-changes, and it is worth **0.359 of R²** that a forecaster never collects. The
-time split even has a fold that scores below predicting the mean.
+changes, and it is worth **0.359 of R²** that a forecaster never collects.
+
+Two different failures are stacked in that table, and only one of them is about
+grouping.
+
+The day leak is the smaller one. Shuffled to grouped costs **0.018**, with
+non-overlapping fold ranges, so it is a real effect and a modest one. All 17,379
+test rows had a sibling from their own day in training and it bought almost
+nothing, because the features already carry the hour, the temperature and the
+weekday, which is most of what a day is.
+
+Non-stationarity is the expensive one. Grouped to time-ordered costs **0.340**,
+and the worst fold lands at **-0.0421**, below predicting the mean. The file
+covers two years and demand grew across them, so a model fitted on the early
+block is being asked to extrapolate to a level it has never seen rather than
+interpolate inside one. No splitter fixes that. `TimeSeriesSplit` only stops you
+from being lied to about it. The fixes are a feature that carries the trend, or
+refitting often enough that the gap between training and use stays small.
 
 ![Splitters](figures/fig-04-splitters.png)
 
-The mechanism is easier to see than to argue about. Drawing one held-out fold
-from each splitter against the calendar, the shuffled fold pulls rows from
-**728 of the 731 days it also trains on**, the grouped fold keeps whole days
-together, and the time fold is a single block at the end.
+Drawing one held-out fold from each splitter against the calendar makes the
+difference visible: the shuffled fold pulls rows from **728 of the 731 days it
+also trains on**, the grouped fold keeps whole days together, and the time fold is
+a single block at the end.
 
 ![What a held-out fold looks like](figures/fig-05-what-a-held-out-fold-looks-like.png)
 
@@ -149,14 +172,17 @@ together, and the time fold is a single block at the end.
 | **Test set** | Touched once, at the end, to produce the number you report |
 | **The rule** | A set that decided something can no longer measure it |
 | **The dial that matters** | Test-set size. Four times more rows halved the optimism; a hundred times more candidates only doubled it |
-| **What it costs you** | Here, 0.0021 of honest accuracy and 0.0288 of honesty in the reported number. The number is the expensive half |
+| **What it costs you** | Here, nothing measurable in model quality and 0.0288 in the reported number. The number is the whole cost |
 | **Never report** | `GridSearchCV.best_score_`. It ran 0.0050 above the nested estimate on 200 rows and 20 candidates, and the gap widens with the search |
 | **Do not trust** | `sigma * sqrt(2 ln k)` as a level. It overstated the simulated optimism in every row, by 2x at small `k` |
-| **Repeated rows** | `GroupKFold`, grouped by whatever repeats: patient, day, device, session. A shuffled split leaked 100.00% of test days here |
-| **Time order** | `TimeSeriesSplit` or a fixed date cut. Shuffling was worth 0.359 of fake R² |
+| **Repeated rows** | `GroupKFold`, grouped by whatever repeats: patient, day, device, session. A shuffled split leaked 100.00% of test days here, and it was worth 0.018 |
+| **Time order** | `TimeSeriesSplit` or a fixed date cut. Worth 0.340 here, twenty times the grouping leak, because demand moved between the two years |
 | **Next** | [Overfitting and underfitting](../03-overfitting-and-underfitting/), then [cross-validation](../04-cross-validation/) |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

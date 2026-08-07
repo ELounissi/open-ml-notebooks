@@ -57,9 +57,22 @@ without building anything.
 
 ![Kernels and gamma](figures/fig-03-kernels.png)
 
-The last panel is the one to stare at. With `gamma = 30` the boundary stops being
-a ring and becomes islands drawn around individual training points. That is
-overfitting made visible.
+The last panel is the one to stare at, and it needed a far larger `gamma` than
+the usual telling suggests. At `gamma = 30` the boundary is still one smooth
+ring, behaving no differently from the sensible settings beside it. Only at
+`gamma = 2000` does it break into lumps and detached islands wrapped around
+individual training points, with a hole through the middle of the inner cluster
+where no training point landed.
+
+**Watch which number catches it.** Every RBF panel scores 1.000 on the data it
+was fitted to, memoriser included, so training accuracy has no signal here at
+all. The held-out score is the one that moves:
+
+| Setting | Train | Held out |
+|---|---|---|
+| rbf, C=0.1, gamma=scale | 1.000 | 1.000 |
+| rbf, C=10, gamma=scale | 1.000 | 1.000 |
+| rbf, C=10, gamma=2000 | 1.000 | **0.812** |
 
 ## Does the kernel pay?
 
@@ -84,12 +97,23 @@ and only on one of the two.
 | 500 | 0.004 s | 0.015 s |
 | 13,611 | 0.571 s | 0.167 s |
 
-A **27×** increase in rows cost the SVM **139×** the time. Logistic regression grew
-11×. And the fitted model stores **2,801 of 13,611 rows (20.6%)** as support
-vectors, every one consulted at prediction time.
+The textbook bound on SVM training is between quadratic and cubic in rows. **The
+measurement does not reach it.** A **27×** increase in rows cost the SVM **139×**
+the time, an exponent of about **1.5**. Quadratic would have cost 741×, cubic
+20,177×. Logistic regression grew 11×.
 
-The promise was that only points near the boundary matter. On overlapping real
-data, a fifth of the rows *are* near the boundary.
+That bound is not wrong, it is a worst case. `libsvm` uses shrinking and caching
+to avoid the pathological path on well-behaved data, and Dry Bean is well
+behaved. The durable point is the shape rather than the digits: **the cost is
+superlinear, so it will bite, sooner than linear intuition expects and later than
+the worst case threatens.** On log-log axes the slope is the exponent, which is
+what makes the SVM's steeper line readable at a glance. Wall-clock timings vary by
+machine; the gap between the two slopes does not.
+
+And the fitted model stores **2,801 of 13,611 rows (20.6%)** as support vectors,
+every one consulted at prediction time. The promise was that only points near the
+boundary matter. On overlapping real data, a fifth of the rows *are* near the
+boundary.
 
 ## Cheat sheet
 
@@ -102,6 +126,9 @@ data, a fifth of the rows *are* near the boundary.
 | **Probabilities** | `probability=True` bolts on Platt scaling with internal cross-validation. Slow, not free |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

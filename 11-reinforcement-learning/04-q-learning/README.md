@@ -43,15 +43,30 @@ each observed surprise:
 
 $$Q(s,a) \leftarrow Q(s,a) + \alpha\Big[r + \gamma \max_{a'} Q(s',a') - Q(s,a)\Big]$$
 
-## The dials, and how each fails
+## The dials, and the one that mattered
 
 ![Hyperparameters](figures/fig-03-hyperparameters.png)
 
-**Alpha** too small barely moves off zero in 500 episodes; too large and each
-update overwrites the last. **Epsilon** at 0.01 means the agent keeps the first
-route it finds; at 0.6 it acts randomly regardless of how good its table gets.
-**Gamma** at 0.5 makes a reward 13 steps away worth $0.5^{13}$, effectively
-nothing, so it cannot plan a route at all.
+Mean reward over the last 100 episodes, sweeping one dial at a time:
+
+| Dial | Settings and scores | Span |
+|---|---|---|
+| alpha | 0.05: −38.8, 0.2: −43.7, 0.5: −38.8, 0.9: **−29.4** | 14.3 |
+| epsilon | 0.01: **−14.2**, 0.1: −38.8, 0.3: −165.2, 0.6: −444.5 | **430.3** |
+| gamma | 0.5: −39.2, 0.9: **−36.7**, 0.99: −37.9, 1.0: −38.8 | 2.5 |
+
+**Only epsilon moved the outcome.** At 0.6 the agent acts randomly regardless of
+how good its table gets, and pays −444.5 for it. At 0.01 it scores **−14.2, the
+best setting anywhere in the sweep**: too little exploration is a real failure
+mode, and it needs a problem with somewhere else to look. Twelve columns and four
+rows is not one.
+
+**Alpha** spans 14.3 across a range from 0.05 to 0.9, and the large step does not
+thrash: 0.9 settles highest of the four. Only the start differs, where 0.05 climbs
+slowly. **Gamma** spans 2.5, with 0.5 within half a point of 1.0. The usual
+argument for discounting failing does not apply here: every reward is −1 or −100
+and reaching the goal ends the episode, so there is no distant positive payoff for
+a small gamma to shrink away.
 
 ## The result worth slowing down for
 
@@ -91,11 +106,14 @@ cliff is a real cost and SARSA is being correct, not timid.
 | **Use it when** | The state space is small enough to enumerate and you can simulate episodes cheaply |
 | **Avoid it when** | States are continuous or enormous: that is what [DQN](../06-deep-q-networks/) is for |
 | **Off-policy** | Yes, so it can learn from replayed or borrowed experience. DQN depends on this |
-| **Main dials** | `alpha` 0.1 to 0.5, `gamma` 0.9 to 1.0, `epsilon` 0.1 often decayed toward 0 |
+| **Main dials** | `alpha` 0.1 to 0.5, `gamma` 0.9 to 1.0, `epsilon` 0.1 often decayed toward 0. Sweep before you tune: here alpha and gamma changed the score by 14.3 and 2.5, epsilon by 430.3 |
 | **Guarantee** | Converges to optimal $Q$ given enough visits to every state-action pair and a decaying alpha |
 | **Watch out** | The `max` makes it optimistic, so it overestimates under noise. Double Q-learning fixes this |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

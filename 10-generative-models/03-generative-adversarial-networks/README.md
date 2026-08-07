@@ -64,16 +64,21 @@ $-\log D(G(z))$ has the same optimum and the opposite profile:
 | 0.0474 | -0.0474 | -0.9526 | 20.1x |
 | 0.5000 | -0.5000 | -0.5000 | 1.0x |
 
-That table is arithmetic and settles the point. The training comparison is
-weaker, and the notebook says so: with a 200-step discriminator head start to
-force the saturating regime, **both forms covered 8 of 8 modes**. Only quality
-separated them, 0.537 against 0.675.
+That table is arithmetic and settles the point: at the moment the generator most
+needs to move, the two gradients differ by three orders of magnitude.
+
+The training comparison is much weaker and the notebook says so. With a 200-step
+discriminator head start to force the saturating regime, **both forms covered 8 of
+8 modes**, and only quality separated them, 0.537 against 0.675. That is one seed
+each. Read it as consistent with the gradient argument rather than as evidence for
+it; the ablation further down runs three seeds and prints how much a single seed
+can move a quality number on its own.
 
 ## The main run, and why its loss curve is a trap
 
 ![Ring training stages](figures/fig-01-ring-training-stages.png)
 
-3,000 steps, 24 seconds, nothing switched on. Final checkpoint: **8 of 8 modes
+3,000 steps, 29 seconds, nothing switched on. Final checkpoint: **8 of 8 modes
 covered, quality 0.941**. The generator never sees a real point; the ring comes
 out of the discriminator's gradient alone.
 
@@ -94,7 +99,7 @@ coverage. One run whose coverage never varied is not evidence either way.
 
 ![Stabilisers](figures/fig-04-stabilisers.png)
 
-Four configurations, three seeds each, 1,200 steps, 149 seconds:
+Four configurations, three seeds each, 1,200 steps, 141 seconds:
 
 | Stabiliser | Mean covered | Worst seed | Best seed | Mean quality |
 |---|---|---|---|---|
@@ -104,21 +109,32 @@ Four configurations, three seeds each, 1,200 steps, 149 seconds:
 | Both | 8.0 | 8.0 | 8.0 | 0.650 |
 
 This cuts against the advice it was meant to support. **No stabiliser changed
-coverage.** Every configuration, the plain one included, covered all eight modes
-on every seed with zero spread. On quality, only label smoothing helped, +0.082
-over plain; halving the generator's learning rate made things **worse**, 0.645
-against 0.684, and combining the two gave back most of smoothing's gain. One of
-the two recommended stabilisers is a net negative here. The caveat that keeps
-this useful: the plain configuration was never in trouble, so this measures what
-stabilisers cost when unnecessary, not what they buy when they are needed.
+coverage.** Every configuration, the plain one included, covered all eight modes on
+every seed with zero spread. That column is empty of information, and empty in a
+specific way worth naming: identical results across seeds mean the test was
+insensitive, not that the settings are dependable.
+
+The quality column is where they differ, and the notebook prints each gap against
+the spread across the three seeds so the ordering cannot be read further than the
+seeds support. What I would carry away is the direction and its mechanism rather
+than the exact margins. Label smoothing caps the discriminator's confidence and
+takes nothing away from the generator. Halving the generator's learning rate takes
+away half its budget on a fixed step count and buys nothing, since the theory wants
+a strong discriminator and this handicaps the generator instead. One of the two
+recommended stabilisers is a net negative here, and there is a reason for it that
+does not depend on the seed.
+
+The caveat that keeps this useful: the plain configuration was never in trouble, so
+this measures what stabilisers cost when unnecessary, not what they buy when they
+are needed.
 
 ## The image GAN
 
 ![Fashion-MNIST samples](figures/fig-05-fashion-mnist-samples.png)
 
-552k generator parameters, 534k discriminator, 60 epochs in 77 seconds. Final
-losses: generator 1.294, discriminator 1.151, numbers that say nothing about
-what came out.
+552k generator parameters, 534k discriminator, 60 epochs in 59 seconds. Final
+losses: generator 1.294, discriminator 1.151, numbers that say nothing about what
+came out.
 
 | | Edge energy | Per-pixel spread |
 |---|---|---|
@@ -148,6 +164,9 @@ it passes: a GAN settled on one garment would read near zero here.
 | **Diagnosis** | Sample-based, always. A collapsed run scored a lower generator loss than a healthy one |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

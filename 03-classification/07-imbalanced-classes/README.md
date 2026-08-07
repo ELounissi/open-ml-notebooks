@@ -34,7 +34,8 @@ three times the best resampler, on a model nobody rebalanced at all.
 
 Average precision, which reads the whole ranking instead of one cut, is 0.748 for
 the plain model and never beaten. Resampling did not improve the ranking. It moved
-the cut.
+the cut, and it damaged the ranking on the way: every fix gave up between 0.12 and
+0.25 average precision.
 
 ## Accuracy is a measurement of the common class
 
@@ -77,9 +78,24 @@ Oversampling reports 3,546 positive rows and 60 distinct ones. SMOTE's rows are 
 distinct, but every one is a convex combination of the same 60.
 
 Across 25 folds, F1 at a fixed 0.5 cut spans **0.5076** between best and worst
-method. Average precision spans **0.2518**, and most of that gap is undersampling
-alone, the only method that deletes real rows, so the only one that can genuinely
-damage the ranking.
+method. Average precision spans **0.2518**, half as much. Most of what resampling
+appears to buy is the cut moving rather than the model improving.
+
+**But none of them are free, which is not what I expected.** Undersampling should
+be the only method able to damage the ranking, since it is the only one that
+deletes real rows. It is the worst, and it is not alone:
+
+| Method | Average precision | Given up against plain |
+|---|---|---|
+| Plain | **0.748** | none, this is the reference |
+| Undersample | 0.496 | -0.252 (34%) |
+| Oversample | 0.624 | -0.124 |
+| SMOTE | 0.627 | -0.121 |
+| Class weights | 0.625 | -0.123 |
+
+Duplicating rows, interpolating between them and reweighting the loss all pull the
+boundary toward the rare class, and pulling the boundary reorders the scores near
+it. Not deleting data is not the same as doing no harm.
 
 ## Why rebalancing is a threshold in disguise
 
@@ -91,17 +107,30 @@ For a calibrated model, rebalancing the training set to fifty-fifty and cutting 
 $$\frac{p'(x)}{1-p'(x)} = r\cdot\frac{p(x)}{1-p(x)}, \qquad
   \frac{1}{1+r} = \frac{n_{\text{pos}}}{n_{\text{pos}}+n_{\text{neg}}} = \pi$$
 
-The measured version: best resampler (SMOTE) **0.2313** F1, plain model at the base
-rate **0.2252**, plain model at a tuned cut **0.7227**.
+The measured version confirms it: best resampler (SMOTE) **0.2313** F1, plain model
+at the base rate **0.2252**. The prediction was right.
 
-The tuned cut averages **0.3381** across folds (sd 0.0630, range 0.2616 to 0.5569).
-The base rate itself is 0.0166: free, needs no data, and reproduces the resamplers
-almost exactly. Tuning is worth doing when you have positives to spare and wobbles
-a lot when you do not.
+**What the prediction never promised is that either would be any good.** The
+tuned cut averages **0.3381** across folds against a base rate of **0.0166**, a
+factor of twenty apart, and the F1 that follows is **0.723** against **0.225**, a
+factor of three. The base rate is not a cheap approximation to the tuned cut. It
+is a different and much worse cut, because rebalancing to fifty-fifty is an
+arbitrary target rather than an optimum, and on a 1.66% base rate it overshoots
+far past where F1 peaks.
 
-A threshold is also a dial. "Catch ninety percent of the fraud" is a request you
-satisfy by reading a number off the recall curve. No resampling ratio takes that
-as input.
+The left panel corrects one more thing. The out-of-fold F1 curve peaks at a cut of
+**0.3468**, right beside the 0.5 line on that log axis, scoring **0.7600** against
+**0.7158** at 0.5. The famous default is slightly wrong here, not badly wrong. The
+base rate, at 0.0166, scores **0.2227**.
+
+So the argument for the threshold is not that a formula beats resampling. It is
+that a threshold is a **dial** rather than a formula. "Catch ninety percent of the
+fraud" is a request you satisfy by reading a number off the recall curve. Neither
+the base rate nor any resampling ratio takes that as input.
+
+One caveat: the tuned cut wobbles fold to fold (sd 0.0630, range 0.2616 to
+0.5569), because it is chosen from a handful of positives. Tune it, but do not
+read the third decimal as meaningful.
 
 ### Second dataset, same shape of answer
 
@@ -137,10 +166,26 @@ training row. Undersample first and the test fold arrives at a **50.00%** positi
 rate instead of the real 1.66%, so precision is measured in a world that does not
 exist.
 
-The random forest reaches a perfect 1.000 on leaked oversampling. A tree can put a
-duplicated row in its own leaf; a linear model cannot. The more flexible the model,
-the more the leak pays out. Class weights and thresholds cannot make this mistake,
-because they never create a row.
+**Read the inflation column, because it runs backwards from the usual story.** I
+expected the forest to inflate most: a tree can put a duplicated row in its own
+leaf, a linear model cannot. Every logistic inflation beats every forest one.
+Mean inflation is **+0.678** for logistic regression against **+0.383** for the
+forest, and the single largest is oversampling with logistic regression at
+**+0.681**.
+
+The answer is in the honest column, not the leaked one. The forest was **already
+almost perfect on the training-fold task**, scoring 0.786 honestly with
+oversampling against logistic regression's 0.229. A leaked duplicate cannot add
+much to a model with that little headroom, so the forest climbs 0.786 to 1.000.
+The linear model starts at 0.229 and the leak carries it to 0.910.
+
+Inflation measures the room between honest performance and the ceiling, not
+flexibility. **You cannot predict what a leak is worth from the model class.** Run
+both orders and subtract: one extra cross-validation, and the only reliable
+answer.
+
+Class weights and thresholds cannot make this mistake, because they never create a
+row.
 
 ## Cheat sheet
 
@@ -154,6 +199,9 @@ because they never create a row.
 | **Watch out** | Resample inside the fold, never before the split. Leaked oversampling inflated F1 by +0.681 here |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

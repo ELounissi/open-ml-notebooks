@@ -23,12 +23,12 @@ procedure reported and what an honest one reported on the same data.
 
 | Mistake | Chapter | What was measured | Invented |
 |---|---|---|---|
-| **leaking a fitted step** | **01-08** | **R squared manufactured by a KNN imputer fitted before the split** | **1.2226** |
-| leaking a fitted step | 03-07 | F1 manufactured by oversampling before the split | 0.6810 |
-| leaking a fitted step | 01-04 | accuracy manufactured on pure noise by selecting columns outside the loop | 0.2550 |
-| leaking a fitted step | 01-07 | R squared manufactured by target encoding computed in-fold, on a noise column | 0.2502 |
-| tuning against the test set | 01-09 | simulated: 500 candidates all truly worth 0.900, best one reported | 0.0606 |
-| **tuning against the test set** | **01-09** | **a grid search's own best score against nested cross-validation** | **0.0074** |
+| **leaking a fitted step** | **[01-08](../../01-foundations/08-missing-data/)** | **R squared manufactured by a KNN imputer fitted before the split** | **1.2226** |
+| leaking a fitted step | [03-07](../../03-classification/07-imbalanced-classes/) | F1 manufactured by oversampling before the split | 0.6810 |
+| leaking a fitted step | [01-04](../../01-foundations/04-cross-validation/) | accuracy manufactured on pure noise by selecting columns outside the loop | 0.2550 |
+| leaking a fitted step | [01-07](../../01-foundations/07-feature-scaling-and-encoding/) | R squared manufactured by target encoding computed in-fold, on a noise column | 0.2502 |
+| tuning against the test set | [01-09](../../01-foundations/09-hyperparameter-tuning/) | simulated: 500 candidates all truly worth 0.900, best one reported | 0.0606 |
+| **tuning against the test set** | **[01-09](../../01-foundations/09-hyperparameter-tuning/)** | **a grid search's own best score against nested cross-validation** | **0.0074** |
 
 ![The ledger](figures/fig-01-the-ledger.png)
 
@@ -43,21 +43,29 @@ The rest of the ledger records real costs rather than invented scores:
 
 | Mistake | Chapter | What was measured | Value |
 |---|---|---|---|
-| accuracy on unbalanced classes | 01-05 | margin of a real model over always predicting negative, at 1% positives | 0.0030 |
-| accuracy on unbalanced classes | 03-07 | the same margin at a 1.66% positive rate | 0.0092 |
-| importance read as causation | 12-02 | impurity importance handed to a column of pure noise, against 0.0276 for a real feature | 0.0214 |
-| importance read as causation | 12-02 | permutation importance of one feature alone, against 0.7990 for it and its twin together | 0.2502 |
-| no baseline | 02-01 | RMSE of predicting the mean, against 0.726 for linear regression | 1.1540 |
-| one split, no interval | 01-04 | spread of a single 80/20 split over 200 seeds, against 0.0074 for 5-fold | 0.0226 |
-| variance without the signal | 11-07 | noise-to-signal ratio after lowering gamma cut raw variance by more than 100x | 71.0700 |
-| a training curve is not a policy | 07-06 | test accuracy at the validation-loss minimum, epoch 9, against 0.8170 at epoch 18 | 0.7963 |
-| a training curve is not a policy | 07-06 | accuracy reported when `model.eval()` is forgotten at batch size 8, true value 0.7533 | 0.6426 |
+| accuracy on unbalanced classes | [01-05](../../01-foundations/05-classification-metrics/) | margin of a real model over always predicting negative, at 1% positives | 0.0030 |
+| accuracy on unbalanced classes | [03-07](../../03-classification/07-imbalanced-classes/) | the same margin at a 1.66% positive rate | 0.0092 |
+| importance read as causation | [12-02](../02-interpreting-models/) | impurity importance handed to a column of pure noise, against 0.0276 for a real feature | 0.0214 |
+| importance read as causation | [12-02](../02-interpreting-models/) | permutation importance of one feature alone, against 0.7990 for it and its twin together | 0.2502 |
+| no baseline | [02-01](../../02-regression/01-linear-regression/) | RMSE of predicting the mean, against 0.726 for linear regression | 1.1540 |
+| one split, no interval | [01-04](../../01-foundations/04-cross-validation/) | spread of a single 80/20 split over 200 seeds, against 0.0074 for 5-fold | 0.0226 |
+| variance without the signal | [11-07](../../11-reinforcement-learning/07-policy-gradients/) | noise-to-signal ratio after lowering gamma cut raw variance by more than 100x | 71.0700 |
+| a training curve is not a policy | [07-06](../../07-neural-networks/06-regularisation/) | test accuracy at the validation-loss minimum, epoch 9, against 0.8170 at epoch 18 | 0.7963 |
+| a training curve is not a policy | [07-06](../../07-neural-networks/06-regularisation/) | accuracy reported when `model.eval()` is forgotten at batch size 8, true value 0.7533 | 0.6426 |
+| a winner inside the noise | [12-01](../01-the-scoreboard/) | rank columns in the six-family table that survive a fold-spread check, of four | 2.0 |
 
-`distinct mistakes on the ledger : 8`
-`chapters cited                  : 10`
+```
+distinct mistakes on the ledger : 9
+chapters cited                  : 11
+```
 
 Treating all of them as equally fatal is how people end up fixing the cheap ones
 and shipping the expensive ones.
+
+The last row is the one I am most likely to miss in my own work. A leak announces
+itself once you go looking for it. A ranking built out of noise looks exactly like
+a ranking built out of signal, and the only thing separating them is a spread you
+have to remember to print.
 
 ## No baseline
 
@@ -108,11 +116,20 @@ The same comparison with repeated folds and a paired interval:
 | interval excludes zero | True |
 
 The interval settles it and the honest sentence is longer than people want it to
-be: on fifteen hundred bean rows logistic regression beats this forest by
-+0.0125, and a single split named it the winner in only 80.0% of tries, with the
-most flattering one reporting +0.0400 and the least flattering one reporting a
-loss of -0.0080. `toolkit.evaluate.paired_ci` is four lines and removes the
-excuse.
+be: on fifteen hundred bean rows logistic regression beats this forest by +0.0125,
+and a single split named it the winner in only 80.0% of tries, with the most
+flattering one reporting +0.0400 and the least flattering one reporting a loss of
+-0.0080.
+
+The paired interval is much narrower than that cloud, and not because the
+bootstrap is generous. A fold that happens to hold awkward rows makes both models
+look bad at once, so subtracting fold by fold cancels the shared difficulty and
+leaves the difference you asked about. Comparing two unpaired numbers throws that
+cancellation away and pays for it in width.
+`toolkit.evaluate.paired_ci` is four lines and removes the excuse.
+
+Hold on to the size of that +0.0125. The last section runs the same two models on
+the full dataset and it does not survive.
 
 ## Accuracy on unbalanced classes
 
@@ -139,7 +156,7 @@ precision is the only column still moving at the bottom of the sweep, falling to
 [03-07](../../03-classification/07-imbalanced-classes/) is the chapter about what
 to do instead, and its answer is a threshold rather than a resampler.
 
-## A chart title that stopped being true
+## A chart title that stopped being true, and a winner that was never there
 
 ![A title that stopped being true](figures/fig-05-a-title-that-stopped-being-true.png)
 
@@ -151,29 +168,41 @@ regenerated while the title is not, because the title is a string:
 | Rows | Logistic regression | Random forest | Winner | Margin |
 |---|---|---|---|---|
 | 1500 | **0.9153** | 0.9000 | logistic regression | 0.0153 |
-| 13611 | 0.9237 | **0.9245** | random forest | 0.0008 |
+| 13611 | 0.9237 | **0.9245** | random forest | **0.0008** |
 
 ```
 the title I wrote after the first run : 'Logistic regression beats the forest by 0.0153'
 is it still true on the full dataset  : False
 ```
 
-Both panels of that figure are drawn from the same numbers. The left one carries
-a sentence that was true when it was written and no longer matches its own bars,
-and nothing in the pipeline that produced it would ever notice.
+Both panels of that figure are drawn from the same numbers. The left one carries a
+sentence that was true when it was written and no longer matches its own bars, and
+nothing in the pipeline that produced it would ever notice.
 
-The flip is not an artefact either. It is the ordinary way model comparisons
-behave: a linear model wins when rows are few and loses when there are enough
-rows for a flexible model to pin its structure down, which is the thread running
-through [the scoreboard](../01-the-scoreboard/) and
-[01-03](../../01-foundations/03-overfitting-and-underfitting/). Note also that
-the winning margin on the full file is 0.0008, which is small enough that the
-sensible report is the flip rather than the winner.
+Now look at that last margin. **0.0008 is not a win.** The notebook prints the
+margin next to the pooled fold standard deviation for exactly this reason: on the
+small sample the lead is several times the fold spread, so what I wrote was fair at
+the time, and on the full file the two models are level and the "winner" column
+flips on a gap no reshuffle would reproduce.
 
-**A title that states a finding must be computed from the data it sits on. Same
-for a number in a paragraph.** If it cannot be regenerated, it will eventually be
-wrong, and it will be wrong quietly. Every chart title in this book is an
-f-string evaluated when the figure is drawn, and this chapter is why.
+So the stale title is wrong twice. It names the wrong model, and it asserts a
+winner where the experiment no longer has one. Writing "the forest wins now" would
+have been the same mistake pointing the other way.
+
+What the two rows do support is weaker and still worth having: the linear model's
+advantage decays as rows arrive, which is what
+[01-03](../../01-foundations/03-overfitting-and-underfitting/) predicts, since a
+flexible model's variance shrinks with sample size while a linear model's bias does
+not. [The scoreboard](../01-the-scoreboard/) runs the same pair at an intermediate
+sample size and finds them inside a fold standard deviation of each other, which is
+the middle of the same story. A real reversal would need the forest to lead by more
+than the noise, and on this dataset it never does.
+
+**A title that states a finding must be computed from the data it sits on, and it
+must be allowed to say there is no finding.** Same for a number in a paragraph. If
+it cannot be regenerated, it will eventually be wrong, and it will be wrong
+quietly. Every chart title in this book is an f-string evaluated when the figure is
+drawn, and this chapter is why.
 
 ## The checklist, printed rather than written
 
@@ -184,6 +213,7 @@ f-string evaluated when the figure is drawn, and this chapter is why.
 | first model | fit a `DummyRegressor` or `DummyClassifier` and write the number down | 01-01 |
 | every experiment | everything with a `fit` method goes inside the `Pipeline` | 12-03 |
 | every comparison | repeated folds and a paired interval, never one split | 01-04 |
+| every comparison | compare the gap to the fold spread before naming a winner | 12-01 |
 | classification | print the majority-class rate next to accuracy, or use another metric | 01-05 |
 | tuning | nested cross-validation or a test set touched once. Never `best_score_` | 01-09 |
 | interpretation | permutation importance on held-out rows, and no causal language | 12-02 |
@@ -213,6 +243,7 @@ baseline, which is where this book started.
 | **Most common** | No baseline. Costs nothing to fix and makes every other number readable |
 | **Hardest to see** | Tuning against the test set. It invented only 0.0074 in a real search, and the model is fine while the number is not |
 | **Most misread** | Feature importance. Impurity importance gave a pure-noise column 0.0214 against 0.0276 for a real feature |
+| **Most flattering** | A winner inside the noise. Two of the four rank columns in [the scoreboard](../01-the-scoreboard/) do not survive a fold-spread check |
 | **Sneakiest** | A stale chart title or a hardcoded number in prose. Regenerate or delete |
 | **The unbalanced trap** | At a 2.00% positive rate, 0.9800 accuracy bought +0.0000 over the majority class and balanced accuracy sat at 0.5000 |
 | **The single-split trap** | One split named logistic regression the winner in 80.0% of 40 tries. The paired interval settled it at +0.0125 [+0.0063, +0.0187] |
@@ -221,6 +252,9 @@ baseline, which is where this book started.
 | **Where to go next** | [The scoreboard](../01-the-scoreboard/) for how the methods compare, then run this checklist against a dataset of your own |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

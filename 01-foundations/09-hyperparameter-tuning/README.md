@@ -86,16 +86,36 @@ for a total cost of **25.62 full evaluations**.
 
 | Budget | Random | Bayesian |
 |---|---|---|
-| 10 evaluations | **0.9760** | 0.9758 |
-| 20 evaluations | 0.9780 | **0.9786** |
-| 42 evaluations | 0.9791 | **0.9803** |
+| 10 evaluations | 0.9760 | 0.9758 |
+| 20 evaluations | 0.9780 | 0.9786 |
+| 42 evaluations | 0.9791 | 0.9803 |
 
 Halving reached 0.9807 at a cost of 25.6; the grid reached 0.9754 at a cost of 42.
-I want to be exact about the Bayesian result, because it is usually oversold. At
-10 evaluations it was **behind** random search, 0.9758 against 0.9760. It only
-pulled ahead from 20 evaluations on, and its final margin over random after 42
-evaluations is 0.0012. On this objective halving was the better buy, reaching the
-highest score of any method at 60% of the grid's cost.
+
+**None of those gaps is a result.** Breast Cancer has 569 rows, so accuracy moves
+in steps of 0.0018, one patient. The entire spread across all four methods at full
+budget is 0.0053, three patients, and the spread across the 12 random-search seeds
+alone is as wide. This objective does not separate the four search strategies and
+I am not going to pretend it does.
+
+That tie is worth more than a winner would be. Two hyperparameters, an easy
+dataset and a broad optimum is a problem where forty evaluations is plenty for any
+method, including drawing points out of a hat. Search strategy starts to matter
+when the space is high-dimensional, the optimum is narrow, or evaluations are
+expensive enough that you get a handful. If you compare search algorithms and they
+all tie, the tuning is finished and the next improvement has to come from the
+features or the model family.
+
+What the chart does separate cleanly is the x axis. Halving reached the same
+cluster for 25.6 evaluations against the grid's 42. When four methods agree on the
+answer, cost is the only thing left to choose on.
+
+One shape in the Bayesian curve is real and is not a ranking: it is level or
+behind early and climbs later. That is structural, not bad luck. The first eight
+evaluations of every Bayesian run are random draws, because a Gaussian process
+fitted to nothing has nothing to say. A method that spends eight evaluations
+warming up cannot beat one that does not over a budget of ten, whatever the final
+numbers say.
 
 Applying halving to the section-2 tree grid instead:
 
@@ -108,6 +128,14 @@ Applying halving to the section-2 tree grid instead:
 min_samples_leaf=1` instead of `max_depth=8, min_samples_leaf=5`. Judging on a
 slice of the rows did lose the winner here. That is the trade, stated with a run
 that shows it happening rather than as a footnote.
+
+Note which hyperparameters got confused. `max_depth` and `min_samples_leaf` are
+exactly the two that interact with dataset size: a leaf minimum of 5 looks
+different on 200 rows than on 3,000, so a candidate judged on a slice is judged
+under a different regime. That is the failure mode to watch for with
+`resource="n_samples"`. If depth limits and leaf minimums are what you are tuning,
+ration `n_estimators` instead and the elimination stops being biased against the
+settings that need data.
 
 ## Sample multiplicative parameters on a log scale
 
@@ -142,12 +170,17 @@ search; it scales with how much freedom the search had to chase noise.
 |---|---|
 | **Grid** | $k^d$ evaluations, $k$ distinct values per axis forever. Fine at one or two hyperparameters, and genuinely better when they all matter |
 | **Random** | One distinct value per parameter per evaluation. The default when you do not know which parameters matter |
-| **Halving** | Screened 81 candidates for 25.6 evaluations and 14.1x faster on the tree grid. It can drop the true winner |
-| **Bayesian** | Surrogate plus expected improvement. It trailed random at 10 evaluations here and led by 0.0012 at 42 |
+| **Halving** | Screened 81 candidates for 25.6 evaluations and 14.1x faster on the tree grid. It dropped the full grid's winner here |
+| **Bayesian** | Surrogate plus expected improvement. It cannot win over its own warm-up, and it did not separate from random search on this objective |
+| **When they tie** | Stop tuning. Four methods inside three patients of each other means the answer is not in the hyperparameters |
 | **Scales** | `loguniform` for C, alpha, gamma, learning rates. 0.8% of uniform draws landed in the bottom two decades |
 | **Reporting** | Nested CV, or a test set the search never saw. Never `best_score_` |
+| **Next** | [Linear regression](../../02-regression/01-linear-regression/), where the tuning problem has a closed-form answer for once |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

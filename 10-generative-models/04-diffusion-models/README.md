@@ -22,21 +22,17 @@ with the same function:
 
 | Family | Modes covered | Quality | Imbalance |
 |---|---|---|---|
-| GAN | 8.0000 | 0.9007 | **0.0395** |
-| diffusion | 8.0000 | **0.9335** | 0.0502 |
+| GAN | 8.0000 | 0.9007 | 0.0395 |
+| diffusion | 8.0000 | 0.9335 | 0.0502 |
 | real data | 8.0000 | 0.9935 | **0.0222** |
 
 **Both families reached all eight modes at every seed**, so coverage, the metric
-the claim is usually stated in, does not separate them at all here.
+the claim is usually stated in, does not separate them at all here. A saturated
+measurement is a fact about the test, not about the methods.
 
-Imbalance is the finer measure, the total variation distance between the
-per-mode shares and a uniform eighth. Real data scores 0.0222, which is the floor
-set by sampling noise. **The GAN scored 0.0395 and diffusion 0.0502**, so on the
-one measure that could have shown mode collapse, the GAN spread its mass more
-evenly than the diffusion model did. I did not expect that.
-
-Diffusion won the other column, putting 93.35% of its points on a mode against
-the GAN's 90.07%. So it is a split decision, per seed as well:
+Imbalance is the finer measure, the total variation distance between the per-mode
+shares and a uniform eighth. Real data scores 0.0222, the floor set by sampling
+noise. Look at what three seeds do to each family before reading the means:
 
 | Seed | GAN quality | GAN imbalance | Diffusion quality | Diffusion imbalance |
 |---|---|---|---|---|
@@ -44,20 +40,33 @@ the GAN's 90.07%. So it is a split decision, per seed as well:
 | 1 | 0.9055 | 0.0555 | 0.9445 | 0.0564 |
 | 2 | 0.8895 | **0.0228** | 0.9420 | 0.0563 |
 
-The GAN's best seed reached 0.0228, which is within 0.0006 of the real data's
-floor. Nothing in this table looks like mode collapse.
+The GAN's imbalance runs from 0.0228 to 0.0555 across its own three seeds. The gap
+between the two families' means is smaller than that. **So this experiment does not
+distinguish them, on either measure**, and the notebook prints each gap against the
+within-family spread rather than leaving the bold text to imply an answer. I had
+expected diffusion to win on imbalance, it did not, and a gap that size is not a
+surprising finding. It is a null result.
 
 ![Diffusion against GAN](figures/fig-05-diffusion-against-gan.png)
 
-Two caveats that belong before anybody quotes this. The ring is two-dimensional
-with eight well-separated modes and both models train on it in under half a
-minute, so it is a place to watch mechanisms rather than a place to rank methods.
-And the sampling budgets are nowhere near equal: the GAN produces a point in one
-forward pass and the diffusion model walked the entire chain.
+Saying "inconclusive" teaches nothing on its own, so here is what would settle it.
+Mode coverage separates generative methods when there are enough modes that
+dropping some is likely, when the modes sit close enough that the discriminator
+cannot separate them cheaply, or when the budget is short enough that a collapsed
+run has no time to recover. The ring has eight well-separated modes and a generous
+budget, which is three strikes.
+[10-03](../03-generative-adversarial-networks/) had to tilt the game on purpose, by
+starving the discriminator, before it could make a GAN collapse at all. That is the
+condition the textbook claim needs, and this ring does not supply it.
 
-What the comparison does establish is that the mode-coverage argument is not
-self-evident. It needs a dataset where it can be demonstrated, and this one is
-not it.
+Two more caveats before anybody quotes the table. The ring is two-dimensional and
+both models train on it in under half a minute, so it is a place to watch
+mechanisms rather than a place to rank methods. And the sampling budgets are
+nowhere near equal: the GAN produces a point in one forward pass and the diffusion
+model walked the entire chain.
+
+The comparison this notebook does settle is not on that figure at all, and it is in
+the next section.
 
 ## The loss is a real progress signal, which is the actual difference
 
@@ -76,9 +85,20 @@ target, so the loss ought to behave. Measured at checkpoints during training:
 **Correlation between training loss and sample quality: -0.994.** A falling loss
 came with better samples, every time.
 
-That is the trade the whole method makes. There is no adversary, no balance to
-maintain, and a number on the screen that means what you want it to mean. It is
-bought with sampling cost, and the next section prices it.
+**This is the difference between the two families that survives measurement**, and
+it is not the one the textbooks lead with.
+[10-03](../03-generative-adversarial-networks/) runs the same correlation on a GAN
+generator's loss and gets a much weaker number, because a GAN loss is a score in a
+moving game: the generator's loss can fall because the discriminator got worse.
+Diffusion regresses onto a fixed target, so nothing underneath the loss is moving,
+and the number on the screen means what you want it to mean.
+
+That difference holds for a reason rather than for a seed, which is exactly what
+the mode-coverage comparison above could not offer. On a real project it also
+matters more: it is the difference between being able to stop training when the
+curve flattens and having to sample and eyeball every checkpoint.
+
+It is bought with sampling cost, and the next section prices it.
 
 ## What the denoising steps buy
 
@@ -194,6 +214,9 @@ magnitude larger.
 | **Watch out** | Samples left the data range, -2.14 to 1.64 against -1 to 1. Scale data to match the terminal Gaussian and check the output |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

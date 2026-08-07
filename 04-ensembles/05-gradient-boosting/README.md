@@ -47,18 +47,48 @@ space of functions, one small tree per step.
 
 ![Learning rate](figures/fig-02-learning-rate.png)
 
-The learning rate scales down every tree's contribution. Halve it and you need
-roughly twice as many trees, but the path is smoother and generalises better,
-because no single tree makes a large correction alone.
+The learning rate scales down every tree's contribution. The received wisdom is
+that lower is better, given more trees. A sweep over a tenfold range with a fixed
+budget of 400 trees says otherwise.
+
+| Learning rate | Best RMSE | Trees needed | Still improving at the cap? |
+|---|---|---|---|
+| 0.50 | 0.4860 | 365 | no |
+| 0.20 | **0.4715** | 388 | no |
+| 0.10 | 0.4870 | 400 | **yes** |
+| 0.05 | 0.5080 | 400 | **yes** |
+
+**The best rate is 0.20, in the middle of the range.** The slowest rate is the
+worst of the four, and its line finishes highest on the chart. Rate 0.10 is no
+better than the fast 0.50.
+
+Look at the last column before concluding that slow rates are bad. Rates 0.10 and
+0.05 record their best score at tree 400, which *is* the budget: their curves were
+still falling when the run ended. Those two results are **censored, not
+converged**, and that is the likely reason they look poor. At 0.05 each tree
+contributes a tenth of what it does at 0.50, so 400 of them is not enough.
+
+The honest rule: a slower rate does not arrive somewhere better, it arrives
+somewhere better *if you let it arrive*. Under a tight budget a slow rate is
+strictly worse, because you are measuring an unfinished model. **Learning rate and
+tree count are one decision, and quoting either alone says nothing.**
+
+The "halve it and you need twice as many trees" half fares no worse but no better:
+a tenfold cut in rate should need roughly ten times the trees, and the measured
+counts are 365, 388, 400, 400. They barely move because the last two are pinned
+against the cap. This experiment cannot test that claim; testing it needs a budget
+large enough for every rate to converge inside it.
 
 ## Boosting can overfit. A forest cannot.
 
 ![Overfitting](figures/fig-03-overfitting.png)
 
-| | Best | At 900 / 400 trees |
-|---|---|---|
-| Gradient boosting | **0.4742** at 164 trees | 0.4799 (**+0.0057 worse**) |
-| Random forest | 0.5209 at 200 trees | 0.5195 (flat) |
+RMSE, so lower is better.
+
+| | At 200 / 164 trees | At 400 / 900 trees | Change |
+|---|---|---|---|
+| Gradient boosting | **0.4742** (its best, at 164) | 0.4799 at 900 | **+0.0057 worse** |
+| Random forest | 0.5209 at 200 | **0.5195** at 400 | -0.0014, flat |
 
 This is the sharpest practical difference between the two. Adding trees to a
 forest never hurts, because it is averaging. Adding trees to a boosted model
@@ -105,11 +135,14 @@ a linear model by is a property of your data, not of the algorithm.
 | **Use it when** | Tabular data with interactions and thresholds, the strongest default in this book for that case |
 | **Avoid it when** | Images, audio, text; you need to extrapolate; you cannot afford to tune |
 | **Scaling needed** | No |
-| **Main dials** | `learning_rate` and `n_estimators` together, then `max_depth` (2 to 6), then subsampling |
+| **Main dials** | `learning_rate` and `n_estimators` together, never one at a time: a slow rate under a tight budget is just an unfinished model. Then `max_depth` (2 to 6), then subsampling |
 | **Watch out** | It **will** overfit if you let it. Always early-stop on a validation slice |
 | **Versus a forest** | The forest is harder to get wrong; boosting is harder to beat once tuned |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

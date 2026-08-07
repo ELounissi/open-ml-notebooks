@@ -34,13 +34,28 @@ point where one coordinate is exactly zero.
 
 ![Paths](figures/fig-02-paths.png)
 
-Ridge's lines glide toward zero and none arrive. Lasso's hit zero one by one:
+**Read the two x axes before the lines.** They are different, and that is half the
+finding. Lasso's coefficients hit zero one by one:
 
 | alpha | Features kept |
 |---|---|
 | 0.001 | all 8 |
 | 0.05 | 4: MedInc, HouseAge, Latitude, Longitude |
 | 0.3 | 1: MedInc |
+| 1 | none |
+
+The first version of this figure drew ridge on that same range and captioned it
+"ridge's lines glide toward zero and none arrive". Over that range ridge does not
+glide, it sits still: at alpha 1, where lasso has already emptied the model,
+ridge's weight vector is at **||w|| 1.560** against 1.561 at the far left. Getting
+a visible glide takes **alpha 100,000**, four decades further out, and even there
+all 8 features survive with the smallest coefficient at **0.00385**, small and not
+zero. So each panel now gets the range where its penalty actually acts.
+
+The wider point: **for the same nominal alpha the two penalties are nowhere near
+the same strength**, because one charges $|w|$ and the other $w^2$, and for the
+small weights that decide selection $w^2$ is much the smaller number. "I used
+alpha=0.1" means nothing until you say which penalty.
 
 ## The result that matters: LassoCV is not a feature selector
 
@@ -73,12 +88,25 @@ choose alpha yourself: around 0.01 here buys a nearly clean list for 0.0024 RMSE
 ![Correlated features](figures/fig-04-correlated-features.png)
 
 Given three near-identical copies of `MedInc`, Lasso keeps one **arbitrarily** and
-the choice jumps from sample to sample:
+the choice jumps from sample to sample. Twelve bootstrap refits:
 
-| | Coefficient spread across 12 refits |
-|---|---|
-| Lasso | 0.360, 0.257, 0.191 |
-| Ridge | 0.113, 0.113, 0.128 |
+| | Spread per coefficient | Zeros | Range | Sum of the three |
+|---|---|---|---|---|
+| Lasso | 0.360, 0.257, 0.191 | **17 of 36** | 0.000 to 0.791 | 0.756 ± 0.031 |
+| Ridge | 0.113, 0.113, 0.128 | 0 of 36 | 0.051 to 0.574 | 0.849 ± 0.037 |
+
+I had this panel captioned "ridge splits the weight evenly and stays put", and it
+does not. Ridge's three lines wander between **0.051 and 0.574**, cross each other
+repeatedly, and all three twins take a turn as the largest, exactly as lasso's do.
+What ridge does is never zero anything and move about two to three times less.
+Steadier is not still.
+
+The genuinely stable quantity is the **total**. Both methods pin the sum of the
+three twin coefficients to within a few per cent, and neither has any idea which
+of the three columns earned it, because that question has no answer. Lasso
+expresses that ignorance by picking one and calling the others zero, which reads
+like a finding. Ridge expresses it by spreading the weight unevenly and zeroing
+nothing, which reads like what it is.
 
 Fine if you only want predictions. Misleading if you then say "the model selected
 this feature, so it is the important one". For correlated groups **and** selection,
@@ -96,6 +124,9 @@ use [Elastic Net](../06-elastic-net/).
 | **Watch out more** | `LassoCV` tunes for prediction, not sparsity. It kept 17 of 30 noise columns here |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

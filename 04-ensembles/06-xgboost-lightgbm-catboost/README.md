@@ -47,10 +47,16 @@ opposite conclusion had been written there on the strength of a single split
 that turned out to be a coin toss.
 
 What does survive every split is the width of the band. **Every library, every
-configuration, every split lands inside a range of 0.0071 to 0.0129 accuracy.**
-That is the more useful finding and a stronger one than a ranking would have
-been. When the entire menu finishes that close together, accuracy is not the
-variable worth optimising, because there is almost nothing left in it to win.
+configuration, every split lands inside a range of 0.0071 to 0.0129 accuracy.** On
+3,403 held-out rows a single accuracy near 0.92 carries about 0.0045 of binomial
+noise, so that band is one to three standard errors wide in total, for twenty-four
+combinations.
+
+That is the more useful finding and a stronger one than a ranking would have been.
+When the entire menu finishes that close together, accuracy is not the variable
+worth optimising, because there is almost nothing left in it to win. Pick on an
+axis that has a gap on it instead, and the chart below shows one: the same four
+libraries that tie on the vertical axis span several-fold on the horizontal one.
 
 ![Accuracy against time](figures/fig-04-accuracy-vs-time.png)
 
@@ -63,15 +69,27 @@ itself once the data is large enough. So the notebook runs it both ways:
 
 | Library | Its own defaults | Matched settings |
 |---|---|---|
-| HistGB | **0.9257** (last) | **0.9277** (first) |
+| HistGB | 0.9257 (last) | 0.9277 (first) |
 | XGBoost | 0.9268 | 0.9262 |
-| LightGBM | **0.9301** (first) | **0.9254** (last) |
+| LightGBM | 0.9301 (first) | 0.9254 (last) |
 | CatBoost | 0.9283 | 0.9262 |
 
-**First and last swap places.** LightGBM leads at defaults and finishes last once
-everything is matched; HistGB does the reverse. The spread also shrinks, from
-0.0044 to 0.0024, which is the part that says how much of a defaults benchmark is
-measuring the defaults.
+First and last swap places, and the useful thing to do with that is not to explain
+it. On 3,403 held-out rows an accuracy near 0.925 carries a binomial standard
+error of about 0.0045. The defaults column spans 0.0044 and the matched column
+spans 0.0024, so **both columns fit inside one standard error and neither is a
+ranking**.
+
+That is what makes the flip informative. If the ordering were real it would not
+reverse from changing settings that were supposed to make the comparison fairer.
+An ordering that turns over under a fair-minded change of protocol is an ordering
+that was noise in the first place, and the flip is the cheapest possible proof of
+it. The four-split grid above reaches the same verdict from a different direction.
+
+The spread shrinking from 0.0044 to 0.0024 is the one directional thing here, and
+it says what a defaults benchmark is measuring: matching the settings removed
+roughly half of a spread that was already inside the noise, which means most of
+what a defaults comparison shows you is the defaults.
 
 The cost of matching is real, because the matched configuration is more model
 than most of the defaults were:
@@ -358,6 +376,9 @@ any benchmark you read, including the fit times higher up this page.
 | Shape out of `predict` | `(n,)` | `(n,)` | `(n, 1)` on multiclass | `(n,)` |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

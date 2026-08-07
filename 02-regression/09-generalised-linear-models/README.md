@@ -1,6 +1,6 @@
 # Generalised linear models
 
-### The Poisson family failed its own test by 32x and still made the best predictions
+### The Poisson family failed its own test by 32x and predicted as well as anything that passed it
 
 **[Open the notebook](notebook.ipynb)** · Part 2, Regression ·
 Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
@@ -30,9 +30,16 @@ distribution built for exactly this, improves the fit enormously:
 **AIC favours the negative binomial by 363,209. Held-out mean absolute error
 favours the Poisson model by 2.02 hires.**
 
-It happens twice. The notebook also measures the exponent linking variance to
-mean directly from the data, gets 1.43, and hands that to a Tweedie model built
-for that exact power. It scored 61.78 against plain Poisson's 61.41.
+The 2.02 hires is 3.3% of the MAE, off one 75/25 split, so the size is worth less
+than the sign. The sign has a mechanism, given below, that does not depend on the
+split.
+
+It happens twice, in the weaker form. The notebook also measures the exponent
+linking variance to mean directly from the data, gets 1.43, and hands that to a
+Tweedie model built for that exact power. It scored 61.78 against plain Poisson's
+61.41, a gap of 0.6% that I would not call a win for either. Getting the variance
+exactly right bought nothing measurable, which is the same lesson arriving more
+quietly.
 
 The reason is a property of the Poisson score equation, `Xᵀ(y - μ) = 0`, which
 only requires the **mean** model to be right. Get the variance wrong and the
@@ -182,14 +189,19 @@ Five variance assumptions, one mean model, one held-out set:
 | Tweedie, p = 1.5 | 61.915 | 93.875 | 34.306 | 2.080 | 0.201 |
 | Gamma, p = 2 | 64.678 | 104.345 | 37.622 | 1.825 | 0.062 |
 
-The measured exponent was 1.43. The Tweedie model fitted at exactly that power
-lost to the Poisson model that assumes an exponent the data rejects. Every
-family with a log link avoids negative predictions and clusters within 3.3 MAE
-of each other; the one without a link is 15 MAE behind and 201 bicycles below
-zero.
+Read that table as two groups, not as five ranks. Every family with a log link
+avoids negative predictions and clusters within 3.3 MAE of the others, which on a
+single split is not a ranking of anything. The one without a link is 15 MAE behind
+and 201 bicycles below zero.
 
-That ordering is the chapter in one table. **The link changed the predictions.
-The family changed the error bars.**
+Inside the cluster, the measured exponent of 1.43 bought nothing: Tweedie at
+exactly that power scored 61.78 against Poisson's 61.41, and Poisson assumes an
+exponent the data has already rejected. Gamma at p = 2 is the only family far
+enough out to separate, and it is the furthest from the measured 1.43, which is
+the one place inside the group where the exponent shows up at all.
+
+That two-group structure is the chapter in one table. **The link changed the
+predictions. The family changed the error bars.**
 
 ## Cheat sheet
 
@@ -202,10 +214,13 @@ The family changed the error bars.**
 | **Not the test** | The unconditional variance-to-mean ratio. It read 173.7 here and a mixture of clean Poissons would inflate it too |
 | **Overdispersed** | Quasi-Poisson for a fast rescale by sqrt(phi), negative binomial for a real distribution. Neither will move your predictions much |
 | **Watch out** | Significance counts barely moved, 52 to 47, while 43 of 54 intervals shifted enough to exclude the better estimate. Report intervals |
-| **Do not** | Assume the better-specified family predicts better. It lost twice here, by 2.02 MAE and by 0.38 |
+| **Do not** | Assume the better-specified family predicts better. Negative binomial lost by 2.02 MAE for a reason, and Tweedie at the measured power tied |
 | **Next** | [Logistic regression](../../03-classification/01-logistic-regression/), the same machinery with a logit link |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

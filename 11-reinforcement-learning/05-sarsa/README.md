@@ -10,9 +10,16 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 | **What you will learn** | What on-policy means as one term in one line of code, how to score the policy an agent learned separately from the reward it collected while learning it, why those two numbers disagree, what happens to the disagreement as exploration goes to zero, and why expected SARSA is usually the one to reach for |
 | **You should already know** | [Q-learning](../04-q-learning/): the temporal-difference update, epsilon-greedy, and the cliff grid |
 | **Environment** | The 4 by 12 cliff grid from [11-03](../03-markov-decision-processes/), rebuilt from its transition model. No `gymnasium`, no RL library |
-| **Runtime** | Around two minutes. The three-method comparison is 0.9 s of it; the two sweeps are 7.5 s and 8.3 s |
+| **Runtime** | Around two minutes on a laptop CPU. The notebook prints the seconds each sweep took |
 
 ---
+
+Where this sits in Part 11: [11-02](../02-multi-armed-bandits/) had actions and no
+state, [11-03](../03-markov-decision-processes/) had state and handed you the
+model, [11-04](../04-q-learning/) took the model away and learned by walking. This
+chapter is about the thing 11-04 could not tell you, which is whether the number it
+reported describes the policy you will deploy or the policy it was running while it
+learned.
 
 ## The result I would lead with
 
@@ -25,8 +32,18 @@ term. Scored two different ways on the same runs:
 | SARSA | -34.1 | -24.4 | **-17.0** | 17 |
 | expected SARSA | **-28.6** | **-21.2** | -15.0 | 15 |
 
-**Best policy learned: Q-learning. Best while learning: expected SARSA. Same
-runs, opposite winners.**
+**Best policy learned: Q-learning. Worst agent to be while learning: Q-learning.
+Same runs, opposite answers.**
+
+Read that table with the seed spread the notebook prints beside it. Q-learning
+against either on-policy method is a gap of tens of points against a spread of a
+few, so those two comparisons are solid. SARSA against expected SARSA in the online
+column is a gap of about three points on three seeds, and the notebook prints the
+verdict on that pair rather than letting the bold text decide it. The place those
+two genuinely separate is the learning-rate sweep at the bottom of this page.
+
+The greedy column carries no sampling error at all. The environment is
+deterministic and the policy is frozen, so one rollout is the exact answer.
 
 Q-learning's -13.0 is not merely good, it is the best this grid allows. Priced
 before anything trained, the cliff-edge route is 13 steps and -13, the route one
@@ -38,10 +55,10 @@ where a single wrong step costs 100 and sends it back to the start, and paid
 **-55.1** for the privilege. It learned the better policy and was the worst
 agent to be for the entire training run.
 
-If you only plot the learning curve you conclude SARSA is better. If you only
-evaluate the final policy you conclude Q-learning is better. Both halves are
-right, and the disagreement is not noise: this environment is deterministic, so
-the greedy column is exact with no sampling error in it at all.
+If you only plot the learning curve you conclude Q-learning is the worst method
+here. If you only evaluate the final policy you conclude it is the best. Both
+halves are right, and the disagreement is far larger than anything three seeds
+could invent.
 
 ![Online against greedy](figures/fig-03-online-versus-greedy.png)
 
@@ -164,18 +181,27 @@ This environment is deterministic, so given Q the only thing that varies between
 two identical transitions is which action SARSA happens to draw. Expected SARSA
 removes exactly that, which here is the **only** source of noise in the update.
 
-The curves say so. SARSA degrades from -24.3 at α = 0.20 to **-92.6 at α = 1.00**,
-a factor of four, while expected SARSA moves between -20.4 and -23.3 across the
-same range and never thrashes. It costs a max and a mean over four numbers.
+The curves say so at the top of the range. SARSA degrades from -24.3 at α = 0.20 to
+**-92.6 at α = 1.00**, a factor of four, while expected SARSA moves between -20.4
+and -23.3 across the same range and never thrashes. It costs a max and a mean over
+four numbers.
 
-At the smallest step size, α = 0.05, SARSA edges it by 0.1, which is what you
-would expect when the step is small enough that the sampling noise is already
-being averaged out by the learning rate itself. Everywhere else the extra line of
-code wins.
+At the bottom of the range the two are the same method as far as three seeds can
+tell. SARSA reads -27.5 against expected SARSA's -27.6 at α = 0.05, which is a
+tenth of a point and nothing at all, and the notebook prints the gap against the
+seed spread at every learning rate so the row cannot be read as a win. That is what
+the theory predicts: with a small step size the update barely moves, so an average
+and a draw both get smoothed to the same place by sheer number of updates. The
+sampling noise only matters once a single draw can move `Q(s,a)` most of the way to
+its target.
 
-Q-learning is the worst row at every learning rate, which is the leading table
-again seen from a different angle: it is not failing to learn, it is walking the
-cliff edge while it does.
+So the claim to carry away is conditional. **Expected SARSA does not beat SARSA.
+It lets you run a step size at which SARSA falls apart.** If you were going to use
+a small step size anyway, the extra line of code bought nothing measurable here.
+
+Q-learning is the worst row at every learning rate, and by margins nothing here
+could invent. That is the leading table again from another angle: it is not failing
+to learn, it is walking the cliff edge while it does.
 
 ## Cheat sheet
 
@@ -187,13 +213,17 @@ cliff edge while it does.
 | **They are one family** | Set the target policy in expected SARSA to greedy and you have written Q-learning. At ε = 0 all three tables came out bit-identical |
 | **Use SARSA when** | The exploration or the action noise is still there at deployment and the mistake has a real cost |
 | **Use Q-learning when** | You train in a simulator and deploy the argmax, or you learn from logged data. [DQN](../06-deep-q-networks/) depends on this |
-| **Default to** | Expected SARSA. It was the best online method at six of seven learning rates and the only one that stayed stable at α = 1.00 |
+| **Default to** | Expected SARSA, for the reason that survives three seeds: it was the only method still stable at α = 1.00. At small α it and SARSA are indistinguishable |
+| **Before ranking** | Print the spread across seeds. Two of the three pairwise gaps here clear it easily and one does not |
 | **Main dials** | `alpha`, `epsilon`, `gamma`. SARSA's greedy policy failed to reach the goal at ε ≥ 0.30 here |
 | **Watch out** | Comparing an online learning curve against a final greedy evaluation and calling it one result. They are two, and they disagreed here |
 | **Sanity check** | Evaluate the greedy policy with exploration off, separately, every time. Three lines, and it changes the conclusion |
 | **Next** | [Deep Q-Networks](../06-deep-q-networks/), which keeps the `max` and replaces the table with a network |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

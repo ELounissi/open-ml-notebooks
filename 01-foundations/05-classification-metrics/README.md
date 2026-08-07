@@ -17,16 +17,24 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 ## The number that should scare you
 
 One array of out-of-fold scores, one model, evaluated twice: on all 10,000 rows at
-1% positives, and on a balanced subset averaged over 20 draws.
+1% positives, and on balanced subsets that keep every positive plus an equal
+number of negatives, averaged over 20 draws.
 
 | | ROC-AUC | PR-AUC | PR baseline |
 |---|---|---|---|
-| 1% positives | **0.9699** | **0.5708** | 0.0100 |
-| 50% positives, 20 draws | **0.9699** ± 0.0045 | **0.9728** ± 0.0046 | 0.5000 |
+| 1% positives, all 10,000 rows | **0.9699** | **0.5708** | 0.0100 |
+| 50% positives, mean of 20 draws | **0.9699** ± 0.0045 | **0.9728** ± 0.0046 | 0.5000 |
 
-ROC-AUC did not move at all. PR-AUC moved by 0.4020. Same predictions, same
-ranking; only how many negatives were in the room changed. Report ROC-AUC on a
-rare-positive problem and you report a number blind to what makes it hard.
+Averaged over twenty draws ROC-AUC comes back to the same 0.9699 it started at.
+PR-AUC moves by 0.4020. Same predictions, same ranking; only how many negatives
+were in the room changed. Report ROC-AUC on a rare-positive problem and you
+report a number blind to what makes it hard.
+
+Draw by draw ROC-AUC does move a little, and it is worth knowing by how much: the
+single draw plotted further down went 0.9699 to 0.9614. That 0.0085 is under two
+standard deviations of the resampling noise. So the honest statement is that a
+fifty-fold change in prevalence moves ROC-AUC by thousandths and PR-AUC by four
+tenths, not that ROC-AUC is frozen.
 
 ## Accuracy on a 1% problem
 
@@ -79,11 +87,16 @@ sentence. The complete one names a threshold.
 
 ![ROC vs PR](figures/fig-04-roc-vs-pr.png)
 
-The lead table above is this figure. Both ROC axes divide within a class, so
-neither moves when prevalence changes. Precision's denominator mixes TP and FP, so
-it depends on how many negatives exist to generate false positives from. PR-AUC is
-also scored against a moving floor: its baseline is the positive rate, 0.0100 here
-against 0.5000 balanced.
+This figure is **one** balanced draw. The lead table at the top is the average of
+twenty, and the two are not the same measurement. In the draw plotted here
+ROC-AUC reads 0.970 against 0.961 and average precision 0.571 against 0.956; over
+twenty draws the ROC gap averages to zero and the PR gap does not.
+
+Both ROC axes divide within a class, so neither moves *in expectation* when
+prevalence changes, and what is left is sampling noise. Precision's denominator
+mixes TP and FP, so it depends on how many negatives exist to generate false
+positives from, and that is not noise. PR-AUC is also scored against a moving
+floor: its baseline is the positive rate, 0.0100 here against 0.5000 balanced.
 
 ROC-AUC has a reading with no curve in it. Enumerating all **990,000**
 positive-negative pairs gives **0.969935**, matching scikit-learn exactly: it is
@@ -144,6 +157,9 @@ and it is a fitted parameter like any other, so pick it on validation data.
 | **Threshold** | Set it from c_FP/(c_FP+c_FN) or a measured cost sweep, on validation data, never on test |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

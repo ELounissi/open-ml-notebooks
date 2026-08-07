@@ -76,10 +76,26 @@ median. The mean absolute distance from the fitted model to each hour's statisti
 | `squared_error` | **1.06** | 12.73 |
 | `absolute_error` | 11.38 | **1.17** |
 
-The median model wins on MAE (87.007 against 88.100), the mean model wins on
-RMSE (128.065 against 129.045), and neither ordering is wrong. Fit under one and
-report the other, and you conclude your model is slightly worse than it needs to
-be without ever seeing why.
+The median model wins on MAE (87.007 against 88.100) and the mean model wins on
+RMSE (128.065 against 129.045). Those are 1.3% and 0.8% gaps, which normally
+would not be worth a sentence. Here they are, because the ordering is not an
+empirical finding that a different seed could reverse. Within each hour the mean
+is exactly the constant minimising squared error and the median is exactly the
+constant minimising absolute error, and summing over hours preserves both. The
+mean model must win on RMSE and the median model must win on MAE, on this data
+and on any other.
+
+What is data-dependent is the size, and the size is small for a reason worth
+taking away. Conditioning on the hour has already removed most of the skew that
+figure 2 shows, so the two metrics have much less left to disagree about.
+**Conditioning on a good feature shrinks the gap between metrics.** On targets
+where the skew survives conditioning, insurance claims and repair costs being the
+usual examples, the same two models diverge far more than a percent.
+
+Fit under one metric and report the other, and you have handed back a model that
+is provably not the best one for the number you printed. Nothing in the output
+says so. [02-08](../../02-regression/08-quantile-regression/) takes the same
+argument to its conclusion and fits a whole family of conditional quantiles.
 
 ## Outliers, and R squared going negative
 
@@ -100,6 +116,14 @@ Then I break predictions on purpose, a decimal point in the wrong place:
 
 Corrupting **60 of 5,160 test rows (1.16%) multiplies RMSE by 2.91 and MAE by
 1.37**. If RMSE jumps overnight on a dashboard, check the data before the model.
+
+Which behaviour you want is a property of the problem, not of the metric. If one
+catastrophic error is genuinely catastrophic, you want the number that screams.
+If the tail is fat and nothing can be done about it, RMSE will spend its life
+reporting on the tail while MAE reports on a normal day.
+[02-07](../../02-regression/07-outlier-resistant-regression/) is the other half of
+this: what to do when the outliers are in the training data rather than the
+scoring set.
 
 R squared has no units, which is why it travels where RMSE cannot. The California
 linear fit scores RMSE 0.735 in hundreds of thousands of dollars and R squared
@@ -147,6 +171,9 @@ MAE, convex cost wants RMSE, an over/under asymmetry wants the pinball loss.
 Anything else is picking by habit.
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

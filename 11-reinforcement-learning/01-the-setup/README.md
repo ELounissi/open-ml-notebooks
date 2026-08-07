@@ -97,13 +97,22 @@ It changes only whether the agent's action decides the next state.
 In the bandit, somebody else operates the winder on their own schedule, so the
 press is wound with probability one half no matter what the agent does. There,
 pressing every tick is not a lazy heuristic, it is the exactly correct answer, and
-winding throws away a stroke that was going to pay. A method that only ever asks
-"which action pays best right now" solves that problem completely.
+for a stronger reason than the +0.50 margin suggests. Pressing pays at least as
+much as winding in **every** state, so it dominates, and a dominant action is
+optimal at every mixing weight. The notebook prints the bandit gap at three
+different winder schedules to show it does not move the sign. There is no version
+of the bandit in which winding is worth doing.
 
 On the machine, the same policy on the same reward table collapses to a fifth of
 what patience earns. The policy did not get worse at picking actions. The
 situation it keeps picking actions in got worse, and it was the policy's own
 doing.
+
+Notice that the sign is not the only thing that changed. Greedy's advantage in the
+bandit is 0.50 and its deficit on the machine is 4.00, eight times larger. That is
+the general case rather than a quirk of this press: when actions move the state,
+the difference between a good policy and a bad one compounds over every later step
+instead of being settled once.
 
 That is the whole reason this is a separate subject. The supervised question is
 "what is the right output for this input". The bandit question is "which action
@@ -179,8 +188,15 @@ thing you sometimes have to do. Resolving that is what everything above is for.
 The credit assignment problem is visible in a single episode. The ten-part stroke
 arrives on the tick after the action that earned it, and that action paid zero at
 the time. Somebody has to move the credit backwards across a gap that is one tick
-here and hundreds of steps in a real problem. Everything else in Part 11 is a
-different answer to that one question.
+here and hundreds of steps in a real problem.
+
+Everything else in Part 11 is a different answer to that one question, and the
+answers get harder in a fixed order. [11-02](../02-multi-armed-bandits/) has no gap
+to cross at all. [11-03](../03-markov-decision-processes/) crosses it by solving
+equations, because the transition model is handed to you. From
+[11-04](../04-q-learning/) onwards the model is gone and the credit has to be
+carried backwards by sampling, which is where the variance that dominates
+[11-07](../07-policy-gradients/) comes from.
 
 ## Cheat sheet
 
@@ -193,13 +209,16 @@ different answer to that one question.
 | **Discount gamma** | Makes an endless sum finite and sets how far ahead the agent looks. On this machine it moved the optimal action, at gamma = 1/9 |
 | **Policy** | The rule from state to action, and the only thing you deploy. This world has four of them |
 | **Value** | Expected return from a state. Know it and acting well is an `argmax` |
-| **Greedy** | Exactly right in a bandit, worth a fifth of patience on the same numbers once actions change the next state |
+| **Greedy** | Exactly right in a bandit, where pressing dominates at any winder schedule. Worth a fifth of patience on the same numbers once actions change the next state |
 | **Reward hacking** | Reward a state and the agent will sit in it. 1.00 of 1.00 on the proxy, zero parts, zero presses |
 | **Safe shaping** | `gamma * Phi(s') - Phi(s)` cannot reorder policies. Watch the sign: it charges you for staying, which is the point |
 | **Do not** | Read a grid search as an exact threshold. This one landed 0.0039 off the algebra on a grid of 0.0050 |
 | **Next** | [Bandits](../02-multi-armed-bandits/) for the case with no state at all, then [MDPs](../03-markov-decision-processes/) when the transitions are handed to you |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

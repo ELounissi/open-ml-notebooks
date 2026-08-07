@@ -160,6 +160,15 @@ The gap widens with length for both models, for a structural reason: an error at
 step t feeds every step after it, so a longer output gives one mistake more room
 to compound. Attention's gap widens too, from 0.000 to 0.040, seven times less.
 
+That ratio is the point, and it is easy to draw the wrong conclusion from it.
+Attention did not fix exposure bias. Exposure bias is not a separate defect to be
+patched; it is an amplifier on whatever per-step error rate you already have. A
+model that is right at nearly every step compounds slowly, and a model already
+shaky in the second half of its output compounds fast. So the way to shrink the
+gap is to fix the per-step errors, and the way to know whether you have is to
+print both numbers. A teacher-forced score alone cannot tell a small gap from a
+large one.
+
 The training loss confirms which failure is which:
 
 | Length | No attention | Attention |
@@ -219,9 +228,12 @@ attention needlessly slow.
 | **Always report** | Free-running accuracy, and the gap to the teacher-forced number |
 | **Scoring α** | On-target rate against chance, and entropy against `log L`. Run both |
 | **Do not** | Read a sharp attention map as an alignment. At length 20 it was 88% concentrated and 8.0% on target against 5.0% chance |
-| **Next** | [The Transformer](../07-transformer-from-scratch/), which keeps the attention and throws away the recurrence |
+| **Next** | [The Transformer](../07-the-transformer/), which keeps the attention and throws away the recurrence |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·

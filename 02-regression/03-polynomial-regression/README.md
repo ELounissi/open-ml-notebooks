@@ -40,14 +40,29 @@ measured independently on freshly noised targets. They reproduce it:
 picture in the textbooks is an identity, and with 400 resampled training sets it
 is checkable to a fraction of a percent.
 
-The column I did not expect to behave this way is the first one. Bias squared
-does not fall monotonically. It rises at **every** even degree in the sweep:
-0.4985 to 0.5000 at degree 2, 0.1053 to 0.1098 at degree 4, 0.0038 to 0.0054 at
-degree 6, 0.0007 to 0.0008 at degree 8. The truth here is
-`sin(1.6x) + 0.35x`, which is an odd function, so an even-power column has
-nothing useful to contribute and its estimated coefficient is pure sampling
-wobble. Four extra columns out of twelve bought negative value on bias and were
+The column I did not expect to behave this way is the first one. Bias squared does
+not fall monotonically. It rises at every even degree in the sweep: 0.4985 to
+0.5000 at degree 2, 0.1053 to 0.1098 at degree 4, 0.0038 to 0.0054 at degree 6,
+0.0007 to 0.0008 at degree 8.
+
+Before believing that, check it against the estimator's own error. The plug-in
+bias squared is inflated by variance divided by the replicate count, which the
+notebook now prints alongside it. At degrees 2, 4 and 6 the rise is several times
+that inflation, so those three are real. At degree 8 the inflation is larger than
+the entire bias squared value, so **that row says nothing at all** and I have
+stopped citing it as evidence. Three consistent rises, not four.
+
+The mechanism holds for the three that survive. The truth is `sin(1.6x) + 0.35x`,
+an odd function on a symmetric range, so an even-power column has nothing to
+contribute and its coefficient is sampling wobble. With a random design that
+wobble does not average out into the odd part cleanly, so the average fit moves
+off the truth and bias rises. Those columns bought negative value on bias and were
 charged for on variance anyway.
+
+The general lesson is bigger than the example. The two plug-in terms are each
+biased, in opposite directions, by the same amount, which is why the sum below
+checks out to a fraction of a percent. **A tight sum is not permission to compare
+small differences within either part.**
 
 The best degree is 5, at a measured MSE of **0.2586 against a noise floor of
 0.2025**. That is 1.28x the floor, with only **0.0561** of the error attributable
@@ -128,6 +143,13 @@ The minimum slides right, from degree 3 to degree 7, and the best achievable MSE
 walks down to 0.2071 against a floor of 0.2025. The complexity that was reckless
 at 20 points is affordable at 320.
 
+The notebook also prints, for each size, every degree within 2% of that curve's
+own minimum, because an argmin over a Monte Carlo estimate is only a finding if
+the bottom is pointed. The claim to take away is about the band rather than its
+lowest pixel: the whole band of acceptable degrees shifts right as the sample
+grows. Announcing "the optimal degree is 5" when 4 through 7 are within 2% of each
+other is the same mistake as ranking models a thousandth apart.
+
 Read the bias column carefully, because every row in it is a different model. It
 reaches 0.0000 because the best degree moved from 3 to 7, not because data cures
 bias. Bias is whatever the model class cannot represent, and no quantity of
@@ -193,10 +215,14 @@ tell the difference; a person reading the data documentation can.
 | **Variance** | The spread of fits about their own average. Falls with n, and concentrates where the data thins: 21,050x higher at the edges than the middle at degree 12 |
 | **Noise** | Unmovable. On real data it cannot be separated from bias without repeated observations at the same input |
 | **Sanity check** | Print bias squared plus variance plus noise next to the measured error. They agreed to 0.25% here. If yours does not, the resampling is wrong |
+| **Do not** | Compare small differences inside the bias column. The plug-in estimate is inflated by variance over the replicate count, which swamped it entirely past degree 7 here |
 | **Watch out** | Never extrapolate a polynomial fit. Variance past the last data point has nothing holding it down |
 | **Next** | [Ridge regression](../04-ridge-regression/), which trades a little bias for a lot of variance on purpose |
 
 ---
+
+If this chapter was useful, a star on the repository helps other people find it.
+The code is yours to use, copy and adapt in your own work, no permission needed.
 
 Made by **Elyes Lounissi** ·
 [LinkedIn](https://www.linkedin.com/in/elyes-lounissi/) ·
