@@ -1,3 +1,5 @@
+[English](CURRICULUM.md) · [العربية](docs/CURRICULUM.ar.md) · [Français](docs/CURRICULUM.fr.md) · [Deutsch](docs/CURRICULUM.de.md) · [Español](docs/CURRICULUM.es.md) · [Português](docs/CURRICULUM.pt.md) · [हिन्दी](docs/CURRICULUM.hi.md) · [简体中文](docs/CURRICULUM.zh-CN.md)
+
 # Curriculum
 
 Eighty-six notebooks, twelve parts, one method each. Read them in order or jump
@@ -36,7 +38,7 @@ The vocabulary everything else uses. Start here if you are new.
 
 | # | Notebook |
 |---|---|
-| 02-01 | Linear regression, from the normal equation to scikit-learn | shipped |
+| 02-01 | [Linear regression, from the normal equation to scikit-learn](02-regression/01-linear-regression/) |
 | 02-02 | [Gradient descent, watched step by step](02-regression/02-gradient-descent/) |
 | 02-03 | [Polynomial regression and the bias-variance tradeoff](02-regression/03-polynomial-regression/) |
 | 02-04 | [Ridge regression (L2)](02-regression/04-ridge-regression/) |
@@ -173,7 +175,7 @@ something. You can see immediately how a support vector machine and a random
 forest differ, because they were asked the same question.
 
 | Dataset | Task | Size | Why this one |
-|---|---|---|
+|---|---|---|---|
 | California Housing | regression | 20,640 × 8 | Ships with scikit-learn, so chapter one runs with no download |
 | Breast Cancer Wisconsin | binary classification | 569 × 30 | Small enough that every method trains instantly |
 | **UCI Dry Bean** | 7-class classification | 13,611 × 16 | Published 2020 and barely used in tutorials, which keeps the book off the beaten path |

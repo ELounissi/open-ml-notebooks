@@ -1,3 +1,5 @@
+[English](README.md) · [العربية](docs/README.ar.md) · [Français](docs/README.fr.md) · [Deutsch](docs/README.de.md) · [Español](docs/README.es.md) · [Português](docs/README.pt.md) · [हिन्दी](docs/README.hi.md) · [简体中文](docs/README.zh-CN.md)
+
 # open-ml-notebooks
 
 ### Learn machine learning by reading the code
