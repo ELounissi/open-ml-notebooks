@@ -28,9 +28,10 @@ that changes is how the decision is made.
 | Plain model, cut at the base rate | 0.225 | 0.130 | 0.850 | **0.748** |
 | Plain model, tuned cut | **0.723** | 0.917 | 0.610 | **0.748** |
 
-Every resampler lands within 0.026 F1 of the plain model cut at its base rate, one
-line of arithmetic, no refitting. And a cut tuned on inner folds reaches **0.723**,
-three times the best resampler, on a model nobody rebalanced at all.
+Every resampler lands within 0.026 F1 of the plain model cut at its base rate,
+which takes one line of arithmetic and no refitting. And a cut tuned on inner folds
+reaches **0.723**, three times the best resampler, on a model nobody rebalanced at
+all.
 
 Average precision, which reads the whole ranking instead of one cut, is 0.748 for
 the plain model and never beaten. Resampling did not improve the ranking. It moved

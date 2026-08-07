@@ -107,9 +107,9 @@ Same budget of 40,000 environment steps for each:
 
 ![PPO](figures/fig-04-ppo.png)
 
-The middle row is the point of the ratio. Ten unclipped steps on one batch is not
-a worse algorithm, it is not an algorithm: it optimises a surrogate at parameters
-that did not generate the data, with no correction for that fact. It reached a
+The middle row is the point of the ratio. Ten unclipped steps on one batch is not a
+worse algorithm. It is not an algorithm at all: it optimises a surrogate at
+parameters that did not generate the data, with no correction for that fact. It reached a
 largest KL of **0.7498**, which is the same neighbourhood as the step that
 destroyed the policy in the leading table, and it finished at less than half of
 what a single step per batch achieves.

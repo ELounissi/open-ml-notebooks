@@ -201,7 +201,7 @@ anything clever. The best setting, 6 components at 0.9175, beats LDA by
 | Gaussian naive Bayes | 0.7641 | 0.7670 | 0.0738 |
 | **QDA, as it comes** | **did not fit** | **did not fit** | 0.0163 |
 
-The bottom two rows are the section. Gaussian naive Bayes is QDA with every
+The bottom two rows are what this section is about. Gaussian naive Bayes is QDA with every
 off-diagonal covariance entry forced to zero, and it fits this data without
 complaint at 0.7641, because a diagonal matrix with positive entries is never
 singular. The assumption everybody calls naive is the thing keeping it alive.
@@ -298,8 +298,8 @@ designed for LDA.** With 3,000 rows per class its extra covariance parameters ar
 pinned down well enough that estimating a covariance it did not need cost nothing
 measurable. The textbook is right that a wrong assumption costs you; what it does
 not say is that the cost scales with how badly the extra parameters are estimated,
-and at this sample size they are estimated well. Which is exactly why the next
-sweep shrinks the sample.
+and at this sample size they are estimated well. That is exactly why the next sweep
+shrinks the sample.
 
 ![Sample size](figures/fig-07-sample-size.png)
 
@@ -321,8 +321,8 @@ outright**:
 The smallest training size where QDA returns a model at all is **11 per class
 against 10 columns**, which is the arithmetic floor and nothing more. Once it
 fits, QDA leads at every size tested, by **+0.0116 at worst**. That is not the
-result the section's prose expects, and the figure's own runtime title is the
-honest version of it. The two failures stay separate: in section 4 the covariance
+result I expected when I set the sweep up, and the figure's own runtime title is
+the honest version. The two failures stay separate: in section 4 the covariance
 could not be inverted at any sample size because the columns were redundant, and
 here it inverts fine at 11 rows per class and immediately earns its keep.
 

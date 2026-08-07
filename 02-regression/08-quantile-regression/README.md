@@ -50,7 +50,7 @@ hour's coverage carries a standard error near 0.030, and 0.406 sits thirteen of
 those below 0.80. The linear model's worst hour, 0.712, is three.
 
 The mechanism is the sharpness the trees were praised for two paragraphs ago,
-landing somewhere specific. Midnight hires sit near the floor, so the conditional
+showing up in one specific place. Midnight hires sit near the floor, so the conditional
 spread genuinely is small, and the boosted model narrows its band accordingly. It
 narrows it too far. The linear model cannot narrow that hard, because its band
 width is a linear function of the same one-hot columns everywhere, so it is

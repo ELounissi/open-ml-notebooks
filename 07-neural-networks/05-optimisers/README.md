@@ -64,11 +64,14 @@ $-9$ only as far as 1.6376. **All** of SGD's final distance is flat and none of 
 is steep. Its loss is high because it never crossed the valley, not because it
 spent its steps crossing it. It is slow, not bouncy.
 
-Momentum is the unstable one. Its velocity is $v \leftarrow 0.9v + g$, so the
-steady-state step is $\eta/(1-\beta) = 2.8$, and $2.8 \times 2 = 5.6$ is past the
-heavy-ball stability limit of $2(1+\beta) = 3.8$. That it still finishes at **11×
-lower loss than SGD** is the finding: an oscillating optimiser that covers ground
-beats a stable one that barely moves.
+Momentum is the unstable one. It carries a velocity $v$, updated as
+$v \leftarrow 0.9v + g$, where $g$ is the current gradient and 0.9 is the decay
+$\beta$. Keep feeding it a steady gradient and $v$ settles at ten times that
+gradient, so the effective step is $\eta/(1-\beta) = 2.8$ rather than 0.28. Against
+the steep direction's curvature of 2 that gives $2.8 \times 2 = 5.6$, past the
+$2(1+\beta) = 3.8$ at which a momentum method stops converging smoothly. That it
+still finishes at **11× lower loss than SGD** is the finding: an oscillating
+optimiser that covers ground beats a stable one that barely moves.
 
 RMSProp is SGD's mirror image. It ends 0.0002 out along the flat axis and 0.0978
 along the steep one, all of its error in the direction where SGD had none. Adam

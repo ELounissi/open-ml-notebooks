@@ -60,9 +60,9 @@ off the truth and bias rises. Those columns bought negative value on bias and we
 charged for on variance anyway.
 
 The general lesson is bigger than the example. The two plug-in terms are each
-biased, in opposite directions, by the same amount, which is why the sum below
-checks out to a fraction of a percent. **A tight sum is not permission to compare
-small differences within either part.**
+biased, in opposite directions, by the same amount, which is why the sum in that
+table checks out to a fraction of a percent. **A tight sum is not permission to
+compare small differences within either part.**
 
 The best degree is 5, at a measured MSE of **0.2586 against a noise floor of
 0.2025**. That is 1.28x the floor, with only **0.0561** of the error attributable

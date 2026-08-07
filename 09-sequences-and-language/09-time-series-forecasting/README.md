@@ -146,7 +146,7 @@ decay with horizon, holding 0.953 at both ends.
 The machine learning intervals fail in the way that matters most: gradient
 boosting covers 0.930 at one hour and **0.651 at 168 hours**. Averaged over all
 horizons it reports 0.759, which hides the problem. A single coverage number for a
-multi-horizon forecast is not a check, it is an average of a good answer and a bad
+multi-horizon forecast is not a check. It is an average of a good answer and a bad
 one.
 
 ![Interval coverage](figures/fig-04-interval-coverage.png)

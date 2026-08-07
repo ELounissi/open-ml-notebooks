@@ -79,8 +79,8 @@ never be filled.
 | 12 | 41,472 | 397 (1.0%) | 23.3 |
 
 The coarsest table won on this budget. Three bins per axis is too crude to
-represent a good policy in principle, and it still beat 12 bins by 2.7x, because
-the fine table had 1.0% of its cells visited even once and the rest were still at
+represent a good policy in principle, and it still beat 12 bins by 2.7x. The fine
+table had 1.0% of its cells visited even once, and the rest were still sitting at
 their initial value when the budget ran out. Within this budget, coverage
 dominated resolution outright.
 

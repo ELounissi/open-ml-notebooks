@@ -34,7 +34,7 @@ The 2.02 hires is 3.3% of the MAE, off one 75/25 split, so the size is worth les
 than the sign. The sign has a mechanism, given below, that does not depend on the
 split.
 
-It happens twice, in the weaker form. The notebook also measures the exponent
+The same thing happens a second time, more quietly. The notebook also measures the exponent
 linking variance to mean directly from the data, gets 1.43, and hands that to a
 Tweedie model built for that exact power. It scored 61.78 against plain Poisson's
 61.41, a gap of 0.6% that I would not call a win for either. Getting the variance

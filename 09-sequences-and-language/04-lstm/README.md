@@ -36,9 +36,9 @@ not write the extra line:
 | 3.0 | 0.953 | **1.127e-01** | 1.007 |
 
 The decay rate is $\sigma(b_f)$, near enough. At the default the LSTM's per-step
-factor is **0.641 against the plain RNN's 0.568**, better, and nowhere near
-better enough: a T=100 gradient of 2.505e-21 is thirteen orders of magnitude below
-the same cell with the bias at 1, and just as dead in practice. The architecture
+factor is **0.641 against the plain RNN's 0.568**. Better, and nowhere near better
+enough: a T=100 gradient of 2.505e-21 sits thirteen orders of magnitude below the
+same cell with the bias at 1, and is just as dead in practice. The architecture
 makes the decay rate learnable; the initialisation puts it somewhere useful.
 
 ## The additive cell state

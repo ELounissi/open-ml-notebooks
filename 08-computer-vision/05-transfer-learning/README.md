@@ -7,7 +7,7 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 
 | | |
 |---|---|
-| **What you will learn** | Why early layers transfer and late ones do not, the difference between feature extraction and fine-tuning, how both compare against training from scratch, and how little labelled data you need before transfer stops being worth it |
+| **What you will learn** | Why early layers transfer and late ones do not. The difference between feature extraction and fine-tuning, and how both compare against training from scratch. And how little labelled data you need before transfer stops being worth it |
 | **You should already know** | [A convolutional network, layer by layer](../02-a-cnn-layer-by-layer/) |
 | **Datasets** | Fashion-MNIST, split into two separate five-class tasks |
 | **Runtime** | Four to six minutes on a laptop CPU, about one on a GPU |

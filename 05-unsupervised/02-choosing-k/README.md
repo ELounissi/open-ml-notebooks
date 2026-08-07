@@ -7,7 +7,7 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 
 | | |
 |---|---|
-| **What you will learn** | How the elbow, the silhouette and the gap statistic each turn a clustering into a number, how to write the gap statistic from scratch because scikit-learn has none, how often each recovers a k you already know, and which of the three can report that the data has no clusters at all |
+| **What you will learn** | How the elbow, the silhouette and the gap statistic each score a clustering. How to write the gap statistic yourself, since scikit-learn has none. How often each one finds a k you already know. And which of the three can say "this data has no clusters" |
 | **You should already know** | [k-means](../01-k-means/), and that features are standardised before any distance is computed |
 | **Datasets** | Synthetic four-blob clouds with a known k, swept over separation and over noise columns. Then UCI Dry Bean, 13,611 rows by 16 measurements, seven varieties, subsampled to 3,000 |
 | **Runtime** | Two to three minutes on a laptop CPU. The 72-dataset recovery sweep alone is 142 s of that |
@@ -106,19 +106,20 @@ Averaging the three together produces a mean recovery falling from 83% to 67%,
 which is true and tells you almost nothing, because the whole fall is one method.
 
 The silhouette's collapse has a specific mechanism, and it is not "distances get
-noisy". A silhouette is a ratio, `(b - a) / max(a, b)`. Isotropic noise columns
-inflate `a` and `b` by nearly the same amount, because they add the same expected
-distance to a neighbour inside the cluster as to one outside it. The numerator's
-difference stays put while the denominator grows, so every point's score is
-squeezed toward zero, the curve over k flattens, and the argmax of a flat curve is
-whatever noise sat on top. It does not degrade gracefully. It stops being a
-maximum.
+noisy". A silhouette is a ratio, `(b - a) / max(a, b)`, where `a` is a point's mean
+distance to its own cluster and `b` its mean distance to the nearest other one.
+Noise columns inflate `a` and `b` by nearly the same amount, because a random extra
+column pushes a neighbour inside the cluster as far away as one outside it. So the
+gap in the numerator stays where it was while the denominator grows. Every point's
+score is squeezed toward zero, the curve over k flattens, and the peak of a flat
+curve sits wherever the random wobble happens to be highest. The silhouette does
+not degrade gracefully. It stops having a peak worth reading.
 
-The elbow is untouched for a reason in the rule rather than in the geometry.
-Isotropic noise raises the pooled dispersion at every k by roughly the same
-additive amount, and the chord rule min-max normalises both axes before measuring
-distance to the chord, so a constant added to the whole curve barely moves where it
-bends.
+The elbow survives for a reason that lives in the rule, not in the geometry. Noise
+raises the pooled dispersion at every k by roughly the same amount, which shifts
+the whole curve up without changing its shape. The chord rule squashes both axes
+to 0 and 1 before it measures anything, so a curve shifted up bends in the same
+place it did before.
 
 **A criterion built on a maximum dissolves in a way that a criterion built on a
 shape does not.** That is the transferable version of this table, and it is worth
@@ -142,7 +143,7 @@ at distance zero, so it can never say "no clusters" either. It is the least
 principled of the three and it recovered the right answer more often than either of
 the others.
 
-Do not read that as "use the elbow". Read it as the sweep only asking one question.
+Do not read that as "use the elbow". Read it as the sweep asking only one question.
 Every dataset in it had exactly four clusters, so a criterion that is structurally
 incapable of answering 1 was never penalised for it, and section 5 is the sweep
 this one cannot run. The gap statistic's 0.653 is bought with the conservatism that

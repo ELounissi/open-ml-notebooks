@@ -102,7 +102,7 @@ measurement does not reach it.** A **27×** increase in rows cost the SVM **139�
 the time, an exponent of about **1.5**. Quadratic would have cost 741×, cubic
 20,177×. Logistic regression grew 11×.
 
-That bound is not wrong, it is a worst case. `libsvm` uses shrinking and caching
+That bound is not wrong. It is a worst case. `libsvm` uses shrinking and caching
 to avoid the pathological path on well-behaved data, and Dry Bean is well
 behaved. The durable point is the shape rather than the digits: **the cost is
 superlinear, so it will bite, sooner than linear intuition expects and later than

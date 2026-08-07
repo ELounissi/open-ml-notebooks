@@ -27,11 +27,11 @@ measured both sides of the condition on the same budget of 36 evaluations over
 
 When both axes carry signal, the grid wins and random search loses nearly two
 repeats in three. The advantage was never about randomness. A grid pays for
-resolution in every dimension at once, and you almost never need it in every
-dimension, but when you do, the lattice is the right shape.
+resolution in every dimension at once, and you almost never need resolution in
+every dimension, but when you do, the lattice is the right shape.
 
-Even in the case random search wins, it wins on the average and not on the floor:
-the grid's worst repeat scored 0.3680, random's worst scored 0.3514.
+Even where random search wins, it wins on the average and not on the floor: the
+grid's worst repeat scored 0.3680, random's worst scored 0.3514.
 
 ## Why the grid runs out
 
@@ -76,9 +76,9 @@ $$\mathrm{EI}(x) = (\mu(x) - f^*)\,\Phi(z) + \sigma(x)\,\phi(z),
 The surrogate's early guesses are visibly bad, which is the point of the
 uncertainty term. At step 5 it predicted 0.9370 and the truth was **0.6292**.
 
-`HalvingRandomSearchCV` rations training rows instead of candidates:
+`HalvingRandomSearchCV` rations training rows instead of candidates.
 
-it starts with 81 candidates on 60 rows and finishes with 9 on 540. The leader's
+It starts with 81 candidates on 60 rows and finishes with 9 on 540. The leader's
 true full-data score climbs 0.9684, 0.9789, **0.9807** across the three rounds,
 for a total cost of **25.62 full evaluations**.
 
@@ -110,8 +110,8 @@ What the chart does separate cleanly is the x axis. Halving reached the same
 cluster for 25.6 evaluations against the grid's 42. When four methods agree on the
 answer, cost is the only thing left to choose on.
 
-One shape in the Bayesian curve is real and is not a ranking: it is level or
-behind early and climbs later. That is structural, not bad luck. The first eight
+One shape in the Bayesian curve is real, and it is not a ranking. The curve sits
+level or behind early and climbs later. That is structural, not bad luck. The first eight
 evaluations of every Bayesian run are random draws, because a Gaussian process
 fitted to nothing has nothing to say. A method that spends eight evaluations
 warming up cannot beat one that does not over a budget of ten, whatever the final

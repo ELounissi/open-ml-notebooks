@@ -7,7 +7,7 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 
 | | |
 |---|---|
-| **What you will learn** | How a convolution is computed, written in NumPy and checked against PyTorch; the one formula that gives every output shape; the parameter count of a real layer; three ways to downsample and how they differ; and how far back one output unit can see |
+| **What you will learn** | How a convolution is computed, written in NumPy and checked against PyTorch. The one formula that gives every output shape, and the parameter count of a real layer. Three ways to downsample and how they differ. And how far back one output unit can see |
 | **You should already know** | [Neural networks in PyTorch](../../07-neural-networks/03-the-same-net-in-pytorch/), and NumPy indexing |
 | **Dataset** | Fashion-MNIST (28×28 greyscale), used as pictures to filter. Nothing is trained here |
 | **Runtime** | Well under a minute on a laptop CPU |
@@ -35,6 +35,10 @@ A kernel lies over a patch, multiplies the overlapping numbers pairwise, and add
 up. That sum is one output pixel. Then it slides one step and repeats.
 
 $$(I * K)(i, j) = \sum_{m=0}^{k-1}\sum_{n=0}^{k-1} I(i+m,\; j+n)\, K(m, n)$$
+
+$I$ is the image, $K$ is the $k \times k$ kernel, $(i, j)$ is the output pixel being
+computed, and $m$ and $n$ walk over the kernel, so $I(i+m, j+n)$ is whichever image
+pixel currently sits under kernel entry $K(m, n)$.
 
 On a 6×6 crop of a sandal, taken at row 12 column 21, with a vertical-edge kernel:
 
@@ -101,6 +105,10 @@ contraction, 32× faster** for identical arithmetic.
 
 $$\text{out} = \left\lfloor \frac{n + 2p - d(k-1) - 1}{s} \right\rfloor + 1$$
 
+For an input of side $n$, kernel $k$, padding $p$, stride $s$ and dilation $d$. The
+$d(k-1)+1$ buried in there is the kernel's reach, meaning how many input pixels the
+window spans once the taps are spread apart.
+
 Twelve configurations were run through the formula and through torch. **Formula and
 torch agree on every row**, including the awkward ones: 28 with k=3, s=2, p=0 gives
 13; with p=1 it gives 14; k=5, s=3, d=2 gives 7 from a reach of 9. `same` padding at
@@ -158,6 +166,11 @@ parameters, so it can learn what to keep.
 
 $$r_\ell = r_{\ell-1} + d_\ell (k_\ell - 1) \cdot j_{\ell-1} \qquad
   j_\ell = j_{\ell-1} \cdot s_\ell$$
+
+$\ell$ is the layer number. $r_\ell$ is the receptive field, the width of the input
+patch one unit at layer $\ell$ depends on. $j_\ell$ is the jump, the input distance
+between neighbouring units at that layer. $k_\ell$, $s_\ell$ and $d_\ell$ are that
+layer's kernel size, stride and dilation, and both counters start at 1.
 
 | Layer | Jump | Receptive field |
 |---|---|---|

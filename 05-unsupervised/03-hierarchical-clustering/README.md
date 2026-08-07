@@ -7,7 +7,7 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 
 | | |
 |---|---|
-| **What you will learn** | How bottom-up merging builds a tree, what the four linkage rules do to the answer, how to read a dendrogram and where to cut it, what cophenetic correlation measures, and why the method stops working above a few thousand rows |
+| **What you will learn** | How bottom-up merging builds a tree, and what the four linkage rules do to the answer. How to read a dendrogram and where to cut it. What cophenetic correlation measures. And why the method stops working above a few thousand rows |
 | **You should already know** | [k-means](../01-k-means/), Euclidean distance, and why features are standardised before any distance is computed |
 | **Datasets** | UCI Dry Bean (13,611 × 16, 7 varieties), plus `make_moons` and `make_blobs` |
 | **Runtime** | About a minute on a laptop CPU |
@@ -17,7 +17,9 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 ## Start here: everyone argues about k and shrugs at the linkage
 
 That is backwards, and it is measurable. I compared how far apart the four linkages
-land at the *correct* $k$ against how far apart Ward lands across $k = 2,3,4,5$:
+land at the *correct* $k$ against how far apart Ward lands across $k = 2,3,4,5$.
+The score is the adjusted Rand index, ARI below, which is 1.000 when a clustering
+matches the true groups exactly and 0.000 when it does no better than chance.
 
 | Shape | Four linkages at the right k | Ward at k = 2,3,4,5 |
 |---|---|---|
@@ -120,10 +122,11 @@ measured the tree, not the clusters.
 | **Average** | **0.831** | 0.318 |
 | Ward | 0.608 | **0.644** |
 
-The two columns invert at the top: the most faithful tree is average, the best partition
-is Ward, and Ward is last on faithfulness while first on ARI. Average linkage merges on
-the mean cross-pair distance, so it is close to optimising this quantity by construction.
-Use the number to catch a tree that has distorted the data, not to pick a linkage.
+The two columns rank the linkages in almost opposite orders. Average builds the most
+faithful tree and Ward the least, while Ward finds the best partition and average is
+mid-table. Average linkage merges on the mean cross-pair distance, so it is close to
+optimising cophenetic correlation by construction. Use the number to catch a tree that
+has distorted the data, not to pick a linkage.
 
 ## The $O(n^2)$ wall
 

@@ -27,6 +27,12 @@ backwards** so every intermediate result gets reused.
 
 ## The derivation
 
+The network is one hidden layer wide. A bean's 16 measurements, $x$, go through
+weights $W_1$ to give the hidden values $z_1$; ReLU zeroes the negative ones; the
+survivors go through weights $W_2$ to give seven output numbers $z_2$, one per
+variety; softmax turns those into probabilities $\hat{p}$. The true variety is $y$,
+a 1 in one slot and zeros elsewhere. $L$ is the loss.
+
 Softmax paired with cross entropy gives a result so clean it looks like a mistake:
 
 $$\frac{\partial L}{\partial z_2} = \hat{p} - y$$
@@ -36,12 +42,14 @@ Prediction minus truth, the same expression that appeared in
 [logistic regression](../../03-classification/01-logistic-regression/). The messy
 softmax derivative and the messy log derivative cancel exactly.
 
-From there, with $\delta_2 = \hat{p} - y$:
+From there, writing $\delta_2 = \hat{p} - y$ for the error arriving at the output:
 
 $$\delta_1 = (\delta_2 W_2^\top) \odot \mathbb{1}[z_1 > 0] \qquad \frac{\partial L}{\partial W_1} = x^\top \delta_1$$
 
-ReLU's derivative is 1 where the input was positive and 0 elsewhere, so that term
-is just a mask.
+$\odot$ multiplies entry by entry, and $\mathbb{1}[z_1 > 0]$ is ones where a hidden
+unit was positive and zeros where it was not. ReLU's derivative is 1 where the
+input was positive and 0 elsewhere, so that term is just a mask: the error travels
+back through $W_2$ and then gets blanked out at every unit ReLU had switched off.
 
 ## Check the gradients before trusting them
 

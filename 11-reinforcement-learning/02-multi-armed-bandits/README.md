@@ -130,9 +130,9 @@ The α = 0.1 version looked *worse* before the switch, at 0.50, and was the best
 after it, cutting second-half regret from 148.35 to **69.31**.
 
 1/n weights every reward an arm ever produced equally, so after 800 pulls a fresh
-reward moves the estimate by one part in 800, and the arm the strategy trusts most
-is the arm whose estimate is hardest to move, exactly backwards from what the
-situation needs. A constant α makes the estimate an exponentially weighted average
+reward moves the estimate by one part in 800. The arm the strategy trusts most is
+therefore the arm whose estimate is hardest to move, which is exactly backwards
+from what the situation needs. A constant α makes the estimate an exponentially weighted average
 with a memory of about 1/α pulls. It never fully converges, and on a fixed problem
 that costs you precision. You are buying the ability to change your mind, and the
 dial has a wrong answer in the other direction too: Thompson with decay 0.99 forgot

@@ -34,9 +34,9 @@ $\alpha$ makes it invertible for **any** $\alpha > 0$.
 
 I added a column equal to `MedInc` plus a whisper of noise (correlation
 **0.999986**) expecting the textbook pathology: one weight at +1000, its twin at
-−997.
+-997.
 
-**It did not happen.** The two weights came out around −0.3 and +1.2. The textbook
+**It did not happen.** The two weights came out around -0.3 and +1.2. The textbook
 example quietly assumes scarce data; with 20,640 rows and 9 columns there is
 enough evidence to keep the solution bounded. **Collinearity is only catastrophic
 when rows are few relative to columns.**
@@ -63,9 +63,9 @@ bootstrap samples:
 report to anyone, because a different sample of the same data gives a different
 answer.
 
-So the honest pitch is not "ridge predicts better". It is **"ridge gives you
-coefficients that mean something"**. If you only need predictions and have plenty
-of rows, plain least squares was fine here.
+So the honest pitch has nothing to do with prediction. It is that **ridge gives you
+coefficients that mean something**. If you only need predictions and have plenty of
+rows, plain least squares was fine here.
 
 ## The regularisation path
 
@@ -78,16 +78,16 @@ the path.
 
 | Coefficient | Smallest alpha | Largest magnitude, and where | Largest alpha |
 |---|---|---|---|
-| `MedInc` | −0.329 | 0.415 at alpha 265 | +0.1151 |
+| `MedInc` | -0.329 | 0.415 at alpha 265 | +0.1151 |
 | `HouseAge` | +0.119 | 0.160 at alpha 2,360 | +0.0256 |
-| `Longitude` | −0.870 | 0.870 at alpha 0.001 | −0.0122 |
+| `Longitude` | -0.870 | 0.870 at alpha 0.001 | -0.0122 |
 
 What *is* monotone is the quantity the penalty actually charges for: the length of
 the whole weight vector, **1.788 down to 0.169, falling at every step**. Ridge is
 free to reshuffle weight between correlated features while the total shrinks, so a
 path with a rising line in it is not a broken solver.
 
-The twins do that reshuffling in the open. They start at −0.329 and +1.158, an
+The twins do that reshuffling in the open. They start at -0.329 and +1.158, an
 uneven split of the same 0.830, and converge: 0.394 and 0.436 by alpha 10, both
 **0.322** by alpha 10,000. That is the **grouping effect**, and it is why the
 squared penalty prefers spreading weight evenly across identical features

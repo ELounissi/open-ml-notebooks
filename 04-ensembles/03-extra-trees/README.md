@@ -184,7 +184,7 @@ one is better than the other is describing their dataset.
 
 Read the last column before reading the fourth. On Breast Cancer and California
 Housing the difference is smaller than its own spread across splits, so those two
-rows are not results at all, they are noise with a sign. Only Bike Sharing and
+rows are not results at all. They are noise with a sign. Only Bike Sharing and
 Dry Bean have a difference that clears its spread, and those two point opposite
 ways.
 

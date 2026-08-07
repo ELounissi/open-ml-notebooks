@@ -77,9 +77,9 @@ picture says otherwise. The two clouds are ordinary ellipsoidal blobs, the gap
 between them is a straight diagonal band, and the fitted boundary runs along the
 middle of it. Nothing is curved, and the line is in the right place.
 
-What it runs into is **overlap**. On two components those 6,182 beans separate
-at **0.910**, and the beans it gets wrong sit inside the band, where DERMASON
-and SIRA of the same size and shape are not distinguishable from these sixteen
+What it runs into is **overlap**. On two components those 6,182 beans separate at
+only **0.910**, and the ones it gets wrong sit inside the band. There, DERMASON and
+SIRA of the same size and shape are not distinguishable from these sixteen
 measurements by a boundary of any shape at all.
 
 The distinction matters because the two failures ask for opposite repairs. A

@@ -61,7 +61,8 @@ and the measured survivors track it: 65.81% for 4 columns at 10% (theory 65.61%)
 (2.81%).
 
 Five per cent missing in each of sixteen columns sounds clean and leaves 43.92%
-of the rows. The second cost is invisible. Dropping is only unbiased under MCAR:
+of the rows. That is the first cost, and at least you can count it. The second
+cost is invisible, because dropping is only unbiased under MCAR:
 
 Dropping kept 69.9%, 69.6% and 69.8% of rows under MCAR, MAR and MNAR, the same
 number every time. Against a true mean of 3.8707 the survivors averaged 3.8719
@@ -84,9 +85,9 @@ correlation that started near zero, divided by another near zero, is noise with 
 ratio attached. Apply $\sqrt{1-p}$ to a column you already know matters, not to a
 whole correlation matrix.
 
-The planning use is the point. Before filling a column you can already say how
-much of its relationship with the target you are giving away, and it does not
-depend on which imputer you pick. It is also why "that feature turned out not to
+The planning use is the point. Before filling a column you can already say how much
+of its relationship with the target you are giving away, and that figure holds
+whichever constant imputer you pick. It is also why "that feature turned out not to
 matter" is a claim worth checking against the feature's missing rate.
 
 ## The missingness indicator

@@ -77,9 +77,9 @@ handed three predicted labels, gained 0.0014. `round` lost. Whatever the chain i
 doing here, it is not the thing the ordering was built to do.
 
 The column moving in both directions is the part to carry forward, and it is about
-macro averages rather than about chains. Chaining is not a uniform improvement
-applied to four labels, it is a redistribution, and the macro F1 is an average of
-gains and losses that partly cancel. If one of these labels mattered more than the
+macro averages rather than about chains. Chaining is a redistribution rather than a
+uniform improvement applied to four labels, and the macro F1 is an average of gains
+and losses that partly cancel. If one of these labels mattered more than the
 others to whoever reads the output, the macro number would be the wrong thing to
 optimise and this table would be the right one. The failure a macro average hides
 completely is a label the model has stopped predicting: it scores zero, the other

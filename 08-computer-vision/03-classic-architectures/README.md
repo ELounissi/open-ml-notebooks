@@ -7,7 +7,7 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 
 | | |
 |---|---|
-| **What you will learn** | How to write LeNet, a VGG block stack and a residual network from scratch in PyTorch, where each one keeps its parameters, how far each one can see computed from the layer list, and what a skip connection does and does not do to the gradient at the first layer |
+| **What you will learn** | How to write LeNet, a VGG block stack and a residual network from scratch in PyTorch. Where each one keeps its parameters, and how far each one can see, computed from the layer list. And what a skip connection does and does not do to the gradient at the first layer |
 | **You should already know** | [A CNN layer by layer](../02-a-cnn-layer-by-layer/) and the [size arithmetic](../01-convolution-and-pooling/) |
 | **Dataset** | Fashion-MNIST, a fixed 8,000-image subset, 758 to 856 images per class, scored on all 10,000 test images |
 | **Runtime** | 1.3 minutes on a laptop GPU. Nothing here is tuned per architecture, which is the only way the comparison means anything |

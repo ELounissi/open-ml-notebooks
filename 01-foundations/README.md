@@ -2,19 +2,18 @@
 
 The vocabulary every other chapter uses. Start here if you are new to machine learning.
 
-**7 of 9 shipped.**
 
-| # | Notebook | Status |
-|---|---|---|
-| `01` | What machine learning actually does, the workflow end to end | planned |
-| `02` | Train, validation, test: why you need all three | planned |
-| `03` | [Overfitting and underfitting, seen rather than described](03-overfitting-and-underfitting/) | **shipped** |
-| `04` | [Cross-validation, and which flavour to use when](04-cross-validation/) | **shipped** |
-| `05` | [Accuracy, precision, recall, F1, ROC-AUC](05-classification-metrics/) | **shipped** |
-| `06` | [MAE, RMSE, R squared, MAPE](06-regression-metrics/) | **shipped** |
-| `07` | [Scaling numbers and encoding categories](07-feature-scaling-and-encoding/) | **shipped** |
-| `08` | [Missing data: what to do and what it costs](08-missing-data/) | **shipped** |
-| `09` | [Grid, random, and Bayesian search](09-hyperparameter-tuning/) | **shipped** |
+| # | Notebook |
+|---|---|
+| `01` | [What machine learning actually does, the workflow end to end](01-what-machine-learning-does/) |
+| `02` | [Train, validation, test: why you need all three](02-train-validation-test/) |
+| `03` | [Overfitting and underfitting, seen rather than described](03-overfitting-and-underfitting/) |
+| `04` | [Cross-validation, and which flavour to use when](04-cross-validation/) |
+| `05` | [Accuracy, precision, recall, F1, ROC-AUC](05-classification-metrics/) |
+| `06` | [MAE, RMSE, R squared, MAPE](06-regression-metrics/) |
+| `07` | [Scaling numbers and encoding categories](07-feature-scaling-and-encoding/) |
+| `08` | [Missing data: what to do and what it costs](08-missing-data/) |
+| `09` | [Grid, random, and Bayesian search](09-hyperparameter-tuning/) |
 
 Every notebook follows the same shape: the idea in plain language, the maths written out, a from-scratch NumPy implementation, the library version annotated line by line, and a measured answer to when the method wins and when it loses.
 

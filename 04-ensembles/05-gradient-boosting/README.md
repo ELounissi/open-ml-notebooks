@@ -68,16 +68,16 @@ still falling when the run ended. Those two results are **censored, not
 converged**, and that is the likely reason they look poor. At 0.05 each tree
 contributes a tenth of what it does at 0.50, so 400 of them is not enough.
 
-The honest rule: a slower rate does not arrive somewhere better, it arrives
+The honest rule: a slower rate does not arrive somewhere better; it arrives
 somewhere better *if you let it arrive*. Under a tight budget a slow rate is
 strictly worse, because you are measuring an unfinished model. **Learning rate and
 tree count are one decision, and quoting either alone says nothing.**
 
-The "halve it and you need twice as many trees" half fares no worse but no better:
-a tenfold cut in rate should need roughly ten times the trees, and the measured
-counts are 365, 388, 400, 400. They barely move because the last two are pinned
-against the cap. This experiment cannot test that claim; testing it needs a budget
-large enough for every rate to converge inside it.
+The other half of the folklore, "halve the rate and you need twice as many trees",
+comes out untestable here. A tenfold cut in rate should need roughly ten times the
+trees, and the measured counts are 365, 388, 400, 400. They barely move because the
+last two are pinned against the cap. Testing that claim needs a budget large enough
+for every rate to converge inside it.
 
 ## Boosting can overfit. A forest cannot.
 

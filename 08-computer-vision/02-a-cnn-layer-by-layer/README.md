@@ -7,7 +7,7 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 
 | | |
 |---|---|
-| **What you will learn** | What a convolution computes, why weight sharing is the whole trick, what the filters actually learn, and a fair comparison against a dense network at a similar parameter budget |
+| **What you will learn** | What a convolution computes, and why weight sharing is the whole trick. What the filters actually learn. And a fair comparison against a dense network at a similar parameter budget |
 | **You should already know** | [The PyTorch training loop](../../07-neural-networks/03-the-same-net-in-pytorch/) |
 | **Dataset** | Fashion-MNIST (70,000 images, 28×28 greyscale, 10 classes) |
 | **Runtime** | Four to six minutes on a laptop CPU, under two on a GPU |
@@ -35,10 +35,10 @@ slides it across the whole image, reusing the same weights at every position.
 
 ![What a filter does](figures/fig-02-what-a-filter-does.png)
 
-The same 3×3 grid, four different jobs (edge detection, blur, sharpen) before
-any learning happens. **Pooling** is the other half: take the maximum in each 2×2
-block, which halves the resolution and makes the representation tolerant to small
-shifts.
+The same 3×3 grid doing several different jobs, edge detection, blur and
+sharpening among them, before any learning happens. **Pooling** is the other
+half: take the maximum in each 2×2 block, which halves the resolution and makes
+the representation tolerant to small shifts.
 
 ## Fewer parameters, better accuracy
 

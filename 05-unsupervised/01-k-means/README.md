@@ -28,6 +28,10 @@ from-scratch version took **69 iterations**.
 
 $$J = \sum_{i=1}^{k} \sum_{x \in C_i} \|x - \mu_i\|^2$$
 
+Here $J$ is the score being minimised, $C_i$ is the set of beans in cluster $i$,
+$\mu_i$ is that cluster's centre, and $x$ is one bean's 16 measurements. Every
+bean contributes its squared distance to its own centre.
+
 Two consequences fall straight out of that objective. **Squared distance means
 scaling matters.** And **minimising distance to a centre makes clusters round**:
 k-means cannot find a crescent, because a crescent has no centre its members are

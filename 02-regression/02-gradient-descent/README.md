@@ -21,8 +21,8 @@ rather than passes over the data, here it was the slow one *and* the inaccurate 
 Full batch finished 1,500 updates in **0.181 s** and landed **1.000e-16** from the best
 achievable loss; stochastic descent spent **0.355 s** on 41,250 updates and stopped
 **3.699e-02** away, fourteen orders of magnitude worse, for **96% more wall-clock
-time**. That is not an argument against small batches, it is an argument about what
-makes them fast: memory pressure and model shape, neither of which applies here.
+time**. None of that argues against small batches. It pins down what makes them fast
+in the first place: memory pressure and model shape, neither of which applies here.
 
 ## Why iterate when a formula exists
 
@@ -41,7 +41,7 @@ the four doublings gave **9.3×, 3.2×, 2.1×, 1.2×**, and the exponent fitted 
 largest three sizes came out at **0.70** against a theoretical 3. Forming $X^\top X$
 fitted **1.81** (theory 2) and one gradient step **1.25** (theory 1).
 
-Say the solve one plainly: at these sizes a multithreaded LAPACK solve is nowhere near
+Say the solve column plainly: at these sizes a multithreaded LAPACK solve is nowhere near
 its asymptotic regime, so the exponent is meaningless and any time projection built on
 it is nonsense. The notebook prints both projections to 100,000 features so you can
 see how bad it gets: **0.00 hours** from the measured exponent against **50 hours**
@@ -87,9 +87,9 @@ Here that ceiling is **0.4934**. Multiples of it, 600 steps each:
 | 1.10 | 0.54269 | 1.6724e+92 | growing |
 | 1.50 | 0.74003 | inf | overflowed at step 510 |
 
-There is no gentle degradation between 0.99 and 1.01. You are not hunting a broad
-optimum, you are finding the edge of a cliff and standing back from it. A loss of
-`nan` in a training log is almost always this.
+There is no gentle degradation between 0.99 and 1.01. You are looking for the edge
+of a cliff so you can stand back from it, rather than hunting a broad optimum. A
+loss of `nan` in a training log is almost always this.
 
 **Stop on the gradient, not on the loss.** Same problem, rate 0.01039, tolerance 1e-6:
 the loss rule quit after **2,203 steps**, still **6.525e-02** from the exact answer.
@@ -128,8 +128,8 @@ down. The wobble column, being the spread of the log of that quantity, then hand
 biggest number to the run that converged best.
 
 The general form is worth keeping: **a convergence diagnostic measured against a known
-optimum stops meaning anything once the difference reaches machine precision**, and it
-gives no warning, it just starts printing numbers that read like instability.
+optimum stops meaning anything once the difference reaches machine precision**. It
+gives no warning either. It simply starts printing numbers that read like instability.
 Mini-batch's 85 and stochastic's 140 are real. And at a constant learning rate
 stochastic descent never converges to a point; it settles into a cloud, and decaying
 the rate shrinks it.

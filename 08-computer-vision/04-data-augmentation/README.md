@@ -7,7 +7,7 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 
 | | |
 |---|---|
-| **What you will learn** | How to write a translation augmentation on the array in four lines, what a label-destroying transform costs in accuracy, what per-image transforms cost in seconds, and why a fixed step budget can turn a fair-looking sweep into a rigged one |
+| **What you will learn** | How to write a translation augmentation on the array in four lines. What a label-destroying transform costs in accuracy, and what per-image transforms cost in seconds. And why a fixed step budget can turn a fair-looking sweep into a rigged one |
 | **You should already know** | [A CNN layer by layer](../02-a-cnn-layer-by-layer/), enough PyTorch to read a training loop |
 | **Dataset** | Fashion-MNIST, nested subsets of 250, 500, 1,000, 2,000 and 4,000 images from one shuffled pool, scored on all 10,000 test images every time |
 | **Runtime** | 4.7 minutes on a GPU. The fifteen-run sweep is 4.3 minutes of that |

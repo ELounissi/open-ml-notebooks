@@ -7,7 +7,7 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 
 | | |
 |---|---|
-| **What you will learn** | How the NumPy network maps onto PyTorch line by line, what autograd is really doing, the training loop you will reuse everywhere, and the three mistakes everyone makes once |
+| **What you will learn** | How the NumPy network maps onto PyTorch line by line, and what autograd is really doing. The training loop you will reuse everywhere. And the three mistakes everyone makes once |
 | **You should already know** | [MLP and backpropagation](../02-mlp-and-backpropagation/) |
 | **Dataset** | UCI Dry Bean (13,611 × 16, 7 classes) |
 | **Runtime** | About a minute on a laptop CPU |
@@ -56,8 +56,9 @@ NumPy version produced, because it is the same maths.
 them. Leave it out and every step adds to the last, the effective learning rate
 grows without bound, and training diverges for no visible reason.
 
-**Applying softmax before `CrossEntropyLoss`.** It applies log-softmax internally.
-Doing it twice is the single most common bug in PyTorch classification.
+**Applying softmax before `CrossEntropyLoss`.** Hand it the raw numbers your last
+layer produced, before any squashing. It applies log-softmax internally, and doing
+it twice is the single most common bug in PyTorch classification.
 
 **Forgetting `model.train()` / `model.eval()`.** The moment dropout or batch norm
 appear, evaluating in training mode gives quietly wrong numbers.

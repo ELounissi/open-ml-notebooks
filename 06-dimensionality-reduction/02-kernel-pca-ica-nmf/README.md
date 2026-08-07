@@ -7,7 +7,7 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 
 | | |
 |---|---|
-| **What you will learn** | How kernel PCA runs PCA in a space it never builds, how ICA recovers mixed sources and how to score that when the answer has no ordering, how NMF produces parts instead of ghosts, and what non-negativity costs |
+| **What you will learn** | How kernel PCA runs PCA in a space it never builds. How ICA pulls mixed sources apart, and how to score that when the answer comes back in no particular order. And how NMF produces parts instead of ghosts, and what non-negativity costs |
 | **You should already know** | [PCA](../01-principal-component-analysis/), and ideally the [kernel trick](../../03-classification/05-support-vector-machines/) |
 | **Datasets** | `make_circles` for kernel PCA, synthetic signals with known sources for ICA, Fashion-MNIST for NMF |
 | **Runtime** | Two to four minutes on a laptop CPU. All three methods are fitted from scratch first, then checked against scikit-learn |
@@ -69,13 +69,17 @@ inside the kernel matrix:
 
 `K̃ = K - 1ₙK - K1ₙ + 1ₙK1ₙ`
 
+K is the kernel matrix, one entry per pair of rows, so it is n by n. K̃ is the
+centred version of it, and 1ₙ is the n by n matrix of every entry 1/n, which is
+how you take row and column averages by multiplying.
+
 The from-scratch version agrees with scikit-learn to six decimals, **absolute
 correlation 1.000000 on both components**. Absolute, because the sign of an
 eigenvector is arbitrary.
 
-The price is written into the formula. K is n by n, so kernel PCA costs memory
-and time quadratic in rows and the eigendecomposition is cubic. PCA on d columns
-costs d by d and does not care how many rows you have.
+The price is written into that n by n. Kernel PCA costs memory and time quadratic
+in rows, and the eigendecomposition is cubic. PCA on d columns costs d by d and
+does not care how many rows you have.
 
 Note the second row of the leading table. PCA on 2 columns into 2 components is
 a rotation, and a rotation cannot make a circle linearly separable, so 0.4800
@@ -122,8 +126,9 @@ matrix, sources swapped for Gaussian noise:
 | sine, square, sawtooth | 0.9977 | 0.9968 | 1.5135 |
 | three independent Gaussians | 0.7683 | 0.6571 | **0.0668** |
 
-The kurtosis column is the only thing that changed between the rows, and it is
-the quantity ICA is implicitly hunting.
+Excess kurtosis measures how far a signal's shape is from a bell curve, and it is
+zero for a Gaussian. That column is the one thing that separates the two rows, and
+it is the quantity ICA is implicitly hunting.
 
 I would not describe the second row as ICA failing outright, and this is where I
 would push back on the usual phrasing. Recovery fell from 0.9977 to **0.7683**,

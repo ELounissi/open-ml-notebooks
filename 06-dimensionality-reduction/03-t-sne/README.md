@@ -7,7 +7,7 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 
 | | |
 |---|---|
-| **What you will learn** | What t-SNE optimises, why perplexity changes the picture so much, which features of the plot mean something and which are artefacts, and why it must never be a preprocessing step |
+| **What you will learn** | What t-SNE optimises, and why perplexity changes the picture so much. Which features of the plot mean something and which are artefacts. And why it must never be a preprocessing step |
 | **You should already know** | [PCA](../01-principal-component-analysis/) |
 | **Datasets** | UCI Dry Bean, plus a construction where the answer is known |
 | **Runtime** | Three to four minutes on a laptop CPU |
@@ -16,9 +16,10 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 
 ## The idea
 
-[PCA](../01-principal-component-analysis/) is linear: it can only unfold structure
-that was already flat. t-SNE takes a different goal: it does not preserve the data,
-it preserves **who is near whom**.
+[PCA](../01-principal-component-analysis/) is linear, so it can only unfold
+structure that was already flat. Think of a sheet of paper rolled into a tube: PCA
+can turn the tube, but it cannot unroll it. t-SNE takes a different goal
+altogether. It does not preserve the data, it preserves **who is near whom**.
 
 ![Against PCA](figures/fig-01-vs-pca.png)
 
@@ -33,7 +34,8 @@ the gaps you see.**
 
 ![Perplexity](figures/fig-02-perplexity.png)
 
-Same 3,000 beans, five settings, five different-looking datasets. Low perplexity
+`perplexity` is roughly how many neighbours each point should care about. Same
+3,000 beans, five settings, five different-looking datasets. Low perplexity
 fragments the data into islands that correspond to nothing; high perplexity merges
 genuinely separate groups.
 
@@ -109,11 +111,12 @@ This chapter buys a far better picture by giving up every one of those propertie
 
 That is the trade to keep in your head for the rest of Part 6. Neither
 [UMAP](../04-umap/) nor t-SNE looks at a distance again once the neighbour graph
-exists, which is exactly why their pictures separate clusters so cleanly and
-exactly why the sizes and gaps in them mean nothing. UMAP's chapter measures how
-much of the coarse arrangement survives instead of repeating the claim, and
-[feature selection](../05-feature-selection/) is the branch of Part 6 that keeps
-your column names rather than mixing them.
+exists. That is exactly why their pictures separate clusters so cleanly, and
+exactly why the sizes and gaps in them mean nothing.
+
+UMAP's chapter measures how much of the coarse arrangement survives instead of
+repeating the claim. And [feature selection](../05-feature-selection/) is the
+branch of Part 6 that keeps your column names rather than mixing them.
 
 ---
 

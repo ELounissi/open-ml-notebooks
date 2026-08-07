@@ -45,7 +45,7 @@ two genuinely separate is the learning-rate sweep at the bottom of this page.
 The greedy column carries no sampling error at all. The environment is
 deterministic and the policy is frozen, so one rollout is the exact answer.
 
-Q-learning's -13.0 is not merely good, it is the best this grid allows. Priced
+Q-learning's -13.0 is not merely good. It is the best this grid allows. Priced
 before anything trained, the cliff-edge route is 13 steps and -13, the route one
 row up is 15 steps and -15, so the edge is worth exactly +2 to an agent that
 never makes a random move. Q-learning found the edge.
@@ -151,7 +151,7 @@ goal at all. And it is not monotone: **-144.0 at ε = 0.05 sits between -16.3 at
 0.02 and -17.0 at 0.10.**
 
 I would not read the large values as caution taken too far. A policy that wanders
-for 400 steps is not a safe route, it is a table that has not converged, and the
+for 400 steps is not a safe route. It is a table that has not converged, and the
 reason is in the target: at high ε, SARSA is bootstrapping from a single sampled
 action that is random 50% of the time, so its updates carry the full variance of
 the exploration policy. Expected SARSA averages that away and shows none of it,

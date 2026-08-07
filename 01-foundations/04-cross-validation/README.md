@@ -21,8 +21,8 @@ is no signal, so cross-validating a logistic regression on it can only return 0.
 Selecting the 100 columns most correlated with the label *before* the
 cross-validation loop returned **0.8200**: **+0.3200 accuracy over chance,
 manufactured out of nothing.** The same selector inside a `Pipeline` returns 0.5650.
-Everything else here is about *where* to cut the folds. This is about what you may
-do before cutting, and it is the expensive mistake.
+Everything else in this chapter is about *where* to cut the folds. That experiment
+is about what you may do before cutting, and it is the expensive mistake.
 
 ## One split is a sample of size one
 
@@ -58,12 +58,12 @@ luckiest and unluckiest run. **Past k=3, changing k moves the answer less than
 changing the seed does.** The column that behaves is the time, which grows
 linearly in k, and that is the real reason to stop at five or ten.
 
-The fold sd column is misread twice. It rises from k=3 onwards, 0.0113 to 0.0514,
+The fold sd column gets misread in two ways. It rises from k=3 onwards, 0.0113 to 0.0514,
 because each test fold is smaller and its score noisier, a property of fold size
 and not evidence that large k is unreliable. But it is not monotone: k=2 sits at
 0.0189, above k=3, because a standard deviation of two numbers is barely a
 standard deviation. Those scores are also correlated, since any two training sets
-share about (k−2)/(k−1) of their rows, so sd/√k is not a valid standard error.
+share about (k-2)/(k-1) of their rows, so sd/√k is not a valid standard error.
 Treat the spread as a smell test.
 
 ## Choosing a splitter

@@ -7,7 +7,7 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 
 | | |
 |---|---|
-| **What you will learn** | What a principal component is, how to compute PCA from the covariance matrix by hand, how many components to keep, and whether reducing dimensions actually helps a downstream model |
+| **What you will learn** | What a principal component is, and how to compute PCA from the covariance matrix by hand. How many components to keep. And whether reducing dimensions actually helps a downstream model |
 | **You should already know** | Matrix multiplication. Eigenvectors help, but the notebook explains what is needed |
 | **Datasets** | UCI Dry Bean (13,611 × 16), Breast Cancer Wisconsin (569 × 30) |
 | **Runtime** | About a minute on a laptop CPU |
@@ -24,8 +24,10 @@ PCA finds new axes that are combinations of the old ones, ordered so the first
 captures as much variation as possible. It is a rotation, chosen so variance
 concentrates in the earliest axes.
 
-Components are the **eigenvectors** of the covariance matrix; each eigenvalue is
-the variance along it. The from-scratch version agrees with scikit-learn to
+Those axes are the **eigenvectors** of the covariance matrix: directions the matrix
+stretches without turning. Each eigenvector comes with an **eigenvalue**, which is
+how much the beans vary along that direction, and sorting by eigenvalue is what
+puts the components in order. The from-scratch version agrees with scikit-learn to
 **2.2 × 10⁻¹⁶**.
 
 ## How much do you keep?

@@ -44,10 +44,10 @@ raises the floor to pay for the ceiling. The bottom row has a second cause on to
 of that: 992 districts were recorded at the 5.0 cap when they were worth more, so
 a model predicting below 5.0 for them is penalised for being right.
 
-**Break the error down by something, always.** It cost one `groupby`, and it
-turned a model that looked unbiased into one that is wrong in a predictable
-direction at both ends of the range it will actually be used on. The thing to
-group by is usually the target itself, a segment you will be judged on, or time.
+**Break the error down by something, always.** One `groupby` turned a model that
+looked unbiased into one that is wrong in a predictable direction at both ends of
+the range it will actually be used on. Group by the target itself, by a segment
+you will be judged on, or by time.
 
 ![Where it is wrong](figures/fig-04-where-it-is-wrong.png)
 
@@ -64,7 +64,7 @@ when the 1990 census data was assembled, so every district worth more than the
 cap was recorded at the cap. No model can recover a number that was never
 written down.
 
-That is not trivia. It is the reason the bottom row of the decile table above
+That is not trivia. The cap is the reason the bottom row of the decile table above
 exists: those districts were scored against a value known to be too low, so a
 model predicting below 5.0 for them is penalised for being right.
 
@@ -88,7 +88,7 @@ right thing to beat rather than a strawman.
 
 An RMSE of 0.4595 means nothing on its own. An RMSE of 0.4595 against a do-nothing
 predictor's 1.1421 is a result. The eight features are worth 60% off the error of
-guessing, and that sentence is the only part of the score the model earned.
+guessing, and that 60% is the only part of the score the model earned.
 
 For the record, the from-scratch versions agree with the library. The closed-form
 least-squares slope through `MedInc` and `LinearRegression`'s differ by
@@ -133,9 +133,9 @@ deviation of that column.
 | Population | -0.0086 |
 
 I expected income to carry the largest weight. Both location columns beat it.
-Which of the two location columns is nominally larger is not a finding: they are
-0.0298 apart on weights near 0.9, and a different split seed would reorder them.
-The finding is that location carries 1.77 of weight against income's 0.83.
+Whether latitude or longitude comes out nominally larger is not a finding: the two
+sit 0.0298 apart on weights near 0.9, and a different split seed would reorder
+them. The finding is that location carries 1.77 of weight against income's 0.83.
 
 The mechanism is geography. Price falls off with distance from the coast, the
 California coast runs diagonally, and a linear model can only approximate a

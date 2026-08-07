@@ -7,7 +7,7 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 
 | | |
 |---|---|
-| **What you will learn** | How downward closure makes an impossible search finite, how to write Apriori in NumPy and check it against mlxtend, why a high-confidence rule is usually worthless, which filter actually does the work, and how to prove a filter works by running it on data with nothing in it |
+| **What you will learn** | How downward closure makes an impossible search finite, and how to write Apriori in NumPy and check it against mlxtend. Why a high-confidence rule is usually worthless, and which filter actually does the work. And how to prove a filter works by running it on data with nothing in it |
 | **You should already know** | Nothing beyond basic probability. No model, no train-test split |
 | **Dataset** | UCI Bike Sharing, 17,379 hours binned into 17,379 transactions of exactly 9 items each, drawn from 29 distinct items |
 | **Runtime** | One to two minutes on a laptop CPU |
@@ -15,6 +15,12 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 ---
 
 ## The result I would lead with
+
+A rule here looks like `season=autumn + time=afternoon => temp=hot`, and it comes
+with three numbers. Its **support** is the share of hours where the whole thing
+holds. Its **confidence** is how often the right-hand side happens among the hours
+where the left-hand side does. Its **lift** is that confidence divided by how often
+the right-hand side happens anyway, so 1.0 means the rule found nothing.
 
 Five filters applied in order, counted at every stage, and the same pipeline run
 on a null version of the data where every variable has been shuffled

@@ -63,12 +63,12 @@ others can be larger. It also keeps all 20 noise columns. Elastic Net at 0.5 kee
 6, at 0.9 keeps 2.
 
 That row was invisible in the first version of this figure, which was a stacked
-bar. A stacked bar draws −0.343 *downward* from the running total, painting over
+bar. A stacked bar draws -0.343 *downward* from the running total, painting over
 the segment beneath it, so the rendered ridge bar showed no negative anywhere and
-left only about a third of `copy0`'s segment visible, reading as a small positive
-rather than as 0.501. Grouped bars and a zero line,
-and the row says what it always said. A chart that hides the thing the prose is
-pointing at gets redrawn, not recaptioned.
+left only about a third of `copy0`'s segment visible, so 0.501 read as a small
+positive. Redrawn as grouped bars with a zero line, the row says what it said all
+along. A chart that hides the thing the prose is pointing at gets redrawn, not
+recaptioned.
 
 ### Ridge does group, once it is paying attention
 
@@ -77,7 +77,7 @@ about L2. Raise it on the same four columns:
 
 | alpha | MedInc | copy0 | copy1 | copy2 | Span | Sum |
 |---|---|---|---|---|---|---|
-| 1 | +0.284 | +0.501 | **−0.343** | +0.387 | 0.844 | 0.830 |
+| 1 | +0.284 | +0.501 | **-0.343** | +0.387 | 0.844 | 0.830 |
 | 10 | +0.220 | +0.289 | +0.063 | +0.259 | 0.227 | 0.830 |
 | 100 | +0.210 | +0.219 | +0.190 | +0.215 | **0.028** | 0.834 |
 | 1000 | +0.208 | +0.210 | +0.206 | +0.209 | **0.004** | 0.833 |
@@ -143,7 +143,7 @@ Back to the first table, with the part I would rather not skip. `ElasticNetCV`
 landed on 10 noise columns and 2 twins, **identical to `LassoCV`**, and nothing
 like the 4-twin even split that Elastic Net produced at `l1_ratio=0.5`.
 
-That is not a bug, it is the same trap as [`LassoCV` not being a feature
+That is not a bug. It is the same trap as [`LassoCV` not being a feature
 selector](../05-lasso-regression/), arriving one chapter later by a different
 route. Cross-validation searched for the pair minimising prediction error, the
 `l1_ratio` axis is flat to within 0.0003 so it had almost nothing to go on there,

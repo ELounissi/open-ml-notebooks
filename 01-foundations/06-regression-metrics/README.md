@@ -77,16 +77,16 @@ median. The mean absolute distance from the fitted model to each hour's statisti
 | `absolute_error` | 11.38 | **1.17** |
 
 The median model wins on MAE (87.007 against 88.100) and the mean model wins on
-RMSE (128.065 against 129.045). Those are 1.3% and 0.8% gaps, which normally
-would not be worth a sentence. Here they are, because the ordering is not an
-empirical finding that a different seed could reverse. Within each hour the mean
+RMSE (128.065 against 129.045). Those are 1.3% and 0.8% gaps, and gaps that small
+normally would not be worth a sentence. These two are, because the ordering is not
+an empirical finding that a different seed could reverse. Within each hour the mean
 is exactly the constant minimising squared error and the median is exactly the
 constant minimising absolute error, and summing over hours preserves both. The
 mean model must win on RMSE and the median model must win on MAE, on this data
 and on any other.
 
-What is data-dependent is the size, and the size is small for a reason worth
-taking away. Conditioning on the hour has already removed most of the skew that
+What is data-dependent is the size of the gap, and here it stays small for a reason
+worth taking away. Conditioning on the hour has already removed most of the skew that
 figure 2 shows, so the two metrics have much less left to disagree about.
 **Conditioning on a good feature shrinks the gap between metrics.** On targets
 where the skew survives conditioning, insurance claims and repair costs being the

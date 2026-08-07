@@ -30,9 +30,9 @@ broken at the first level where its mean absolute slope error crosses 0.25.
 **Against high-leverage points Huber breaks at exactly the same contamination as
 plain least squares.** At 10% bad rows in x, Huber's slope error is **2.153** and
 ordinary least squares' is **2.124**, against a true slope of 2.0. Those two are
-the same number as far as eight samples can tell, and that is the finding: not
-that Huber is worse, but that the resistant loss bought nothing at all over the
-loss it was brought in to replace. Both are off by more than the slope they were
+the same number as far as eight samples can tell, and that is the finding. Huber is
+not worse here. The resistant loss simply bought nothing at all over the loss it
+was brought in to replace. Both are off by more than the slope they were
 estimating.
 
 The mechanism is not a bug in the implementation. Huber downweights rows with
@@ -164,7 +164,7 @@ column is the one you are choosing on.
 RANSAC is last on all five error columns, and by a wide margin: its RMSE of
 144.60 is 38% above the next worst. Its default threshold is the median absolute
 deviation of y, which on a spiky demand series marks the busy hours as outliers
-and fits a line to the quiet ones. Rush hour is not an error, it is the
+and fits a line to the quiet ones. Rush hour is not an error. It is the
 distribution. RANSAC does keep one column, though, at 0.35 seconds against
 Huber's 1.29 and Theil-Sen's 18.43. Being wrong quickly is still a column.
 

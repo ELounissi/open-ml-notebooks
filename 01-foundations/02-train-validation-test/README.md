@@ -48,10 +48,11 @@ rather than by the number each one reported:
 
 The two tuned models are the same model in every way that matters. 0.8747 against
 0.8768 is a fifth of a percentage point, and the notebook prints the paired
-standard error across the 15 sessions beside it so you can see it is noise. It
-should be noise. Both rules take the maximum of the same 120 candidates scored on
-a 250-row set, so they are solving an identical selection problem and there is no
-mechanism by which one would find better trees than the other.
+standard error across the 15 sessions so you can check that difference against the
+noise it sits inside. It ought to be noise. Both rules take the maximum of the
+same 120 candidates scored on a 250-row set, so they are solving an identical
+selection problem and there is no mechanism by which one would find better trees
+than the other.
 
 What differs is the number: **+0.0288 against +0.0037**. The whole cost of tuning
 against the test set landed on the report, not on the model. That is the harder
@@ -81,8 +82,8 @@ overfitted anywhere:
 
 The closed form is high in every row: **2.05x the measurement at two candidates**
 and still 15% high at a thousand. The `sqrt(2 ln k)` approximation to the
-expected maximum is asymptotic and it does not earn its keep at small `k`. Read
-it as a shape, which it gets right, and not as a level.
+expected maximum is asymptotic, and it does not earn its keep at small `k`. Read
+the formula as a shape, which it gets right, and never as a level.
 
 ![Winner's curse](figures/fig-01-winners-curse.png)
 
@@ -113,9 +114,9 @@ outer loop scores the procedure on rows the procedure never saw.
 | Gap | **+0.0050** |
 | Outer folds | 0.95, 1.00, 1.00, 1.00, 0.975 |
 
-200 rows of Breast Cancer, 20 candidate SVM settings. The gap is small because
-20 candidates is a narrow search, and it points the direction it always points:
-`best_score_` is the maximum of a set of noisy numbers and the maximum of noisy
+200 rows of Breast Cancer, 20 candidate SVM settings. The gap is small because 20
+candidates is a narrow search, and it leans the way this gap always leans:
+`best_score_` is the maximum of a set of noisy numbers, and the maximum of noisy
 numbers is biased upward whatever the models were. Note the outer-fold spread,
 0.95 to 1.00, which is wider than the gap it is being used to detect.
 
@@ -134,8 +135,9 @@ own day sitting in training.** Not most of them. All of them.
 | GroupKFold by day | 0.6098 | 0.6002 | 0.6190 | can you handle a day you have never seen? |
 | TimeSeriesSplit | **0.2693** | **-0.0421** | 0.4651 | can you handle next month? |
 
-Same model, same rows, same metric. Only the definition of a held-out row
-changes, and it is worth **0.359 of R²** that a forecaster never collects.
+Same model, same rows, same metric. The only thing that changes is what counts as
+a held-out row, and that choice alone moves the score by **0.359 of R²**. A
+forecaster never gets to collect that 0.359.
 
 Two different failures are stacked in that table, and only one of them is about
 grouping.

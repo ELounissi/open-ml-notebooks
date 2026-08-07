@@ -7,7 +7,7 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 
 | | |
 |---|---|
-| **What you will learn** | The three families of feature selection and what separates them, how to write mutual information and recursive feature elimination from scratch, which methods remove pure noise, which remove duplicated information, and what the wrapper costs |
+| **What you will learn** | The three families of feature selection and what separates them. How to write mutual information and recursive feature elimination from scratch. Which methods remove pure noise and which remove duplicated information. And what the wrapper costs |
 | **You should already know** | [Logistic regression](../../03-classification/01-logistic-regression/), [random forests](../../04-ensembles/02-random-forest/), [cross-validation](../../01-foundations/04-cross-validation/) |
 | **Dataset** | Breast Cancer Wisconsin, 569 rows and 30 real columns, with 8 columns of known-worthless noise and 6 known near-duplicates planted into it. 44 columns in, keep 15 |
 | **Runtime** | One to two minutes on a laptop CPU. Every selector is refitted inside each cross-validation fold |
@@ -16,8 +16,11 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 
 ## The result I would lead with
 
-Six selectors, one budget of 15 columns out of 44, with the answer key planted
-so that the right behaviour is countable rather than arguable:
+I planted the answer key before running anything. Into the 30 real columns went 8
+columns of pure random noise, which every selector should throw away, and 6 noisy
+copies of real columns, which each look useful on their own but add nothing once
+you already have the original. So the right behaviour is countable rather than
+arguable. Six selectors, one budget of 15 columns out of 44:
 
 | Method | Family | Noise kept | Duplicate pairs kept | Real kept | Accuracy | Seconds |
 |---|---|---|---|---|---|---|

@@ -129,10 +129,12 @@ Over one week both models follow the two commuter peaks and the overnight trough
 without being told that days exist, and both shave the tops off the sharpest
 spikes, because a squared error loss prefers being slightly low on a peak to being
 badly wrong on either side. Their errors are correlated, the tell that they use
-the same information in nearly the same way. Two honest notes: a one-hour horizon
-on a periodic series is not the case a recurrent layer is built for and it won
-anyway, a result rather than a rule; and it saw the counts alone, with no
-temperature, humidity or holiday flags.
+the same information in nearly the same way.
+
+Two honest notes. A one-hour horizon on a periodic series is not the case a
+recurrent layer is built for, and it won anyway, which makes this a result rather
+than a rule. And the model saw the hire counts alone, with no temperature,
+humidity or holiday flags.
 
 ## Cheat sheet
 

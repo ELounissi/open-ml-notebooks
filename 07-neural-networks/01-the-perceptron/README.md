@@ -21,12 +21,17 @@ book. Weighted sum, hard threshold:
 
 $$\hat{y} = \begin{cases} 1 & \text{if } w \cdot x + b > 0 \\ 0 & \text{otherwise} \end{cases}$$
 
+$x$ is one row of measurements, $w$ is one weight per measurement, $b$ is the bias,
+and $\hat{y}$ is the neuron's answer.
+
 What made it famous is the learning rule, one line, no calculus:
 
 $$w \leftarrow w + \eta\,(y - \hat{y})\,x$$
 
-Predicted 0 when the answer was 1? Push weights **toward** this input. Predicted 1
-when it was 0? Push them **away**. Got it right? Change nothing.
+$y$ is the true label and $\eta$ is the learning rate, a small positive number
+setting how big a correction each mistake buys. Predicted 0 when the answer was 1?
+Push weights **toward** this input. Predicted 1 when it was 0? Push them **away**.
+Got it right? Change nothing.
 
 ![Convergence](figures/fig-01-convergence.png)
 
@@ -46,14 +51,16 @@ wrong, and the real answer is more useful.
 |---|---|
 | Hard-margin linear SVM, training accuracy | **1.0000** |
 | A separating hyperplane exists | **True** |
-| Widest margin any hyperplane achieves | 0.00133 |
-| Largest sample norm R | 20.57 |
+| Widest margin any hyperplane achieves, $\gamma$ | 0.00133 |
+| Largest sample norm, $R$ | 20.57 |
 | Novikoff mistake bound, $(R/\gamma)^2$ | **239,890,695** |
 
 The data **is** linearly separable, so the precondition holds and the perceptron
 will find a line in finite steps, exactly as promised. The catch is what "finite"
-is worth. Novikoff bounds the mistakes by $(R/\gamma)^2$, and on data separable
-only by a sliver that comes out near **240 million**. Fifty epochs made nowhere
+is worth. Novikoff bounds the mistakes by $(R/\gamma)^2$, where $R$ is how far the
+furthest row sits from the origin and $\gamma$ is how much clearance the best
+possible line gets. Divide a wide spread by a sliver of clearance, square it, and
+the bound comes out near **240 million**. Fifty epochs made nowhere
 near that many.
 
 **Convergence in finite time and convergence in useful time are different claims,

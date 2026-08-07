@@ -50,9 +50,9 @@ fold, five-fold cross-validation, and reading the coefficients.
 ![Location outweighs income](figures/fig-02-coefficients.png)
 
 This one surprised me. I expected income to carry the largest weight; latitude
-(-0.90) and longitude (-0.87) both outrank it (0.83). Which of the two coordinates
-is nominally larger is not a finding, since they sit a few hundredths apart on
-weights near one. The finding is that the pair of them beat income.
+(-0.90) and longitude (-0.87) both outrank it (0.83). Whether latitude or longitude
+comes out nominally larger is not a finding, since the two sit a few hundredths
+apart on weights near one. The finding is that the pair of them beat income.
 
 The mechanism is geography. Price falls off with distance from the coast, the
 California coast runs diagonally, and the only way a plane can approximate a
@@ -65,8 +65,9 @@ numbers on an 80% split of the same data.
 
 ![Residual diagnostics](figures/fig-03-residuals.png)
 
-The orange stripe is 992 districts capped at $500,000, whose true values no longer
-exist, not a modelling failure.
+The orange stripe is 992 districts capped at $500,000. Their true values no longer
+exist anywhere in the file, so that stripe is a property of the data rather than a
+modelling failure.
 
 The right panel is the real finding, and it needed binning to see. A raw residual
 scatter looked like a formless smear. Averaging the error within each tenth of the

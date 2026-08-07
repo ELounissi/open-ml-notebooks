@@ -210,7 +210,7 @@ stops mattering entirely, because the minimum rows per leaf binds first.
 and the leaf budget becomes dangerous; leave it alone and raising it does
 nothing, because there is nothing left that is legal to split.
 
-Then the split that only appears with all four libraries present. Peak **training**
+Then a divide that only shows up with all four libraries present. Peak **training**
 accuracy once the guard is off:
 
 | | |

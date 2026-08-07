@@ -7,7 +7,7 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 
 | | |
 |---|---|
-| **What you will learn** | Why pixel accuracy is the wrong metric for a small foreground, how IoU and Dice fix it and how they relate exactly, how to write a U-Net from scratch, and what the skip connections contribute, measured at the boundaries where they should matter most |
+| **What you will learn** | Why pixel accuracy is the wrong metric for a small foreground, and how IoU and Dice fix it. How the two relate exactly. How to write a U-Net from scratch. And what the skip connections contribute, measured at the boundaries where they should matter most |
 | **You should already know** | [A CNN layer by layer](../02-a-cnn-layer-by-layer/) and [classic architectures](../03-classic-architectures/) for the skip connection |
 | **Dataset** | Synthetic 64x64 images generated in the notebook: 400 training, 100 test. Bright discs to find, bright rectangles to ignore, and every mask exact by construction |
 | **Runtime** | 0.3 minutes on the CUDA device this run used, torch 2.11.0+cu128. Each U-Net trains in 6 s |
@@ -41,8 +41,11 @@ model.
 
 ![Metrics disagree](figures/fig-02-metrics-disagree.png)
 
-The fix is one term. IoU throws the true negatives away entirely, `TP / (TP + FP
-+ FN)`, so predicting nothing gives `TP = 0` and a score of zero. Dice counts the
+The fix is one term. Count every pixel as one of four things: `TP` for foreground
+found, `FP` for background wrongly claimed, `FN` for foreground missed, and `TN`
+for background correctly left alone. Pixel accuracy counts all four. IoU throws
+the true negatives away entirely, `TP / (TP + FP + FN)`, so predicting nothing
+gives `TP = 0` and a score of zero. Dice counts the
 intersection twice, and the two are the same quantity in different clothes:
 
 `Dice = 2·IoU / (1 + IoU)`

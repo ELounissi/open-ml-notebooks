@@ -7,7 +7,7 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 
 | | |
 |---|---|
-| **What you will learn** | How Isolation Forest, One-Class SVM, Local Outlier Factor and a Gaussian-mixture density each define unusual, how to judge a detector with no labels and how to judge one honestly when you have them, and what `contamination` really does |
+| **What you will learn** | How Isolation Forest, One-Class SVM, Local Outlier Factor and a Gaussian-mixture density each define unusual. How to judge a detector when you have no labels, and how to judge one honestly when you do. And what `contamination` really does |
 | **You should already know** | [Gaussian mixtures](../05-gaussian-mixture-models/), [density-based clustering](../04-dbscan-and-hdbscan/), [support vector machines](../../03-classification/05-support-vector-machines/), [random forests](../../04-ensembles/02-random-forest/) |
 | **Datasets** | UCI Dry Bean, Wisconsin Breast Cancer, plus blobs with uniform noise scattered over them |
 | **Runtime** | Two to three minutes on a laptop CPU |
@@ -30,7 +30,9 @@ were seen by one detector and missed by the other three.
 The obvious next move makes it worse. Rank-averaging the four scores (the cheapest
 ensemble there is, and one that needs no labels to build) reaches **0.087** average
 precision, against **0.949** for the best single detector and 0.077 for the worst.
-The consensus landed **0.010 above the worst member and 0.862 below the best**.
+Average precision is the area under the precision-recall curve, and guessing at
+random would score the base rate, 0.011. So the consensus landed **0.010 above the
+worst member and 0.862 below the best**.
 
 The mechanism is worth being precise about, because this is the opposite of the
 standard advice. Unanimous agreement selects rows that are extreme on every simple

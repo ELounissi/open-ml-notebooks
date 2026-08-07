@@ -7,7 +7,7 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 
 | | |
 |---|---|
-| **What you will learn** | Which pieces of a training loop earn their place, why averaging a metric over batches is wrong and how large the error gets, what keeping the last epoch's weights costs, how a schedule and gradient clipping actually behave when you measure them, and one function to paste into your own project |
+| **What you will learn** | Which pieces of a training loop earn their place. Why averaging a metric over batches is wrong, and how large the error gets. What keeping the last epoch's weights costs. How a schedule and gradient clipping actually behave when you measure them. And one function to paste into your own project |
 | **You should already know** | [The same network in PyTorch](../03-the-same-net-in-pytorch/), [optimisers](../05-optimisers/), [regularisation](../06-regularisation/) |
 | **Dataset** | Fashion-MNIST, cut to 4,000 training and 1,000 validation images against a 10,000-image test set left untouched until the last section |
 | **Runtime** | A few minutes. The device is chosen at run time and printed by the first cell; the timings on this page came from a CUDA device, torch 2.11.0+cu128 on an NVIDIA RTX A2000 Laptop GPU |

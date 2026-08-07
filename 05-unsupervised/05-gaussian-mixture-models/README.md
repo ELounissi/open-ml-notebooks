@@ -7,7 +7,7 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 
 | | |
 |---|---|
-| **What you will learn** | How a mixture model differs from k-means, what expectation-maximisation does, what the covariance types buy, and what BIC does and does not tell you about the number of components |
+| **What you will learn** | How a mixture model differs from k-means, and what expectation-maximisation does. What the four covariance types buy you. And what BIC does and does not tell you about the number of components |
 | **You should already know** | [k-Means](../01-k-means/) |
 | **Datasets** | UCI Dry Bean, plus the stretched blobs that broke k-means |
 | **Runtime** | About a minute on a laptop CPU |
@@ -21,9 +21,12 @@ point belongs to exactly one. A Gaussian mixture relaxes both.
 
 $$p(x) = \sum_{i=1}^{k} \pi_i \, \mathcal{N}(x \mid \mu_i, \Sigma_i)$$
 
-Three things per component: how common it is, where it sits, and **what shape it
-has**. That covariance matrix is the whole upgrade: a cluster can be a stretched,
-tilted ellipse instead of a ball.
+The chance of seeing a bean like $x$ is the sum, over the $k$ components, of how
+common component $i$ is ($\pi_i$) times how likely it was to produce that bean.
+$\mathcal{N}$ is the normal distribution, $\mu_i$ is where component $i$ sits, and
+$\Sigma_i$ is its covariance matrix. So each component carries three things: how
+common it is, where it sits, and **what shape it has**. That third one is the
+whole upgrade: a cluster can be a stretched, tilted ellipse instead of a ball.
 
 **k-means is the special case** where every covariance is the identity and every
 assignment is hard.
@@ -82,6 +85,10 @@ first.
 ![Choosing k](figures/fig-03-choosing-k.png)
 
 $$\text{BIC} = -2\log L + p \log n$$
+
+$L$ is how likely the fitted model says your data was, $p$ is how many parameters
+it used to say so, and $n$ is the number of beans. The first term rewards fit and
+the second charges rent on every parameter, and lower is better.
 
 The promise is that BIC can turn around where inertia never does, because every
 extra component costs $p \log n$. **On this dataset it did not turn around.**

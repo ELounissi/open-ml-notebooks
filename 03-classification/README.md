@@ -2,19 +2,18 @@
 
 Predicting a category. The core algorithms every practitioner is expected to know.
 
-**7 of 9 shipped.**
 
-| # | Notebook | Status |
-|---|---|---|
-| `01` | [Logistic regression](01-logistic-regression/) | **shipped** |
-| `02` | [k-Nearest Neighbours](02-k-nearest-neighbours/) | **shipped** |
-| `03` | [Naive Bayes](03-naive-bayes/) | **shipped** |
-| `04` | Linear and Quadratic Discriminant Analysis | planned |
-| `05` | [Support Vector Machines and the kernel trick](05-support-vector-machines/) | **shipped** |
-| `06` | [Decision trees, and how a split is chosen](06-decision-trees/) | **shipped** |
-| `07` | [Resampling, class weights, and thresholds](07-imbalanced-classes/) | **shipped** |
-| `08` | One-vs-rest, one-vs-one, and multilabel | planned |
-| `09` | [Making predicted probabilities mean something](09-probability-calibration/) | **shipped** |
+| # | Notebook |
+|---|---|
+| `01` | [Logistic regression](01-logistic-regression/) |
+| `02` | [k-Nearest Neighbours](02-k-nearest-neighbours/) |
+| `03` | [Naive Bayes](03-naive-bayes/) |
+| `04` | [Linear and Quadratic Discriminant Analysis](04-discriminant-analysis/) |
+| `05` | [Support Vector Machines and the kernel trick](05-support-vector-machines/) |
+| `06` | [Decision trees, and how a split is chosen](06-decision-trees/) |
+| `07` | [Resampling, class weights, and thresholds](07-imbalanced-classes/) |
+| `08` | [One-vs-rest, one-vs-one, and multilabel](08-multiclass-and-multilabel/) |
+| `09` | [Making predicted probabilities mean something](09-probability-calibration/) |
 
 Every notebook follows the same shape: the idea in plain language, the maths written out, a from-scratch NumPy implementation, the library version annotated line by line, and a measured answer to when the method wins and when it loses.
 

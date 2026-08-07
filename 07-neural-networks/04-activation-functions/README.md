@@ -7,7 +7,7 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 
 | | |
 |---|---|
-| **What you will learn** | Why a network without a non-linearity is a linear model wearing a costume, what six common activations do to a signal and to a gradient, how to measure a vanishing gradient instead of taking my word for it, how ReLU units die, and which activation to reach for first |
+| **What you will learn** | Why a network without a non-linearity is a linear model wearing a costume. What six common activations do to a signal and to a gradient. How to measure a vanishing gradient instead of taking my word for it. How ReLU units die, and which activation to reach for first |
 | **You should already know** | [The same network in PyTorch](../03-the-same-net-in-pytorch/) |
 | **Dataset** | UCI Dry Bean (10,208 train / 3,403 test, 16 features, 7 classes) |
 | **Runtime** | Two to three minutes on a laptop CPU (torch 2.11.0, run on CUDA here) |
@@ -40,6 +40,10 @@ the sigmoid was.
 ## Proof that a stack of linear layers is one linear layer
 
 $$W_2(W_1x + b_1) + b_2 = (W_2W_1)x + (W_2b_1 + b_2) = Wx + b$$
+
+$x$ is the input, and $W_1, b_1$ and $W_2, b_2$ are the two layers' weights and
+biases. The product $W_2W_1$ is a matrix and $W_2b_1 + b_2$ is a vector, so the
+whole thing is one layer with weights $W$ and bias $b$.
 
 Better to measure that than assert it, so I trained a deep stack with `nn.Identity`
 between layers and multiplied the weight matrices out by hand. The stack has **3,943

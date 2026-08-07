@@ -7,7 +7,7 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 
 | | |
 |---|---|
-| **What you will learn** | How to overfit on purpose, what dropout, batch norm, weight decay, early stopping and augmentation each do mechanically, how much each recovers on one architecture, and why forgetting `model.eval()` ruins your numbers |
+| **What you will learn** | How to overfit on purpose. What dropout, batch norm, weight decay, early stopping and augmentation each do mechanically, and how much each recovers on one architecture. And why forgetting `model.eval()` ruins your numbers |
 | **You should already know** | [The PyTorch training loop](../03-the-same-net-in-pytorch/), [optimisers](../05-optimisers/) |
 | **Datasets** | Fashion-MNIST, cut to 2,000 training images against 10,000 test images |
 | **Runtime** | Three to five minutes on a laptop CPU, under one on a GPU |

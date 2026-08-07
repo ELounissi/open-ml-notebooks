@@ -17,9 +17,9 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 ## The result I would lead with
 
 Every entry on the ledger is something this book measured, with a chapter that
-shows the measurement, and the `invented` column marks the rows where the
-quantity is a score that did not exist: the difference between what a flawed
-procedure reported and what an honest one reported on the same data.
+shows the measurement. The `invented` column marks the rows where the quantity is
+a score that never existed: the difference between what a flawed procedure
+reported and what an honest one reported on the same data.
 
 | Mistake | Chapter | What was measured | Invented |
 |---|---|---|---|

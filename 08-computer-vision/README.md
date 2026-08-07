@@ -2,17 +2,16 @@
 
 What a convolution buys you, and how to get results without training from scratch.
 
-**3 of 7 shipped.**
 
-| # | Notebook | Status |
-|---|---|---|
-| `01` | [Convolution, pooling, and what a filter learns](01-convolution-and-pooling/) | **shipped** |
-| `02` | [A CNN on Fashion-MNIST, layer by layer](02-a-cnn-layer-by-layer/) | **shipped** |
-| `03` | LeNet, VGG, ResNet | planned |
-| `04` | Data augmentation | planned |
-| `05` | [Transfer learning and fine-tuning](05-transfer-learning/) | **shipped** |
-| `06` | Image segmentation, an introduction | planned |
-| `07` | Object detection, an introduction | planned |
+| # | Notebook |
+|---|---|
+| `01` | [Convolution, pooling, and what a filter learns](01-convolution-and-pooling/) |
+| `02` | [A CNN on Fashion-MNIST, layer by layer](02-a-cnn-layer-by-layer/) |
+| `03` | [LeNet, VGG, ResNet](03-classic-architectures/) |
+| `04` | [Data augmentation](04-data-augmentation/) |
+| `05` | [Transfer learning and fine-tuning](05-transfer-learning/) |
+| `06` | [Image segmentation, an introduction](06-image-segmentation/) |
+| `07` | [Object detection, an introduction](07-object-detection/) |
 
 Every notebook follows the same shape: the idea in plain language, the maths written out, a from-scratch NumPy implementation, the library version annotated line by line, and a measured answer to when the method wins and when it loses.
 

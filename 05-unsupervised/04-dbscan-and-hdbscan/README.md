@@ -7,7 +7,7 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 
 | | |
 |---|---|
-| **What you will learn** | How density-based clustering finds shapes k-means cannot, how to choose `eps` from the data instead of guessing, why it labels points as noise, and where it fails |
+| **What you will learn** | How density-based clustering finds shapes k-means cannot. How to choose `eps` from the data instead of guessing. Why some points get labelled noise, and where the method fails |
 | **You should already know** | [k-Means](../01-k-means/) |
 | **Datasets** | UCI Dry Bean, plus synthetic shapes chosen to separate the two methods |
 | **Runtime** | About a minute on a laptop CPU |

@@ -120,7 +120,7 @@ out-of-fold columns took **16.9 s**. Trained on those the meta-model claimed 0.9
 got **0.9207**; trained on the in-sample columns it claimed **1.0000** and got
 **0.9130**. The leak invents **+0.0793** of reported accuracy no held-out data will
 confirm, and separately costs **-0.0078** of real accuracy. You do not merely misjudge
-the model, you build a worse one.
+the model; you ship a worse one.
 
 ![Meta-model weights](figures/fig-02-meta-weights.png)
 

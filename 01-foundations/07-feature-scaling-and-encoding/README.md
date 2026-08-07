@@ -48,9 +48,9 @@ Same seven-class bean problem, 3,000 stratified rows, cross-validated accuracy:
 The tree ensembles print a change of **exactly zero**, not a small one: a split
 asks whether a column is above a threshold, and a monotone transform moves the
 threshold by exactly as much as it moves the data. Logistic regression fails
-differently. On raw columns it used **1000 iterations, which is the cap**, against
-**73** scaled, with a largest coefficient of 1.594e-01 against 3.113e+00. It ran
-out of budget looking.
+differently. On raw columns the solver burned **1000 iterations, which is the
+cap**; on scaled columns it finished in **73**. Its largest coefficient was
+1.594e-01 raw against 3.113e+00 scaled. It ran out of budget looking.
 
 ## The four scalers barely differ from each other
 
@@ -99,9 +99,9 @@ to a naming choice that carries no information.
 The dots in the right panel come in stacked pairs, and there are **12** distinct
 scores among the 24 numberings, each one landing twice. Least squares on a single
 column is invariant to any affine change of that column, and reversing a
-numbering (code c becomes K−1−c) is affine, so a numbering and its mirror fit the
-same line with the opposite slope and score identically. The ordinal encoding is
-not picking an order for the seasons, it is picking a set of gaps between them,
+numbering (code c becomes K-1-c) is affine, so a numbering and its mirror fit the
+same line with the opposite slope and score identically. What the ordinal encoding
+really picks is a set of gaps between the seasons rather than an order for them,
 and a set of gaps read backwards is the same set of gaps. Twenty-four arbitrary
 choices, twelve genuinely different models.
 

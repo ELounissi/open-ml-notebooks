@@ -46,7 +46,7 @@ finding. Lasso's coefficients hit zero one by one:
 
 The first version of this figure drew ridge on that same range and captioned it
 "ridge's lines glide toward zero and none arrive". Over that range ridge does not
-glide, it sits still: at alpha 1, where lasso has already emptied the model,
+glide. It sits still: at alpha 1, where lasso has already emptied the model,
 ridge's weight vector is at **||w|| 1.560** against 1.561 at the far left. Getting
 a visible glide takes **alpha 100,000**, four decades further out, and even there
 all 8 features survive with the smallest coefficient at **0.00385**, small and not
@@ -95,8 +95,8 @@ the choice jumps from sample to sample. Twelve bootstrap refits:
 | Lasso | 0.360, 0.257, 0.191 | **17 of 36** | 0.000 to 0.791 | 0.756 ± 0.031 |
 | Ridge | 0.113, 0.113, 0.128 | 0 of 36 | 0.051 to 0.574 | 0.849 ± 0.037 |
 
-I had this panel captioned "ridge splits the weight evenly and stays put", and it
-does not. Ridge's three lines wander between **0.051 and 0.574**, cross each other
+I had this panel captioned "ridge splits the weight evenly and stays put". Ridge
+does neither. Its three lines wander between **0.051 and 0.574**, cross each other
 repeatedly, and all three twins take a turn as the largest, exactly as lasso's do.
 What ridge does is never zero anything and move about two to three times less.
 Steadier is not still.

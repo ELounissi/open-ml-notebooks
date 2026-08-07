@@ -47,10 +47,10 @@ The weights are not vague, either. At length 20:
 | attention entropy against uniform | 0.491 against 2.996, **16.4% of it** |
 | mean distance from the expected position | **0.97 symbols** |
 
-So the distribution is sharp, it is confident, it sits about one symbol from
-where the task definition says it should, and the entropy check the notebook
-proposes for catching a model that is faking it, near-uniform weights, passes
-comfortably. Sharpness said the model was addressing positions. The on-target
+So the distribution is sharp and confident, and it sits about one symbol from
+where the task definition says it should. The notebook proposes an entropy check
+for catching a model that is faking it, meaning weights close to uniform, and this
+model passes it comfortably. Sharpness said the model was addressing positions. The on-target
 rate said it was not addressing the positions we expected.
 
 The failure is not in the model, which works. It is in the assumption that a

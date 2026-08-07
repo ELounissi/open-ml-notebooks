@@ -81,8 +81,8 @@ noise, a thousand columns, coin-flip labels. **True accuracy by construction:
 
 ![Selection leak on noise](figures/fig-03-selection-leak-on-noise.png)
 
-**An accuracy of 0.800 on data containing nothing.** That is not a distortion of
-a real result, it is a whole result, invented, and it would pass review in most
+**An accuracy of 0.800 on data containing nothing.** That is not a distortion of a
+real result. It is a whole result, invented, and it would pass review in most
 venues. The pipelined column stays where it belongs, between 0.4150 and 0.4950.
 
 The mechanism has a closed form. With p columns of pure noise and n rows, the

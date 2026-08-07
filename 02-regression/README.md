@@ -2,19 +2,18 @@
 
 Predicting a number. Nine methods, from the straight line to generalised linear models.
 
-**5 of 9 shipped.**
 
-| # | Notebook | Status |
-|---|---|---|
-| `01` | [Linear regression, from the normal equation to scikit-learn](01-linear-regression/) | **shipped** |
-| `02` | [Gradient descent, watched step by step](02-gradient-descent/) | **shipped** |
-| `03` | Polynomial regression and the bias-variance tradeoff | planned |
-| `04` | [Ridge regression (L2)](04-ridge-regression/) | **shipped** |
-| `05` | [Lasso regression (L1) and automatic feature selection](05-lasso-regression/) | **shipped** |
-| `06` | [Elastic Net](06-elastic-net/) | **shipped** |
-| `07` | Huber and RANSAC | planned |
-| `08` | Predicting a range, not a number | planned |
-| `09` | Poisson and friends | planned |
+| # | Notebook |
+|---|---|
+| `01` | [Linear regression, from the normal equation to scikit-learn](01-linear-regression/) |
+| `02` | [Gradient descent, watched step by step](02-gradient-descent/) |
+| `03` | [Polynomial regression and the bias-variance tradeoff](03-polynomial-regression/) |
+| `04` | [Ridge regression (L2)](04-ridge-regression/) |
+| `05` | [Lasso regression (L1) and automatic feature selection](05-lasso-regression/) |
+| `06` | [Elastic Net](06-elastic-net/) |
+| `07` | [Huber and RANSAC](07-outlier-resistant-regression/) |
+| `08` | [Predicting a range, not a number](08-quantile-regression/) |
+| `09` | [Poisson and friends](09-generalised-linear-models/) |
 
 Every notebook follows the same shape: the idea in plain language, the maths written out, a from-scratch NumPy implementation, the library version annotated line by line, and a measured answer to when the method wins and when it loses.
 

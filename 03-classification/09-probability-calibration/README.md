@@ -83,7 +83,7 @@ regression and **3.7%** for naive Bayes. The middle is fuller, not full, and tha
 is enough to bend the reliability curve.
 
 **The SVM margin is not a probability.** `decision_function` returned a signed
-distance in [−2.765, 2.592]. Min-max squashing and a plain sigmoid both hold the AUC
+distance in [-2.765, 2.592]. Min-max squashing and a plain sigmoid both hold the AUC
 at exactly 0.9953 and both stay badly calibrated, at ECE 0.1927 and 0.1753: neither
 looked at a label.
 
@@ -109,19 +109,21 @@ estimate, while the margin was never estimating a probability at all.
 | SVM (rbf) | 0.1927 | 0.0433 | **0.0159** | 0.9953 → 0.9931 |
 
 The SVM is the clean win: ECE from 0.1927 to 0.0159, a **12× reduction**, for 0.0022
-of AUC. That is what calibration is for. Two results argue against reaching for it
-reflexively. Sigmoid on logistic regression made ECE **2.9× worse**: log loss is a
-proper scoring rule, so that model was already fine and the wrapper solved a problem
-that did not exist. And sigmoid on naive Bayes cost **0.0423 of AUC**, 0.9877 down
-to 0.9454, which the usual "a calibrator is monotone and cannot reorder anything"
-does not cover. Monotone holds in the idealised case. In practice the map is
-*fitted*: a sigmoid fitted on scores already crushed against 0 and 1, which is
-exactly what naive Bayes produces, saturates and maps whole groups of distinct
-scores onto one output. Ties are not reorderings, but AUC counts them at half
-credit, so it falls. On top of that `CalibratedClassifierCV` refits the base
-estimator on each internal fold and averages, so the score being calibrated is not
-quite the one you started with. Measure AUC after wrapping rather than assuming it
-held.
+of AUC. That is what calibration is for.
+
+Two results argue against reaching for it reflexively. Sigmoid on logistic
+regression made ECE **2.9× worse**: log loss is a proper scoring rule, so that model
+was already fine and the wrapper solved a problem that did not exist. And sigmoid on
+naive Bayes cost **0.0423 of AUC**, 0.9877 down to 0.9454, which the usual "a
+calibrator is monotone and cannot reorder anything" does not cover.
+
+Monotone holds in the idealised case. In practice the map is *fitted*. Naive Bayes
+hands the calibrator scores already crushed against 0 and 1, and a sigmoid fitted on
+scores like that saturates, mapping whole groups of distinct scores onto one output.
+Ties are not reorderings, but AUC counts them at half credit, so it falls. On top of
+that `CalibratedClassifierCV` refits the base estimator on each internal fold and
+averages, so the score being calibrated is not quite the one you started with.
+Measure AUC after wrapping rather than assuming it held.
 
 ### Where isotonic overfits
 

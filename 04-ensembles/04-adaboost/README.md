@@ -141,7 +141,7 @@ flipped labels in each of three repeats and the spread of the paired difference
 alongside it, because three repeats is not many and a fourteen-fold claim deserves
 its own error bar.
 
-The textbook warning is not wrong, it is conditional, and this run fails three of
+The textbook warning is not wrong. It is conditional, and this run fails three of
 its conditions at once.
 
 **Not enough rounds.** The damage is cumulative and bites once the ensemble has

@@ -7,7 +7,7 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 
 | | |
 |---|---|
-| **What you will learn** | Intersection over union, non-maximum suppression and average precision written from scratch; how a single-shot detector turns a grid of anchors into boxes; why detection is scored with AP rather than accuracy; and how AP moves when you change the two thresholds you are forced to pick |
+| **What you will learn** | Intersection over union, non-maximum suppression and average precision, written from scratch. How a single-shot detector turns a grid of anchors into boxes. Why detection is scored with AP rather than accuracy. And how AP moves when you change the two thresholds you are forced to pick |
 | **You should already know** | [A CNN layer by layer](../02-a-cnn-layer-by-layer/) and [segmentation](../06-image-segmentation/) for the IoU definition |
 | **Dataset** | Synthetic 64x64 images generated in the notebook. 600 training images with 1,526 objects, 150 test images with 372, every box exact by construction |
 | **Runtime** | 0.5 minutes on the CUDA device this run used, torch 2.11.0+cu128. The detector itself trains in 16 s |
@@ -15,6 +15,12 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 ---
 
 ## The result I would lead with
+
+Two pieces of vocabulary first, because the table needs them. **IoU**, intersection
+over union, is how much a predicted box and a true box overlap, from 0 for no
+contact to 1 for a perfect match, and you have to pick how much overlap counts as
+finding the object. **AP**, average precision, is the area under the
+precision-recall curve, so 1.0 means every object found with no false alarms.
 
 One trained detector, one fixed set of predicted boxes, scored twelve times with
 nothing changed except the overlap required to call a box correct:

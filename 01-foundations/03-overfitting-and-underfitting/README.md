@@ -20,8 +20,8 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 data and wrong on new data, in the same way.
 
 **Underfitting** is visible. **Overfitting** is not: the model is *right* on the
-training data and wrong on new data, and the gap between those two is the only
-warning you get.
+training data and wrong on new data, and the gap between those two scores is the
+only warning you get.
 
 ![Seeing it](figures/fig-01-seeing-it.png)
 
@@ -31,16 +31,16 @@ warning you get.
 | 4 | 0.250 | **0.409** | about right |
 | 20 | 0.302 | **146.102** | overfitting |
 
-Degree 20 has a test error 357 times worse than degree 4, and it does not even
-buy that with a better fit to the training data: 0.302 against 0.250. Which is
-not what the textbook curve does, and the reason turns out to be worth a section.
+Degree 20 has a test error 357 times worse than degree 4, and it does not even buy
+that with a better fit to the training data: 0.302 against 0.250. A textbook curve
+does not do that, and the reason turns out to be worth a section.
 
 ## The two numbers that matter
 
 ![The curve](figures/fig-02-the-curve.png)
 
 This is the most useful diagnostic in machine learning, and its shape is worth
-memorising. Two thirds of it came out as expected.
+memorising. Two of its three parts came out as expected.
 
 **Test error falls, bottoms out, then rises.** The turning point, degree 4 here,
 is the model you want. **The gap between the lines is the overfitting**, not the

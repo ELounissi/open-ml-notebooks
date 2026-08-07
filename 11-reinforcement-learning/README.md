@@ -2,18 +2,17 @@
 
 Learning from reward instead of from answers.
 
-**5 of 8 shipped.**
 
-| # | Notebook | Status |
-|---|---|---|
-| `01` | Agents, states, actions, rewards | planned |
-| `02` | [Multi-armed bandits](02-multi-armed-bandits/) | **shipped** |
-| `03` | [MDPs, value iteration, policy iteration](03-markov-decision-processes/) | **shipped** |
-| `04` | [Q-learning](04-q-learning/) | **shipped** |
-| `05` | SARSA, and how it differs from Q-learning | planned |
-| `06` | [Deep Q-Networks](06-deep-q-networks/) | **shipped** |
-| `07` | [Policy gradients and REINFORCE](07-policy-gradients/) | **shipped** |
-| `08` | Actor-critic and PPO | planned |
+| # | Notebook |
+|---|---|
+| `01` | [Agents, states, actions, rewards](01-the-setup/) |
+| `02` | [Multi-armed bandits](02-multi-armed-bandits/) |
+| `03` | [MDPs, value iteration, policy iteration](03-markov-decision-processes/) |
+| `04` | [Q-learning](04-q-learning/) |
+| `05` | [SARSA, and how it differs from Q-learning](05-sarsa/) |
+| `06` | [Deep Q-Networks](06-deep-q-networks/) |
+| `07` | [Policy gradients and REINFORCE](07-policy-gradients/) |
+| `08` | [Actor-critic and PPO](08-actor-critic-and-ppo/) |
 
 Every notebook follows the same shape: the idea in plain language, the maths written out, a from-scratch NumPy implementation, the library version annotated line by line, and a measured answer to when the method wins and when it loses.
 

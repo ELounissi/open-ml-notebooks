@@ -96,8 +96,8 @@ It changes only whether the agent's action decides the next state.
 
 In the bandit, somebody else operates the winder on their own schedule, so the
 press is wound with probability one half no matter what the agent does. There,
-pressing every tick is not a lazy heuristic, it is the exactly correct answer, and
-for a stronger reason than the +0.50 margin suggests. Pressing pays at least as
+pressing every tick is the exactly correct answer rather than a lazy heuristic,
+and for a stronger reason than the +0.50 margin suggests. Pressing pays at least as
 much as winding in **every** state, so it dominates, and a dominant action is
 optimal at every mixing weight. The notebook prints the bandit gap at three
 different winder schedules to show it does not move the sign. There is no version

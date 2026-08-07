@@ -36,13 +36,13 @@ text 5.5%, which is the point: what left was the part a model could only memoris
 
 **TF-IDF pays about as much again on exactly the same columns.** No new
 information enters between rows two and three. The tokeniser, the vocabulary and
-the counts are identical and only the weighting changes, which is the strongest
-evidence available that the reweighting is doing real work, because no other
-explanation is on the table when the feature set is held fixed.
+the counts are identical, and only the weighting changes. That makes this the
+strongest evidence available that the reweighting does real work, because with the
+feature set held fixed no other explanation is on the table.
 
 **Bigrams did not pay.** Doubling the columns to 20,790 moved accuracy by
-**-0.0009**, about a tenth of a standard error. That is not a small loss, it is
-nothing, and I would not keep the columns.
+**-0.0009**, about a tenth of a standard error. That is not a small loss. It is no
+measurable change at all, and I would not keep the columns.
 
 That last result is conditional, and the condition is the task. This is topic
 classification: a baseball post says "pitcher", a space post says "orbit", and

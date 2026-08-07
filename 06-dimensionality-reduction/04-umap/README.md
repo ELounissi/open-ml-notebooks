@@ -7,7 +7,7 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 
 | | |
 |---|---|
-| **What you will learn** | What UMAP optimises and how that differs from t-SNE, what `n_neighbors` and `min_dist` actually change, how to measure the "preserves global structure" claim instead of repeating it, and why having a `transform` decides where you are allowed to use it |
+| **What you will learn** | What UMAP optimises, and how that differs from t-SNE. What `n_neighbors` and `min_dist` actually change. How to measure the "preserves global structure" claim instead of repeating it. And why having a `transform` decides where you are allowed to use it |
 | **You should already know** | [t-SNE](../03-t-sne/), [PCA](../01-principal-component-analysis/) |
 | **Datasets** | UCI Dry Bean, UCI Breast Cancer |
 | **Runtime** | Two to four minutes on a laptop CPU |
@@ -26,8 +26,9 @@ running the scikit-learn fallback - pip install umap-learn for the real thing
 ```
 
 So every number on this page came from **`Isomap`**, with `SpectralEmbedding`
-alongside it in one figure. Isomap builds a neighbour graph, measures geodesic
-distances along it, then runs classical MDS on those distances, and it has a
+alongside it in one figure. Isomap builds a neighbour graph, then measures how far
+apart two points are by walking the graph rather than cutting straight through
+space, then looks for coordinates whose distances reproduce those walks. It has a
 `transform` the way UMAP does. What is missing is `min_dist`, which has no
 scikit-learn equivalent, and the stochastic layout: Isomap is deterministic. That
 distinction is not a footnote here. It changes one of the conclusions.

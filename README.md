@@ -73,12 +73,13 @@ Full table of contents with all 86 notebooks: **[CURRICULUM.md](CURRICULUM.md)**
 | **11: [Reinforcement learning](11-reinforcement-learning/)** | Bandits, MDPs, Q-learning, SARSA, DQN, policy gradients, actor-critic, PPO |
 | **12: [Putting it together](12-putting-it-together/)** | The scoreboard, SHAP and LIME, pipelines, deployment, common mistakes |
 
-### Available now
+### A few worth opening first
 
 - **[01-03: Overfitting and underfitting](01-foundations/03-overfitting-and-underfitting/)**,
-  the single most useful diagnostic in machine learning, drawn rather than defined;
-  a degree-20 polynomial with a *better* training error than degree 4 and a test
-  error **three hundred times worse**
+  the single most useful diagnostic in machine learning, drawn rather than defined,
+  including the degree-20 fit that is worse than degree 4 on the training set as
+  well as the test set, because the design matrix has a condition number of 1.1e+21
+  and the solver quietly gives up before overfitting gets a chance
 - **[02-01: Linear regression](02-regression/01-linear-regression/)**, the normal
   equation derived, a 30-line NumPy version matched against scikit-learn to 12
   decimal places, residual diagnostics that expose a bias the summary statistic
@@ -149,9 +150,9 @@ Full table of contents with all 86 notebooks: **[CURRICULUM.md](CURRICULUM.md)**
 
 Between them these cover supervised regression, supervised classification,
 ensembles, unsupervised clustering, dimensionality reduction, and reinforcement
-learning. New notebooks land in batches. Watch or star the repo to get them.
+learning, and every one of them is finished and executed.
 
-### The scoreboard so far
+### The scoreboard
 
 Because every notebook uses the same datasets, the comparisons accumulate. On
 **UCI Dry Bean**, 5-fold cross-validated accuracy:
