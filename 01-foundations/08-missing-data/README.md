@@ -28,7 +28,7 @@ and measured what each cost. The complete-data model scores R squared 0.6037.
 
 MNAR is worse, but only by **1.4x on R squared lost and 1.3x on fill error**.
 The bigger number is the one nobody mentions: MCAR, the mechanism everyone calls
-safe, still cost 0.1061 of R squared — about a sixth of the model — purely from
+safe, still cost 0.1061 of R squared, about a sixth of the model, purely from
 filling a third of one column with a constant. Getting the mechanism right does
 not rescue you from the missing rate.
 
@@ -42,8 +42,8 @@ tells you it happened.
 ![Three mechanisms](figures/fig-01-three-mechanisms.png)
 
 One deletion rule, three drivers: noise for MCAR, `AveRooms` for MAR, the column
-itself for MNAR. All three delete about the same amount — 30.14%, 30.38% and
-30.19% of 20,640 rows. The MedInc–AveRooms correlation is **+0.327**, and that is
+itself for MNAR. All three delete about the same amount: 30.14%, 30.38% and
+30.19% of 20,640 rows. The MedInc/AveRooms correlation is **+0.327**, and that is
 what makes MAR partly recoverable later.
 
 Against a true mean of 3.871, the survivors average 3.872 under MCAR, 3.637 under
@@ -61,9 +61,9 @@ and the measured survivors track it: 65.81% for 4 columns at 10% (theory 65.61%)
 (2.81%).
 
 Five per cent missing in each of sixteen columns sounds clean and leaves 43.92%
-of the rows. The second cost is invisible — dropping is only unbiased under MCAR:
+of the rows. The second cost is invisible. Dropping is only unbiased under MCAR:
 
-Dropping kept 69.9%, 69.6% and 69.8% of rows under MCAR, MAR and MNAR — the same
+Dropping kept 69.9%, 69.6% and 69.8% of rows under MCAR, MAR and MNAR, the same
 number every time. Against a true mean of 3.8707 the survivors averaged 3.8719
 (+0.0013), 3.6368 (**-0.2339**) and 3.5254 (**-0.3452**). Only one of the three
 threw away a random selection.
@@ -78,7 +78,7 @@ is **0.8358**. The standard deviation went 1.8998 to 1.5891, a ratio of 0.8365,
 and the correlation with the target went 0.6881 to 0.5760, a ratio of 0.8371.
 
 Those two land on the formula. The mean ratio across all eight correlations is
-**0.9412**, well above 0.8358, so the shrink is not uniform in practice — treat
+**0.9412**, well above 0.8358, so the shrink is not uniform in practice. Treat
 $\sqrt{1-p}$ as a bound on the worst-affected relationships rather than a
 prediction for every pair.
 
@@ -91,7 +91,7 @@ under MCAR (+0.0013), 0.4699 to 0.4778 under MAR (+0.0079), and 0.4589 to 0.4849
 under MNAR (**+0.0260**).
 
 Under MCAR the indicator is a column of noise and buys nothing, which is correct.
-Under MNAR it buys the most — but be precise about how much: 0.0260 recovered out
+Under MNAR it buys the most, but be precise about how much: 0.0260 recovered out
 of 0.1448 lost is **18% of the damage**, not most of it. It costs one boolean
 column and no thought, so it is still worth adding by default. It is not a repair.
 
@@ -111,7 +111,7 @@ This block runs on a subsample where the complete-data model scores R squared
 | MNAR | iterative | **7.3979** | -0.1734 | 2.8929 |
 
 Two things here contradict the tidy version of this story. KNN under MNAR does
-not fail alongside the median — it beats every constant by a wide margin and cuts
+not fail alongside the median; it beats every constant by a wide margin and cuts
 the mean bias from -0.4534 to -0.1133. And `IterativeImputer` under MNAR is the
 worst method on the table, with a fill error of 7.3979 against the median's
 2.5239. The cheap method is not always close, and the expensive method is not
@@ -130,7 +130,7 @@ predict. +1.2226 in R squared is not a rounding error, and it went the other way
 in 30% of repeats, so a single run will not reliably reveal it.
 
 On the full 20,640 rows with a median, the same test gives honest 0.497618
-against leaky 0.497600 — a difference of **-0.000018**. The leak is invisible
+against leaky 0.497600, a difference of **-0.000018**. The leak is invisible
 when the data is large and the imputer is simple. It does not stay that way.
 
 ## Cheat sheet

@@ -15,8 +15,8 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 ---
 
 The measurement I did not expect: fitting a calibrator on the model's own training
-rows left a random forest **worse than never calibrating at all** — ECE **0.0651**
-against **0.0171** uncalibrated — and knocked its AUC from 0.9820 to 0.9411. Platt
+rows left a random forest **worse than never calibrating at all** (ECE **0.0651**
+against **0.0171** uncalibrated) and knocked its AUC from 0.9820 to 0.9411. Platt
 scaling then nearly tripled the error of a logistic regression that had arrived
 calibrated already. Calibration is a separate axis from accuracy, and it is easy to
 move the wrong way.
@@ -39,8 +39,8 @@ cancer and divided its logits by a temperature $T$, which cannot move the order.
 | Under-confident, $T = 3.0$ | 0.995283 | **0.1063** | 0.0381 |
 
 AUC spread across the three: **0.0000000000**. ECE spread: **0.0878**. Sharpening
-this model slightly *improved* its ECE — the fitted version was already a little
-under-confident — so only the flattening did damage.
+this model slightly *improved* its ECE (the fitted version was already a little
+under-confident), so only the flattening did damage.
 
 ## Reliability diagrams and expected calibration error
 
@@ -49,13 +49,13 @@ under-confident — so only the flattening did damage.
 ECE is a weighted average of the per-bin gaps between predicted probability and
 observed frequency, $\sum_b (n_b/n)\,|\bar{y}_b - \bar{p}_b|$, and nothing else is
 going on. I wrote it twice, as a loop and vectorised, and checked both against
-`toolkit.evaluate` — all three returned **0.0184214056**.
+`toolkit.evaluate`: all three returned **0.0184214056**.
 
 The bin populations are what most reliability plots hide. Here **79.3% of the data
 sat in the two end bins**: the largest held 296 cases at a gap of +0.005, while the
 bin with the worst gap on the plot, +0.154, held 11. Those two dots look identical
-and should not. ECE is also not a proper scoring rule — predicting the base rate for
-everything scores near zero, as above — so quote Brier or log loss beside it.
+and should not. ECE is also not a proper scoring rule (predicting the base rate for
+everything scores near zero, as above), so quote Brier or log loss beside it.
 
 ## Each model family fails in its own shape
 
@@ -77,7 +77,7 @@ regression.
 
 **The SVM margin is not a probability.** `decision_function` returned a signed
 distance in [−2.765, 2.592]. Min-max squashing and a plain sigmoid both hold the AUC
-at exactly 0.9953 and both stay badly calibrated, at ECE 0.1927 and 0.1753 — neither
+at exactly 0.9953 and both stay badly calibrated, at ECE 0.1927 and 0.1753: neither
 looked at a label.
 
 **Naive Bayes is over-confident by the widest margin here.** It counts correlated
@@ -98,7 +98,7 @@ accuracy of **0.9385**.
 
 The SVM is the clean win: ECE from 0.1927 to 0.0159, a **12× reduction**, for 0.0022
 of AUC. That is what calibration is for. Two results argue against reaching for it
-reflexively. Sigmoid on logistic regression made ECE **2.9× worse** — log loss is a
+reflexively. Sigmoid on logistic regression made ECE **2.9× worse**: log loss is a
 proper scoring rule, so that model was already fine and the wrapper solved a problem
 that did not exist. And sigmoid on naive Bayes cost **0.0423 of AUC**; a calibrator
 is monotone and cannot reorder anything, so that came from the refitting inside
@@ -110,7 +110,7 @@ is monotone and cannot reorder anything, so that came from the refitting inside
 
 Breast cancer is too small to sweep, so I switched to dry bean, kept the two
 varieties that get confused most, and split 1730 train / 2597 calibration pool /
-1855 test — uncalibrated Brier 0.0775, ECE 0.0736. Then I held the base model fixed
+1855 test: uncalibrated Brier 0.0775, ECE 0.0736. Then I held the base model fixed
 and grew only the calibration set.
 
 | Calibration rows | 25 | 50 | 100 | 200 | 400 | 800 | 1600 | 2500 |
@@ -146,7 +146,7 @@ data set aside permanently.
 
 The danger scales with overfitting. Repeated with naive Bayes, which fits its
 training rows about as well as anything else (0.9035 train against 0.9121 test), the
-two rows land at ECE 0.0176 and 0.0187 — barely a difference. Rather than reason
+two rows land at ECE 0.0176 and 0.0187, barely a difference. Rather than reason
 about that per model, always use held-out data.
 
 ## Cheat sheet
@@ -156,12 +156,12 @@ about that per model, always use held-out data.
 | **Discrimination** | Does the model order the cases. AUC. Invariant to any increasing transform of the score |
 | **Calibration** | Does the number mean what it says. ECE, read against the diagonal of a reliability diagram |
 | **Report together** | ECE plus Brier or log loss. ECE alone rewards a model that predicts the base rate and nothing else |
-| **Random forest** | Under-confident. Votes average away from 0 and 1 — 38.8% of scores inside (0.02, 0.98) here |
+| **Random forest** | Under-confident. Votes average away from 0 and 1, 38.8% of scores inside (0.02, 0.98) here |
 | **Naive Bayes** | Over-confident. 95.6% of predictions above 0.99 confidence at 0.9385 accuracy |
-| **SVM** | `decision_function` is a distance. Squashing it by hand fixes nothing — ECE stayed at 0.1927 |
+| **SVM** | `decision_function` is a distance. Squashing it by hand fixes nothing: ECE stayed at 0.1927 |
 | **Logistic regression** | Usually arrives calibrated. Wrapping it made ECE 2.9× worse here |
-| **Platt vs isotonic** | Sigmoid below roughly 800 calibration rows, isotonic past it — and by a small margin even then |
-| **Where to fit it** | Never the training rows. Held-out split, or `CalibratedClassifierCV(estimator=..., cv=5)` to cross-fit. For a prefit model, `FrozenEstimator` — the old `cv="prefit"` is gone in scikit-learn 1.8 |
+| **Platt vs isotonic** | Sigmoid below roughly 800 calibration rows, isotonic past it, and by a small margin even then |
+| **Where to fit it** | Never the training rows. Held-out split, or `CalibratedClassifierCV(estimator=..., cv=5)` to cross-fit. For a prefit model, `FrozenEstimator`: the old `cv="prefit"` is gone in scikit-learn 1.8 |
 
 ---
 

@@ -7,7 +7,7 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 
 | | |
 |---|---|
-| **What you will learn** | Why a Q table cannot survive a continuous state, how a network takes its place, and what experience replay and the target network are each worth — measured by removing them one at a time |
+| **What you will learn** | Why a Q table cannot survive a continuous state, how a network takes its place, and what experience replay and the target network are each worth, measured by removing them one at a time |
 | **You should already know** | [Q-learning](../04-q-learning/), and enough PyTorch to read a three-layer network |
 | **Environment** | Cart-pole, physics and all, written from scratch in the notebook. No `gymnasium` needed |
 | **Runtime** | A few minutes on a laptop CPU (493 s for the full ablation) |
@@ -37,7 +37,7 @@ starting point. It is damaged, not dead.
 
 The seed spread column says the same thing from the other side. The unstable
 configuration is **no replay, at 34.8 spread between seeds**. The no-target runs
-agree with each other perfectly — spread 0.0 — because both seeds sat flat.
+agree with each other perfectly (spread 0.0) because both seeds sat flat.
 
 If you take one operational rule from this notebook: when a DQN never leaves its
 starting return, check that the target network is actually frozen before you
@@ -85,7 +85,7 @@ $$y = r + \gamma (1 - \text{done}) \max_{a'} Q_{\phi^-}(s')[a'], \qquad
 \mathcal{L}(\phi) = \big(Q_\phi(s)[a] - y\big)^2$$
 
 The $\phi^-$ is a frozen copy of the weights. That copy is the thing the ablation
-above says you cannot do without — fitting a target computed from the weights you
+above says you cannot do without: fitting a target computed from the weights you
 are updating is regression against a label that runs away, and here the values
 spiral instead of converging.
 
@@ -112,7 +112,7 @@ Take actions genuinely worth the same, add independent noise, take the max:
 
 Every true value is zero, so column three is pure bias and it grows with the
 action count. Double DQN removes essentially all of it by letting the live
-network choose the action and the frozen one price it — a one-line change, since
+network choose the action and the frozen one price it, a one-line change, since
 both networks are already there.
 
 ## What the network learned
@@ -126,7 +126,7 @@ rotation. A table would have needed a separate number for every box along that
 line and no way to know they belonged together.
 
 One caveat the notebook prints and does not discuss. Running that same network
-greedily with exploration off gives `[11, 9, 9, 11, 11, 12, 11, 11, 12, 10]` —
+greedily with exploration off gives `[11, 9, 9, 11, 11, 12, 11, 11, 12, 10]`,
 **mean 10.7 of a possible 500**, worse than the random policy above. The surface
 is a snapshot of a network taken at the end of training, and its shape is more
 readable than its performance. Treat the picture as an illustration of what
@@ -139,7 +139,7 @@ checkpoint balances the pole.
 |---|---|
 | **Use it when** | Discrete actions, continuous states, a simulator you can run millions of steps in |
 | **Avoid it when** | Actions are continuous. Use [policy gradients](../07-policy-gradients/) |
-| **Must have** | The target network above all — removing it cost 96% of the score here. Replay cost 64% |
+| **Must have** | The target network above all: removing it cost 96% of the score here. Replay cost 64% |
 | **Main dials** | Learning rate, replay capacity, target sync interval, batch size, epsilon schedule |
 | **Loss** | Huber rather than squared error, so one bad bootstrap cannot dominate a batch |
 | **Watch out** | The `max` inflates values by 1.538 over ten actions. Double DQN costs one line |

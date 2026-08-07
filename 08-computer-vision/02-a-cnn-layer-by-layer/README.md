@@ -19,7 +19,7 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 ![Fashion-MNIST](figures/fig-01-the-data.png)
 
 A dense layer treats a 28×28 image as 784 unrelated numbers. Shift a shoe two
-pixels right and every input changes — as far as the layer knows it is a different
+pixels right and every input changes: as far as the layer knows it is a different
 picture, and it must learn the shoe again in the new position.
 
 A convolution starts from two facts about images: **nearby pixels are related**,
@@ -35,7 +35,7 @@ slides it across the whole image, reusing the same weights at every position.
 
 ![What a filter does](figures/fig-02-what-a-filter-does.png)
 
-The same 3×3 grid, four different jobs — edge detection, blur, sharpen — before
+The same 3×3 grid, four different jobs (edge detection, blur, sharpen) before
 any learning happens. **Pooling** is the other half: take the maximum in each 2×2
 block, which halves the resolution and makes the representation tolerant to small
 shifts.
@@ -50,7 +50,7 @@ shifts.
 | Dense | 118,282 | 0.8678 | 9.6 |
 
 The CNN wins on accuracy, parameter count, **and** speed. This is not extra
-capacity — it is better assumptions. The convolution knows the input is a grid and
+capacity; it is better assumptions. The convolution knows the input is a grid and
 that patterns repeat across it. The dense layer must discover both from data, and
 never fully does.
 
@@ -61,7 +61,7 @@ never fully does.
 ![Activations](figures/fig-05-activations.png)
 
 Compare these to the hand-designed Sobel filters earlier in the notebook. Several
-learned ones have the same structure — positive on one side, negative on the other,
+learned ones have the same structure: positive on one side, negative on the other,
 which is an edge detector. **Nobody asked for that.** It emerged because detecting
 edges helps tell a sandal from a boot.
 
@@ -70,7 +70,7 @@ edges helps tell a sandal from a boot.
 ![Confusion](figures/fig-06-confusion.png)
 
 The errors are not random. Shirts, pullovers, coats and T-shirts trade with each
-other, because at 28×28 in greyscale they genuinely do look alike — sleeves and a
+other, because at 28×28 in greyscale they genuinely do look alike, sleeves and a
 torso-shaped blob. Trousers, bags and boots are almost never confused, because
 their silhouettes are distinctive.
 
@@ -81,7 +81,7 @@ real.** Errors scattered evenly across the matrix would suggest it had not.
 
 | | |
 |---|---|
-| **Use it when** | The input is a grid where position matters and patterns repeat — images, spectrograms, some time series |
+| **Use it when** | The input is a grid where position matters and patterns repeat: images, spectrograms, some time series |
 | **Avoid it when** | Features have no spatial relationship. On tabular data a convolution is meaningless |
 | **The trick** | Weight sharing. Parameters do not scale with input size |
 | **Standard block** | `Conv → ReLU → Pool`, repeated, channels doubling as resolution halves |

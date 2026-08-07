@@ -20,7 +20,7 @@ Everyone repeats that stochastic gradient descent is the fast one. Counted in se
 rather than passes over the data, here it was the slow one *and* the inaccurate one.
 Full batch finished 1,500 updates in **0.205 s** and landed **1.000e-16** from the best
 achievable loss; stochastic descent spent **0.366 s** on 41,250 updates and stopped
-**3.699e-02** away — fourteen orders of magnitude worse, for 78% more wall-clock time.
+**3.699e-02** away, fourteen orders of magnitude worse, for 78% more wall-clock time.
 That is not an argument against small batches, it is an argument about what makes them
 fast: memory pressure and model shape, neither of which applies here.
 
@@ -38,13 +38,13 @@ Fitted exponents against theory: forming $X^\top X$ came out at **1.61** (theory
 2), one gradient step at **1.04** (theory says 1), and the solve at **0.06** against a
 theoretical 3. Say that last one plainly: at these sizes a multithreaded BLAS solve is
 nowhere near its asymptotic regime, so the exponent is meaningless and the time
-projection built on it is nonsense. The memory projection is not — **$X^\top X$ alone
+projection built on it is nonsense. The memory projection is not: **$X^\top X$ alone
 would need 80 GB** at 100,000 features.
 
 Cost is the reason people quote. Rank is the reason that stops you. Duplicate one
 column and the matrix has 9 columns at **rank 8**; numpy refused with `Singular
 matrix`. Gradient descent walked the same problem to **MSE 0.52432099**, matching
-`lstsq` exactly, and put **+0.414810** on each duplicate — without being told anything
+`lstsq` exactly, and put **+0.414810** on each duplicate, without being told anything
 about the duplication.
 
 ## The update rule, checked against the closed form
@@ -97,21 +97,21 @@ and not learning rates.
 | Mini-batch, 256 rows | 16,000 | 0.377 | 1.711e-05 | 85 / 319 | 0.281 |
 | Stochastic, 1 row | 41,250 | 0.366 | 3.699e-02 | 140 / 274 | 0.293 |
 
-Per pass over the data the stochastic curve is far ahead, and the right panel shows it
-— that is why nobody trains a network full-batch. Per second the ordering reverses,
+Per pass over the data the stochastic curve is far ahead, and the right panel shows it:
+that is why nobody trains a network full-batch. Per second the ordering reverses,
 because one batch step is a single BLAS call across every core on a cached matrix while
 41,250 single-row steps are 41,250 trips through the Python interpreter. The wobble
 column is the spread of the remaining gap on a log scale over the last 40% of each run,
 so batch's 0.808 is large because that run was still falling through orders of
 magnitude, not because it was noisy. And at a constant learning rate stochastic descent
-never converges to a point — it settles into a cloud, and decaying the rate shrinks it.
+never converges to a point; it settles into a cloud, and decaying the rate shrinks it.
 
 ## What scaling saves
 
 ![Scaling changes the shape](figures/fig-04-scaling-changes-the-shape.png)
 
-Two centred features, same model, same minimum loss of **0.65363196** both ways —
-original units: condition **44.5**, **439 steps**. Standardised: condition **1.3**,
+Two centred features, same model, same minimum loss of **0.65363196** both ways.
+Original units: condition **44.5**, **439 steps**. Standardised: condition **1.3**,
 **81 steps**. On all eight features with a shared 20,000-iteration budget it stops
 being cosmetic:
 
@@ -120,14 +120,14 @@ being cosmetic:
 | Original units | **42,145,624** | 20,000 (budget spent) | 4.52e-02 | 6.567e-01 |
 | Standardised | 44 | **359** | 9.99e-09 | 1.443e-15 |
 
-The normal equation does not care about units — the exact solution is the exact
+The normal equation does not care about units: the exact solution is the exact
 solution. The moment you walk downhill, units decide whether the walk finishes at all.
 
 ## Cheat sheet
 
 | | |
 |---|---|
-| **Use it when** | The exact solution is too expensive, does not exist, or was never available — every model after this chapter |
+| **Use it when** | The exact solution is too expensive, does not exist, or was never available: every model after this chapter |
 | **Update rule** | $w \leftarrow w - \eta\,\frac{2}{m}X^\top(Xw-y)$, at $O(mn)$ per step against $O(n^3)$ for one exact solve |
 | **Safe learning rate** | Strictly below $2/\lambda_{\max}$. At 0.99× it converges, at 1.01× it grows to 3.4e7 in 600 steps |
 | **Scaling** | Not optional. It sets the condition number, and the condition number sets the step count |

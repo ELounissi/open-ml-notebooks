@@ -22,7 +22,7 @@ $$G = 1 - \sum_{c} p_c^2$$
 
 A pure group scores 0. An even mix of seven varieties scores 0.857. A split's
 value is how much impurity it removes, weighted by how many beans land each side.
-The tree tries **every feature at every threshold** and keeps the best. Greedy —
+The tree tries **every feature at every threshold** and keeps the best. Greedy:
 it never looks ahead.
 
 The notebook implements that search from scratch. Starting impurity is **0.8271**,
@@ -61,7 +61,7 @@ memorised, and you can count the leaves it invented in order to do it.
 Trees split one feature at a time, so every boundary is a staircase of
 axis-aligned steps. The depth-3 tree draws two or three steps and misses the seam.
 The unrestrained tree follows it closely and then keeps going, carving small
-pockets around individual beans — visible as islands of the wrong shade.
+pockets around individual beans, visible as islands of the wrong shade.
 
 Those pockets are exactly what [bagging](../../04-ensembles/01-bagging/) and
 [random forests](../../04-ensembles/02-random-forest/) exist to average away.
@@ -75,7 +75,7 @@ Those pockets are exactly what [bagging](../../04-ensembles/01-bagging/) and
 | Tree, unrestrained | 0.8945 |
 
 Dry Bean rewards smooth linear boundaries, and a staircase is the wrong shape for
-it. A single tree is rarely the model you deploy — it is the model you *read*, and
+it. A single tree is rarely the model you deploy; it is the model you *read*, and
 the building block for the ensembles that follow.
 
 ## Cheat sheet
@@ -86,7 +86,7 @@ the building block for the ensembles that follow.
 | **Avoid it when** | The boundary is diagonal or smooth; you need to extrapolate; you want stability |
 | **Scaling needed** | No. Splits are thresholds, so units do not matter |
 | **Main dials** | `max_depth`, `min_samples_leaf`, `min_samples_split`, `ccp_alpha` |
-| **Watch out** | Unconstrained trees always hit 100% training accuracy, and they are unstable — reshuffle and the tree changes shape |
+| **Watch out** | Unconstrained trees always hit 100% training accuracy, and they are unstable: reshuffle and the tree changes shape |
 
 ---
 

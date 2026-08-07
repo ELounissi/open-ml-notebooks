@@ -22,7 +22,7 @@ of this is usually presented, but it won.
 
 | Method | Train acc | Test acc | Gap | Epochs | vs baseline |
 |---|---|---|---|---|---|
-| **No regularisation** | 0.9180 | **0.8087** | 0.1093 | 25 | — |
+| **No regularisation** | 0.9180 | **0.8087** | 0.1093 | 25 | |
 | Dropout, p=0.3 | 0.8665 | 0.7999 | 0.0666 | 25 | **−0.0088** |
 | Early stopping | 0.8595 | 0.7963 | 0.0632 | **9** | −0.0124 |
 | Batch norm | 0.9825 | 0.7932 | **0.1893** | 25 | −0.0155 |
@@ -43,14 +43,14 @@ finished third on test accuracy.
 
 The honest reading is that 25 epochs is not enough for the noisy methods. Dropout
 and augmentation both slow convergence in exchange for a better ceiling, and this
-run stops before the trade pays. One seed, one 2,000-image subset — differences of
+run stops before the trade pays. One seed, one 2,000-image subset: differences of
 a fraction of a percent in the middle of that table are noise.
 
 ## Building the gap first
 
 You cannot judge a regulariser on a network that is not overfitting. Two hidden
 layers of 256 and 128 with ReLU, **235,146 parameters** against **2,000 training
-images** — **118 parameters per image** — plus 500 validation images and the full
+images** (**118 parameters per image**) plus 500 validation images and the full
 **10,000** test images, on torch 2.11.0+cu128 on CUDA.
 
 ![Overfitting](figures/fig-01-overfitting.png)
@@ -64,7 +64,7 @@ images** — **118 parameters per image** — plus 500 validation images and the
 | Validation loss minimum | **epoch 9** |
 
 Training loss falls monotonically. Validation loss bottoms out at epoch 9 and then
-climbs, and after that turning point the network is still learning — it is learning
+climbs, and after that turning point the network is still learning: it is learning
 things true of these 2,000 images and false of clothing in general.
 
 ## What each one does
@@ -77,7 +77,7 @@ other unit can build a feature that depends on unit 40 being there.
 
 **Batch norm** normalises each feature against its own mini-batch. On a batch with
 mean +4.989 and standard deviation 2.946, the output came out at mean +0.000 and
-std 1.002. Its running mean after that one batch was `[0.473 0.486 0.532 0.504]` —
+std 1.002. Its running mean after that one batch was `[0.473 0.486 0.532 0.504]`:
 those stored numbers, not the batch, are what eval mode uses. The regularising
 effect is a side effect of batch noise, and it is not adjustable.
 
@@ -85,8 +85,8 @@ effect is a side effect of batch noise, and it is not adjustable.
 $w \leftarrow (1 - \eta\lambda)\, w - \eta \nabla \mathcal{L}(w)$. With SGD the
 equation and the code agree. With Adam they do not, which is why `AdamW` exists.
 
-**Early stopping** is free. **Augmentation** — random horizontal flip plus a shift
-of up to two pixels — is the only method here that adds information rather than
+**Early stopping** is free. **Augmentation**, random horizontal flip plus a shift
+of up to two pixels, is the only method here that adds information rather than
 removing freedom.
 
 ![One at a time](figures/fig-02-one-at-a-time.png)
@@ -98,7 +98,7 @@ augmentation 4 s, everything combined 4 s.
 
 The baseline run already recorded validation loss every epoch, so no retraining was
 needed. It bottomed out at **epoch 9 of 25**, where test accuracy was **0.7963**
-against **0.8087** at epoch 25 — a difference of −0.0124 for **16 saved epochs, 64%
+against **0.8087** at epoch 25, a difference of −0.0124 for **16 saved epochs, 64%
 of the run**.
 
 It gave back 0.0124 accuracy for 64% of the compute. On a longer run past the
@@ -115,7 +115,7 @@ reports a wrong number and edits the model while doing it.
 ![Train/eval trap](figures/fig-04-train-eval-trap.png)
 
 `model.eval()` returns **0.7533**, the same number every time. `model.train()` over
-15 identical calls averaged **0.7351**, ranging **0.7327 to 0.7400** — an error of
+15 identical calls averaged **0.7351**, ranging **0.7327 to 0.7400**, an error of
 **−0.0182** from forgetting one line. Then the part that catches people: in training
 mode the accuracy depends on the evaluation batch size, a parameter that should have
 no effect on anything.
@@ -124,7 +124,7 @@ no effect on anything.
 |---|---|---|---|---|---|---|---|
 | Train-mode accuracy | **0.6426** | 0.6923 | 0.7187 | 0.7257 | 0.7288 | 0.7336 | 0.7321 |
 
-**At batch size 8 the reported accuracy is 0.6426 against a true 0.7533 — an error
+**At batch size 8 the reported accuracy is 0.6426 against a true 0.7533, an error
 of 0.1107 from a missing line of code.** Batch norm is normalising each image
 against whichever others share its batch, so the prediction for one garment depends
 on what you loaded beside it.

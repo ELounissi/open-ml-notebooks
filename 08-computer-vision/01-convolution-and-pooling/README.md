@@ -23,8 +23,8 @@ not approximately zero. Cosine between the two maps is **0.008** unaligned and
 a dense layer has no way to know the two pictures show the same garment.
 
 The second number is the price. `Conv2d(16, 32, 3)` holds **4,640** parameters. A
-dense layer mapping the same 16×14×14 tensor to 32×14×14 needs **19,675,264** — a
-ratio of **4,240×** — and the convolution holds those 4,640 whether the input is
+dense layer mapping the same 16×14×14 tensor to 32×14×14 needs **19,675,264** (a
+ratio of **4,240×**), and the convolution holds those 4,640 whether the input is
 14×14, 64×64 or 224×224. Everything below is the machinery behind those two facts.
 
 ## The operation
@@ -48,7 +48,7 @@ first window       kernel        product      sum
 Repeating at every position gives a 4×4 map: **the 6×6 patch became 4×4 because the
 window cannot hang off the edge**. The values run positive where the patch goes
 bright-to-dark left to right, negative the other way, near zero on flat ground. The
-formula above is cross-correlation, not convolution — every library skips the kernel
+formula above is cross-correlation, not convolution: every library skips the kernel
 flip and calls it convolution anyway, and it makes no difference to a learned weight.
 
 ## Nine numbers decide everything
@@ -71,7 +71,7 @@ One sandal, eight hand-designed kernels, same operation throughout.
 The weight-sum column splits the table into two families. Sum to one and average
 brightness is preserved (mean 0.203 to 0.205 throughout), so the output still looks
 like the garment. Sum to zero and the kernel cancels on flat regions, responding only
-where something changes — mean within 0.002 of zero for all three.
+where something changes, mean within 0.002 of zero for all three.
 
 ## From scratch, checked against torch
 
@@ -87,7 +87,7 @@ inside the same loop, and every combination was checked against `F.conv2d`.
 
 Largest difference anywhere across eight configurations: **1.332e-15**, against a
 float64 machine epsilon of 2.220e-16. Six units in the last place is the only
-agreement worth claiming. It also confirms the unflipped convention — a flipped
+agreement worth claiming. It also confirms the unflipped convention: a flipped
 kernel would disagree in the first decimal, not the sixteenth.
 
 With channels, a filter is an `in_channels × k × k` block. Two implementations, both
@@ -112,7 +112,7 @@ stride 2 raises `RuntimeError`.
 The cost of shrinking shows up when you stack. From 28×28 a 3×3 valid conv can be
 stacked **13 times** before the map is 2×2 (28, 26, 24 … 4, 2); the padded stack sits
 at 28 forever. That is why `padding=1` appears on nearly every 3×3 layer in nearly
-every architecture — a network with no padding eats its own image from the border
+every architecture: a network with no padding eats its own image from the border
 inwards, so edge pixels pass through fewer layers than central ones.
 
 ### Parameters
@@ -149,7 +149,7 @@ All three halve a 28×28 map to 14×14 and disagree about what survives.
 
 On the raw image the three look almost alike, which is why the edge map is there. On
 the edge map max pooling keeps **100%** of every thin edge peak, average pooling
-**80.9%** and the strided conv **76.0%** — thin structure fades. None is right in
+**80.9%** and the strided conv **76.0%**: thin structure fades. None is right in
 general: max pooling detects whether a feature is present at all, average pooling is
 what global pooling does at the end of a modern network, and a strided convolution has
 parameters, so it can learn what to keep.
@@ -171,7 +171,7 @@ $$r_\ell = r_{\ell-1} + d_\ell (k_\ell - 1) \cdot j_{\ell-1} \qquad
 
 The recurrence is easy to get wrong, so I checked it by backpropagation: put a
 gradient of one on a single output unit, and the input pixels with non-zero gradient
-are exactly the pixels it depends on. **Formula says 24×24. The gradient says 24×24 —
+are exactly the pixels it depends on. **Formula says 24×24. The gradient says 24×24,
 576 non-zero pixels of 4,225.** The probe uses average pooling, because max pooling
 routes its gradient to one winner and would undercount a real footprint.
 
@@ -186,7 +186,7 @@ dilations 1, 2, 4, 8 reach **31×31 using 36 weights**.
 The exact zero from the top of this page lives here. The same weights apply at every
 position, so moving the input moves the output and changes nothing else. Including the
 borders the difference is **3.486**, since the shift pulls in pixels that were not
-there before — the zero is an interior claim, and it is stronger than similarity.
+there before: the zero is an interior claim, and it is stronger than similarity.
 
 Equivariance is not invariance. The feature map moved. Something later has to stop
 caring where it moved to, and pooling is the cheap version of that: a maximum over a

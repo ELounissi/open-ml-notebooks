@@ -8,7 +8,7 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 | | |
 |---|---|
 | **What you will learn** | The forget, input and output gates, the cell state and why updating it by addition is the whole trick, an LSTM cell written by hand and checked against `nn.LSTM`, the vanishing-gradient measurement repeated for gated cells, a synthetic memory task swept over lag, the GRU as a cheaper cousin, and hourly forecasting where all of them face a linear model |
-| **You should already know** | [Recurrent neural networks](../03-recurrent-neural-networks/) — this notebook reuses its gradient measurement, its windowing and its training loop |
+| **You should already know** | [Recurrent neural networks](../03-recurrent-neural-networks/): this notebook reuses its gradient measurement, its windowing and its training loop |
 | **Datasets** | UCI Bike Sharing, 17,379 hourly hire counts, plus a synthetic copy task generated here |
 | **Runtime** | Four to five minutes on a laptop CPU |
 
@@ -36,7 +36,7 @@ not write the extra line:
 | 3.0 | 0.953 | **1.127e-01** | 1.007 |
 
 The decay rate is $\sigma(b_f)$, near enough. At the default the LSTM's per-step
-factor is **0.641 against the plain RNN's 0.568** — better, and nowhere near
+factor is **0.641 against the plain RNN's 0.568**, better, and nowhere near
 better enough: a T=100 gradient of 2.505e-21 is thirteen orders of magnitude below
 the same cell with the bias at 1, and just as dead in practice. The architecture
 makes the decay rate learnable; the initialisation puts it somewhere useful.
@@ -50,8 +50,8 @@ $$c_t = f_t \odot c_{t-1} + i_t \odot g_t \qquad h_t = o_t \odot \tanh(c_t)$$
 Nothing multiplies $c_{t-1}$ by a weight matrix and nothing pushes it through a
 $\tanh$, so $\partial c_t / \partial c_{t-1} = \operatorname{diag}(f_t)$. Against
 the RNN's $\operatorname{diag}(\tanh'(a_t))\,W_h$, the shared matrix and the
-guaranteed shrinkage are gone. What is left is still an exponential — the table
-above is the proof — but the base is picked per unit and per step. Written by hand
+guaranteed shrinkage are gone. What is left is still an exponential (the table
+above is the proof), but the base is picked per unit and per step. Written by hand
 and checked against `nn.LSTM`, the largest disagreement is **5.960e-08**.
 
 ## What the gates cost
@@ -63,7 +63,7 @@ and checked against `nn.LSTM`, the largest disagreement is **5.960e-08**.
 | GRU | 14,208 | **2.50** | **0.58** |
 
 Four weight blocks against the RNN's one, so four times the parameters at the same
-hidden size — at hidden 32 it is 1,344, 4,032 and 5,376. The clock does not
+hidden size: at hidden 32 it is 1,344, 4,032 and 5,376. The clock does not
 follow: the GRU carries three times the RNN's parameters and runs in **58% of its
 time**, because fused kernels decide it rather than arithmetic.
 
@@ -106,7 +106,7 @@ train, **3,471** test, scaling from the training hours only (mean 174.72, sd
 | Last value | 0 | 129.72 |
 
 The LSTM came third of three sequence models. The spread across all three is
-**4.87 RMSE**, which from one seed is not a ranking — the recurrence barely
+**4.87 RMSE**, which from one seed is not a ranking: the recurrence barely
 mattered here, and the gap that did matter is the **38.4%** between the best
 sequence model and the linear one. Predicting the next hour from the last
 twenty-four is close to a fixed weighted average, which 25 coefficients already
@@ -136,7 +136,7 @@ distractors out. Nobody designed these traces, and they only partly match it.
 | | |
 |---|---|
 | **The two states** | $h_t$ is what the network reports, $c_t$ is what it remembers. `nn.LSTM` returns `(output, (h_n, c_n))` |
-| **The update** | `c = f * c_prev + i * g`, then `h = o * tanh(c)`, giving $\partial c_t / \partial c_{t-1} = \operatorname{diag}(f_t)$ — no weight matrix, no $\tanh'$, so the decay rate is learned |
+| **The update** | `c = f * c_prev + i * g`, then `h = o * tanh(c)`, giving $\partial c_t / \partial c_{t-1} = \operatorname{diag}(f_t)$: no weight matrix, no $\tanh'$, so the decay rate is learned |
 | **Forget bias** | Set it to 1 yourself. At PyTorch's default the per-step factor is 0.641 against a plain RNN's 0.568 |
 | **Gate order** | PyTorch stacks $[i, f, g, o]$ in `weight_ih_l0`, a GRU stacks $[r, z, n]$. Slice `H:2H` is the memory gate in both |
 | **Cost** | Four times an RNN's parameters and 2.39x its time per step, while a GRU ran at 0.58x. Fused kernels, not arithmetic |

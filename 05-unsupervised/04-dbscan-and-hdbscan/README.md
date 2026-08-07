@@ -22,17 +22,17 @@ separated from other dense regions by sparse space**.
 
 Every point is **core** (at least `min_samples` neighbours within `eps`),
 **border** (within `eps` of a core point), or **noise**. Clusters grow by chaining
-core points together — which is why a crescent works: no point needs to be near a
+core points together, which is why a crescent works: no point needs to be near a
 centre, only near its neighbours.
 
 ![Shapes](figures/fig-01-shapes.png)
 
-**Two crescents** is the headline — DBSCAN recovers both, k-means cannot.
+**Two crescents** is the headline: DBSCAN recovers both, k-means cannot.
 
 **Uniform noise did not go the way I expected**, and the correction is the most
 useful thing here. I assumed DBSCAN would label the structureless cloud as noise.
 At `eps=0.30` it found **2 clusters and called nothing noise at all**. Uniform
-random points are *evenly* dense, not sparse — every point has plenty of
+random points are *evenly* dense, not sparse: every point has plenty of
 neighbours, so every point is core, and the chaining runs through the whole square.
 
 Tightening `eps` does not rescue it either:
@@ -54,7 +54,7 @@ your job.
 ![Choosing eps](figures/fig-02-choosing-eps.png)
 
 Plot each point's distance to its `k`-th nearest neighbour, sorted. The elbow marks
-where points stop living in dense regions — here **eps ≈ 1.85**. This beats trial
+where points stop living in dense regions, here **eps ≈ 1.85**. This beats trial
 and error, which is how most people meet DBSCAN.
 
 ## On real data, k-means wins
@@ -68,7 +68,7 @@ and error, which is how most people meet DBSCAN.
 | HDBSCAN, min_cluster_size=150 | 0.036 |
 
 **DBSCAN loses badly here**, and the reason is instructive. Bean varieties form
-smooth, roughly elliptical, overlapping clouds of *similar density* — exactly what
+smooth, roughly elliptical, overlapping clouds of *similar density*, exactly what
 k-means was designed for. There is no sparse space between varieties to cut along,
 so DBSCAN merges everything into two blobs.
 

@@ -21,7 +21,7 @@ regression picks one by minimising log loss. An SVM asks a different question:
 **which line leaves the most room on both sides?**
 
 The points touching the kerb are the **support vectors**, and they are the only
-ones that matter — move any other point and the boundary does not shift.
+ones that matter: move any other point and the boundary does not shift.
 
 ![The margin](figures/fig-01-the-margin.png)
 
@@ -32,7 +32,7 @@ ones that matter — move any other point and the boundary does not shift.
 | 100.0 | 3 | 2.072 |
 
 **`C` is the price of a training mistake.** Large `C` makes violations expensive,
-so the model contorts to classify everything — narrow margin, overfitting. Small
+so the model contorts to classify everything, narrow margin, overfitting. Small
 `C` buys a wider street by tolerating errors. Note the direction: **large `C`
 means _less_ regularisation**, which is backwards from most libraries.
 
@@ -41,7 +41,7 @@ means _less_ regularisation**, which is backwards from most libraries.
 ![The kernel trick](figures/fig-02-kernel-trick.png)
 
 Two concentric rings: no line separates them, and a linear SVM manages only
-**0.578**. Add one feature — distance from the origin — and the inner ring lifts
+**0.578**. Add one feature, distance from the origin, and the inner ring lifts
 while the outer stays down. A flat plane now slides between them: **1.000**.
 
 The trick is that the SVM's maths only ever touches the data through **dot
@@ -72,7 +72,7 @@ overfitting made visible.
 ![Comparison](figures/fig-04-comparison.png)
 
 The RBF SVM is the **first model in this book to clearly beat logistic regression
-on Dry Bean** — and it loses to it on Breast Cancer. The kernel earns a little,
+on Dry Bean**, and it loses to it on Breast Cancer. The kernel earns a little,
 and only on one of the two.
 
 ## The cost nobody mentions
@@ -86,7 +86,7 @@ and only on one of the two.
 
 A **27×** increase in rows cost the SVM **139×** the time. Logistic regression grew
 11×. And the fitted model stores **2,801 of 13,611 rows (20.6%)** as support
-vectors — every one consulted at prediction time.
+vectors, every one consulted at prediction time.
 
 The promise was that only points near the boundary matter. On overlapping real
 data, a fifth of the rows *are* near the boundary.
@@ -98,7 +98,7 @@ data, a fifth of the rows *are* near the boundary.
 | **Use it when** | Rows in the thousands not millions; complicated boundary; features outnumber rows |
 | **Avoid it when** | Large datasets, you need calibrated probabilities, or you need to explain the model |
 | **Scaling needed** | Absolutely. Both the margin and the RBF kernel are distance-based |
-| **Main dials** | `C`, `gamma`, `kernel` — and `C` with `gamma` must be tuned together, never one at a time |
+| **Main dials** | `C`, `gamma`, `kernel`. And `C` with `gamma` must be tuned together, never one at a time |
 | **Probabilities** | `probability=True` bolts on Platt scaling with internal cross-validation. Slow, not free |
 
 ---

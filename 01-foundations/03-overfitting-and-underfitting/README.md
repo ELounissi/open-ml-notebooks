@@ -16,7 +16,7 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 
 ## The one sentence version
 
-**Underfitting** is a model too simple to capture the pattern — wrong on training
+**Underfitting** is a model too simple to capture the pattern, wrong on training
 data and wrong on new data, in the same way.
 
 **Underfitting** is visible. **Overfitting** is not: the model is *right* on the
@@ -41,10 +41,10 @@ hundred times worse.
 This is the most useful diagnostic in machine learning, and its shape is worth
 memorising.
 
-**Training error only ever falls** as flexibility rises — so a low training error
+**Training error only ever falls** as flexibility rises, so a low training error
 tells you nothing on its own. **Test error falls, bottoms out, then rises.** The
 turning point is the model you want. **The gap between the lines is the
-overfitting** — not the height of either one.
+overfitting**, not the height of either one.
 
 ## Bias and variance, without the definitions
 
@@ -52,8 +52,8 @@ overfitting** — not the height of either one.
 
 Each faint line is the same model refitted on a different sample of 20 points.
 
-**Degree 1: high bias, low variance.** The forty fits sit on top of each other —
-stable — and all wrong in the same way. Consistently mistaken.
+**Degree 1: high bias, low variance.** The forty fits sit on top of each other,
+stable, and all wrong in the same way. Consistently mistaken.
 
 **Degree 15: low bias, high variance.** The fits scatter everywhere. Their
 *average* tracks the truth closely, so the model is not systematically wrong, but
@@ -66,7 +66,7 @@ different way every time.
 
 ![More data](figures/fig-04-more-data.png)
 
-At 15 points, degree 18 is a disaster. At 400 points it is fine — there is now
+At 15 points, degree 18 is a disaster. At 400 points it is fine. There is now
 enough evidence to pin down its coefficients. Degree 1 does not improve at all,
 because no amount of evidence fixes a model that structurally cannot represent the
 pattern.

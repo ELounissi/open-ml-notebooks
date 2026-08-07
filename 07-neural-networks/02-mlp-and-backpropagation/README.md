@@ -31,7 +31,7 @@ Softmax paired with cross entropy gives a result so clean it looks like a mistak
 
 $$\frac{\partial L}{\partial z_2} = \hat{p} - y$$
 
-Prediction minus truth — the same expression that appeared in
+Prediction minus truth, the same expression that appeared in
 [linear regression](../../02-regression/01-linear-regression/) and
 [logistic regression](../../03-classification/01-logistic-regression/). The messy
 softmax derivative and the messy log derivative cancel exactly.
@@ -86,7 +86,7 @@ single split is a sample of size one.
 It also does not change the advice. Gradient boosting needed one line and no
 tuning; the network needed a derivation, an initialisation scheme, a learning rate,
 a width, and an epoch count. Neural networks earn their keep where the input has
-structure a tree cannot exploit — the grid of an image, the order of a sequence.
+structure a tree cannot exploit: the grid of an image, the order of a sequence.
 
 ## Cheat sheet
 

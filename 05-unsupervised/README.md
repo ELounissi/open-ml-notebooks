@@ -1,4 +1,4 @@
-# Part 5 — Unsupervised learning
+# Part 5: Unsupervised learning
 
 Finding structure when nobody gives you labels.
 

@@ -19,7 +19,7 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 I made 200 rows of Gaussian noise, 1000 columns wide, with coin-flip labels. There
 is no signal, so cross-validating a logistic regression on it can only return 0.5.
 Selecting the 100 columns most correlated with the label *before* the
-cross-validation loop returned **0.8200** — **+0.3200 accuracy over chance,
+cross-validation loop returned **0.8200**: **+0.3200 accuracy over chance,
 manufactured out of nothing.** The same selector inside a `Pipeline` returns 0.5650.
 Everything else here is about *where* to cut the folds. This is about what you may
 do before cutting, and it is the expensive mistake.
@@ -50,7 +50,7 @@ luckiest and unluckiest seed. Two honest people would disagree and both be right
 Above that the mean barely moves and the cost grows linearly in k.
 
 The fold sd column is the one people misread. It **rises** with k, 0.0189 to
-0.0514, because each test fold is smaller and noisier — a property of fold size,
+0.0514, because each test fold is smaller and noisier, a property of fold size,
 not evidence that large k is unreliable. Those scores are also correlated, since
 any two training sets share about (k−2)/(k−1) of their rows, so sd/√k is not a
 valid standard error. Treat the spread as a smell test.
@@ -94,7 +94,7 @@ The mean is fine. Everything else is not. LeaveOneOut's fold scores take exactly
 wrong. The one thing cross-validation gives you beyond a point estimate is gone.
 
 Repeating fixes a different problem. Across ten repeats of 5-fold on the bean
-slice, the best single run scored 0.8889 and the worst 0.8689 — that **0.0200 gap
+slice, the best single run scored 0.8889 and the worst 0.8689: that **0.0200 gap
 is the accuracy you can claim by trying seeds until you like the answer.**
 Averaging the ten runs cuts the spread from 0.0061 to 0.0019.
 
@@ -114,7 +114,7 @@ Pure noise, 200 rows, 1000 columns, balanced labels. The honest score is 0.5.
 The piped line lands where it should. The other is a paper that passes review.
 
 Not every leak costs the same. Fitting a `StandardScaler` on everything before
-cross-validating Breast Cancer scored 0.9789, identical to the piped version — a
+cross-validating Breast Cancer scored 0.9789, identical to the piped version, a
 difference of **+0.0000**, because what leaks is a mean and a standard deviation
 pooled over hundreds of rows. Fix both anyway; `Pipeline` is free. But knowing
 which leaks are expensive tells you where to look when a result seems too good.

@@ -9,7 +9,7 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 |---|---|
 | **What you will learn** | How an agent learns from reward alone, what the Bellman equation does, how to write Q-learning in thirty lines, and the one-word difference from SARSA that changes the route |
 | **You should already know** | Python and NumPy. No prior reinforcement learning needed |
-| **Environment** | Cliff Walking, built from scratch in the notebook — no `gym` dependency |
+| **Environment** | Cliff Walking, built from scratch in the notebook, no `gym` dependency |
 | **Runtime** | Under a minute on a laptop CPU |
 
 ---
@@ -28,7 +28,7 @@ step 3, and the reward has to travel back that far.
 
 A 4 × 12 grid. Every step costs −1. The cliff costs −100 and throws you back to
 the start. There is a short dangerous route along the edge and a long safe one
-over the top — and that tension is the whole notebook.
+over the top, and that tension is the whole notebook.
 
 ## The maths
 
@@ -50,8 +50,8 @@ $$Q(s,a) \leftarrow Q(s,a) + \alpha\Big[r + \gamma \max_{a'} Q(s',a') - Q(s,a)\B
 **Alpha** too small barely moves off zero in 500 episodes; too large and each
 update overwrites the last. **Epsilon** at 0.01 means the agent keeps the first
 route it finds; at 0.6 it acts randomly regardless of how good its table gets.
-**Gamma** at 0.5 makes a reward 13 steps away worth $0.5^{13}$ — effectively
-nothing — so it cannot plan a route at all.
+**Gamma** at 0.5 makes a reward 13 steps away worth $0.5^{13}$, effectively
+nothing, so it cannot plan a route at all.
 
 ## The result worth slowing down for
 
@@ -72,7 +72,7 @@ to take** rather than the best available. That sounds like a technicality.
 Both agents explore at $\varepsilon = 0.1$, so one move in ten is random.
 Q-learning's route hugs the cliff, where one random step down costs −100. SARSA's
 update includes that exploration in its estimates, so it learns those squares are
-dangerous *for an agent that sometimes moves at random* — which is what it is. It
+dangerous *for an agent that sometimes moves at random*, which is what it is. It
 climbs to the top row and pays four extra steps for the clearance.
 
 The names are **off-policy** (Q-learning evaluates the greedy policy while
@@ -81,7 +81,7 @@ runs).
 
 Which is right depends on whether the exploration is real. Training in simulation
 and deploying greedily? Q-learning's answer. Agent that will keep behaving
-randomly in the world — noisy actuators, a live experiment? Then falling off the
+randomly in the world: noisy actuators, a live experiment? Then falling off the
 cliff is a real cost and SARSA is being correct, not timid.
 
 ## Cheat sheet
@@ -89,9 +89,9 @@ cliff is a real cost and SARSA is being correct, not timid.
 | | |
 |---|---|
 | **Use it when** | The state space is small enough to enumerate and you can simulate episodes cheaply |
-| **Avoid it when** | States are continuous or enormous — that is what [DQN](../06-deep-q-networks/) is for |
+| **Avoid it when** | States are continuous or enormous: that is what [DQN](../06-deep-q-networks/) is for |
 | **Off-policy** | Yes, so it can learn from replayed or borrowed experience. DQN depends on this |
-| **Main dials** | `alpha` 0.1–0.5, `gamma` 0.9–1.0, `epsilon` 0.1 often decayed toward 0 |
+| **Main dials** | `alpha` 0.1 to 0.5, `gamma` 0.9 to 1.0, `epsilon` 0.1 often decayed toward 0 |
 | **Guarantee** | Converges to optimal $Q$ given enough visits to every state-action pair and a decaying alpha |
 | **Watch out** | The `max` makes it optimistic, so it overestimates under noise. Double Q-learning fixes this |
 

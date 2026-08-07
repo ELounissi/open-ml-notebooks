@@ -1,4 +1,4 @@
-# Part 2 — Regression
+# Part 2: Regression
 
 Predicting a number. Nine methods, from the straight line to generalised linear models.
 

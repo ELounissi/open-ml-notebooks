@@ -23,7 +23,7 @@ classify a new bean: find the `k` closest training beans and take a vote.
 `fit()` is literally just storing the array. The cost moves from training to
 prediction.
 
-## Scaling is not optional — it is the model
+## Scaling is not optional: it is the model
 
 Distance sums squared differences across features, so **every feature contributes
 on its own scale**. `Area` runs into the hundreds of thousands; `Eccentricity`
@@ -34,7 +34,7 @@ runs 0 to 1.
 | Without scaling | 0.7185 |
 | With scaling | **0.9231** |
 
-**+0.205 from one preprocessing step.** The model is not weighing the features —
+**+0.205 from one preprocessing step.** The model is not weighing the features;
 the units are.
 
 ## Choosing k
@@ -54,7 +54,7 @@ scores 0.9063.
 ![Curse of dimensionality](figures/fig-02-curse-of-dimensionality.png)
 
 **Left:** with 1,000 random points, the farthest is **4,572×** the distance of the
-nearest in one dimension. By 1,000 dimensions that ratio falls to **1.15** —
+nearest in one dimension. By 1,000 dimensions that ratio falls to **1.15**:
 every point is essentially equally far away, and "nearest" has stopped meaning
 anything.
 
@@ -66,7 +66,7 @@ anything.
 | 400 | 0.8559 | 0.9403 |
 
 k-NN loses 0.109, logistic regression 0.040. A linear model can give a useless
-feature a weight near zero. **k-NN has no weights, so it cannot ignore anything** —
+feature a weight near zero. **k-NN has no weights, so it cannot ignore anything**:
 every column votes on what counts as "near", whether or not it knows anything.
 
 ## Cheat sheet
@@ -76,7 +76,7 @@ every column votes on what counts as "near", whether or not it knows anything.
 | **Use it when** | Few features and all relevant; irregular boundary; you want a non-linear baseline with no training |
 | **Avoid it when** | Many features, many irrelevant ones, large datasets needing fast prediction |
 | **Scaling needed** | Absolutely. Without it the largest-unit column *is* the model |
-| **Cost** | Training free. Prediction is O(rows × features) per query — the real limitation |
+| **Cost** | Training free. Prediction is O(rows × features) per query, the real limitation |
 | **Main dials** | `n_neighbors`, `weights`, `metric`, `p` |
 | **Watch out** | `k=1` scores 1.000 on training data by construction. Never judge k-NN on training accuracy |
 

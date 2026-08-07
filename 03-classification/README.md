@@ -1,4 +1,4 @@
-# Part 3 — Classification
+# Part 3: Classification
 
 Predicting a category. The core algorithms every practitioner is expected to know.
 

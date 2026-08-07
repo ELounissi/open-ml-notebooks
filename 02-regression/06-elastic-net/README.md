@@ -16,8 +16,8 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 
 ## The headline: accuracy is a tie, stability is not
 
-Four regularisers on the same 20,640 rows and 31 columns — 8 real features, 3
-near-copies of `MedInc`, 20 pure noise:
+Four regularisers on the same 20,640 rows and 31 columns (8 real features, 3
+near-copies of `MedInc`, 20 pure noise):
 
 | Model | RMSE | Noise columns kept | Twins kept |
 |---|---|---|---|
@@ -53,12 +53,12 @@ Four near-identical income columns. Ridge at `alpha=1.0`, the rest at `alpha=0.0
 | Lasso (`l1_ratio=1`) | **0.777** | 0.001 | 0.000 | 0.000 | 2 | 0.777 | 1 |
 
 Read the individual columns, not the count. Lasso puts **0.777 of 0.777** on one
-twin and leaves the rest at zero — it picked a winner. Elastic Net at 0.5 spreads
+twin and leaves the rest at zero. It picked a winner. Elastic Net at 0.5 spreads
 0.808 across four weights that sit between 0.185 and 0.212, within 0.027 of each
 other. That even split is the grouping effect, and neither parent penalty produces
 it.
 
-Ridge keeps all four too, but unevenly, and one comes out **negative** — a column
+Ridge keeps all four too, but unevenly, and one comes out **negative**: a column
 that is a noisy copy of a positive predictor is given a negative weight so the
 others can be larger. It also keeps all 20 noise columns. Elastic Net at 0.5 keeps
 6, at 0.9 keeps 2.
@@ -79,7 +79,7 @@ coefficients:
 | Lasso | 0.2938 |
 | Elastic Net | 0.0190 |
 
-Lasso's lines cross and swap — the winning twin changes from sample to sample, and
+Lasso's lines cross and swap: the winning twin changes from sample to sample, and
 0.2938 is roughly a third of the total income weight moving around. Elastic Net's
 four lines stay flat and stacked at 0.0190.
 
@@ -90,8 +90,8 @@ defensible or not. With Lasso on correlated columns, it is not.
 
 ![Tuning](figures/fig-03-tuning.png)
 
-A 6 × 25 grid — `l1_ratio` in {0.1, 0.3, 0.5, 0.7, 0.9, 0.99}, `alpha` on
-`logspace(-4, 0, 25)` — each cell a 5-fold cross-validated RMSE:
+A 6 × 25 grid (`l1_ratio` in {0.1, 0.3, 0.5, 0.7, 0.9, 0.99}, `alpha` on
+`logspace(-4, 0, 25)`), each cell a 5-fold cross-validated RMSE:
 
 | | RMSE |
 |---|---|
@@ -108,13 +108,13 @@ Tune `alpha` carefully, `l1_ratio` casually.
 ![Comparison](figures/fig-04-comparison.png)
 
 Back to the first table, with the part I would rather not skip. `ElasticNetCV`
-landed on 10 noise columns and 2 twins — **identical to `LassoCV`**, and nothing
+landed on 10 noise columns and 2 twins, **identical to `LassoCV`**, and nothing
 like the 4-twin even split that Elastic Net produced at `l1_ratio=0.5`.
 
 That is not a bug, it is the same trap as [`LassoCV` not being a feature
 selector](../05-lasso-regression/). Cross-validation chose the pair that minimises
 prediction error, and the grid says that pair is `l1_ratio=0.9` with
-`alpha=0.00316` — L1-heavy and very weak. At that setting Elastic Net *is* Lasso,
+`alpha=0.00316`, L1-heavy and very weak. At that setting Elastic Net *is* Lasso,
 grouping effect and all its stability included.
 
 So: if you want the grouping effect, you have to ask for it. Pick a lower

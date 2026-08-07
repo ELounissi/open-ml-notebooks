@@ -42,7 +42,7 @@ included, on the same sample.
 
 Single linkage goes from perfect to worthless between two panels. It only needs a chain
 of near neighbours to walk along, which is what traces a crescent and what walks through
-scattered noise from one blob to the next — a failure called **chaining**. Ward makes
+scattered noise from one blob to the next, a failure called **chaining**. Ward makes
 the opposite trade: it will never chain, and it will never find the crescents.
 
 ## Reading a dendrogram
@@ -50,14 +50,14 @@ the opposite trade: it will never chain, and it will never find the crescents.
 ![Dendrogram and its cut](figures/fig-02-dendrogram-cut.png)
 
 The height of a bar is the distance at which that merge happened, and nothing else in
-the picture carries information — leaf order is only constrained by the tree. On sixty
+the picture carries information: leaf order is only constrained by the tree. On sixty
 points from three blobs, the largest gap in the last twelve merges runs from **27.492
 to 56.750**, so the cut goes at **42.121**, leaving **2 clusters**.
 
 ![Merge heights](figures/fig-03-merge-heights.png)
 
 Going up: 8 clusters left at 3.009, 6 at 3.886, 4 at 4.923, 3 at **5.260**, then 2 at
-**27.492** and 1 at 56.750. Six merges under 5.3, then one at 27.5 — everything below it
+**27.492** and 1 at 56.750. Six merges under 5.3, then one at 27.5: everything below it
 held together far more cheaply, which is the tree telling you where to cut.
 
 **Cutting by height and cutting by count are different questions.** Cutting at 42.121
@@ -75,8 +75,8 @@ the edge. Asking for exactly three clusters does not fix that, it hides it.
 
 ![Linkage on beans](figures/fig-04-linkage-on-beans.png)
 
-The full set is **92,622,855 pairs**, so I sampled **1,500 rows (11.0%)** — **1,124,250
-pairs** — because the full distance matrix does not fit comfortably in memory.
+The full set is **92,622,855 pairs**, so I sampled **1,500 rows (11.0%)** (**1,124,250
+pairs**) because the full distance matrix does not fit comfortably in memory.
 
 | Method | ARI |
 |---|---|
@@ -99,7 +99,7 @@ complete linkage on **cosine reached 0.428**, better than complete on Euclidean.
 
 ![Cophenetic correlation](figures/fig-05-cophenetic.png)
 
-Cophenetic distance is the height at which two points first share a cluster — the tree's
+Cophenetic distance is the height at which two points first share a cluster, the tree's
 opinion of how far apart they are. Correlate it against the real distances and you have
 measured the tree, not the clusters.
 
@@ -118,14 +118,14 @@ Use the number to catch a tree that has distorted the data, not to pick a linkag
 ## The $O(n^2)$ wall
 
 Ward on samples of the standardised beans: 250 rows in 0.002 s, 500 in 0.009 s, 1,000 in
-0.050 s, 2,000 in 0.236 s, 4,000 in 1.116 s — the last three doublings costing **5.7×**,
+0.050 s, 2,000 in 0.236 s, 4,000 in 1.116 s, the last three doublings costing **5.7×**,
 **4.7×** and **4.7×**. That is the $O(n^2)$ of SciPy's nearest-neighbour chain, not the
 $O(n^3)$ of the naive algorithm. Time is not the problem. Memory is: **0.69 GB** of
 distances at 13,611 rows, **37.25 GB** at 100,000, **3,725.29 GB** at a million.
 
 Two escapes, both ordinary practice. **Sample, then assign**: the tree fitted on 1,500
 rows scored ARI 0.644 on the sample and **0.672 across all 13,611 rows** once every
-remaining row took its nearest centroid — better on the full set than on the sample it
+remaining row took its nearest centroid, better on the full set than on the sample it
 was built from. **Connectivity constraint**: hand sklearn a k-nearest-neighbour graph and
 the dense matrix is never built; all 13,611 rows clustered in **6.6 s** at **ARI 0.658**,
 sizes [3986, 3036, 2353, 1918, 1679, 522, 117]. Both beat the unconstrained sample fit.

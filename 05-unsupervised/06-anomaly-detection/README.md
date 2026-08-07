@@ -27,8 +27,8 @@ the four detectors flags its top 40 rows. Then I count the overlap.
 Every row the four detectors agreed on was an ordinary bean. Eighteen real anomalies
 were seen by one detector and missed by the other three.
 
-The obvious next move makes it worse. Rank-averaging the four scores — the cheapest
-ensemble there is, and one that needs no labels to build — reaches **0.087** average
+The obvious next move makes it worse. Rank-averaging the four scores (the cheapest
+ensemble there is, and one that needs no labels to build) reaches **0.087** average
 precision, against **0.949** for the best single detector and 0.077 for the worst.
 The consensus landed **0.010 above the worst member and 0.862 below the best**.
 
@@ -37,7 +37,7 @@ standard advice. Unanimous agreement selects rows that are extreme on every simp
 criterion at once: cut off quickly by random splits, outside the enclosing surface,
 sparse relative to their neighbours, unlikely under the fitted density. A row clearing
 all four bars is usually a genuine bean at the far edge of the normal distribution. A
-real anomaly has no obligation to look wrong in four ways — it only has to be wrong in
+real anomaly has no obligation to look wrong in four ways: it only has to be wrong in
 one, and then only the detector whose definition happens to match will see it.
 Intersecting throws that row out; averaging buries it under the three that never
 noticed. Consensus is not a safety property, and an ensemble is not automatically
@@ -49,7 +49,7 @@ safer than its best member.
 
 Isolation Forest asks how few random cuts separate a point from the rest. On a cloud
 of 120 points plus one stray, averaged over 200 random trees, the stray falls out
-after **2.60** cuts and a central point after **11.57** — **4.5×** as many. No
+after **2.60** cuts and a central point after **11.57**, **4.5×** as many. No
 distance metric, no scaling, no assumption about shape, which is why it is the
 cheapest thing to try first.
 
@@ -74,7 +74,7 @@ density. Four different questions, which is why the four answers diverge.
 Within three points of each other, and the boundaries look nothing alike. Isolation
 Forest draws a boxy region because it can only cut along the axes. The SVM draws a
 smooth contour wrapping both blobs and the gap between them. LOF hugs each blob
-separately, tight around the narrow one and loose around the wide one — that is what
+separately, tight around the narrow one and loose around the wide one: that is what
 *local* buys. The mixture draws two clean ellipses, which is exactly right here only
 because I generated two ellipses. Some noise landed inside a blob: no detector flags
 those and none should, because nothing about them is observably unusual. The ceiling
@@ -96,7 +96,7 @@ the uniform junk. Equal shares would mean the score carries no information.
 
 **A describable difference.** The flagged rows against the rest, in standard
 deviations: ConvexArea **+5.32**, Area +5.26, Perimeter +5.10, EquivDiameter +4.53,
-MinorAxisLength +4.33. That is the honest deliverable of a label-free run — not
+MinorAxisLength +4.33. That is the honest deliverable of a label-free run, not
 "these are wrong" but "these are much bigger, and here is by how much".
 
 ## Scored with labels
@@ -115,7 +115,7 @@ Isolation Forest won both. Below first place the order inverts: LOF goes from la
 the beans (0.077) to second on the cells (0.476), and the mixture goes the other way.
 
 The structure of the anomaly decides most of that. The odd beans are one variety, so
-they sit in their own tight clump of forty — and a clump is not sparse relative to
+they sit in their own tight clump of forty, and a clump is not sparse relative to
 itself, which is precisely what a local method cannot see. The malignant cells spread
 along several correlated measurements instead of clumping, so the local method has
 room to work. You usually cannot see that structure before picking the detector, which
@@ -146,7 +146,7 @@ case you had better options.
 
 The One-Class SVM is the exception, because `nu` enters the optimisation itself. At
 `nu=0.01` it keeps 101 support vectors and scores **0.186**; at `nu=0.20`, 607 support
-vectors and **0.568**. Spearman between the two rankings is **0.6573** — two fits, two
+vectors and **0.568**. Spearman between the two rankings is **0.6573**: two fits, two
 rankings, a threefold difference in average precision. For the SVM the dial is real
 and needs tuning; for the other three it is cosmetic, which is easy to miss because
 scikit-learn spells both as one small float in the constructor.

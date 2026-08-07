@@ -1,4 +1,4 @@
-# Part 8 — Computer vision
+# Part 8: Computer vision
 
 What a convolution buys you, and how to get results without training from scratch.
 

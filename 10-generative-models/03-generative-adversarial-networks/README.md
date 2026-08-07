@@ -26,7 +26,7 @@ is what their losses say about it:
 
 The collapsed run has the **lower** generator loss. Worse than that: the
 theoretical equilibrium values are 0.693 for the generator and 1.386 for the
-discriminator, and the collapsed run sits at 0.682 and 1.410 — closer to textbook
+discriminator, and the collapsed run sits at 0.682 and 1.410, closer to textbook
 equilibrium on both counts than the run that works. Monitored the way you monitor
 everything else in this book, the broken run would look like the healthy one, and
 by the equilibrium reference it would look better.
@@ -43,7 +43,7 @@ Counting where 2,000 generated points land, at the end of each run:
 | Largest share on any mode | 0.131 | **0.000** | 0.144 |
 
 Worth being precise here, because it is not the textbook picture. The collapsing
-run did not settle on one mode and produce it well — it ended up
+run did not settle on one mode and produce it well; it ended up
 producing points that land on no mode at all, quality 0.169, meaning 83% of its
 output falls in the gaps between the Gaussians. The sawtooth over training is
 real, but the final state is drift, not one sharp mode.
@@ -82,12 +82,12 @@ out of the discriminator's gradient alone.
 Across all checkpoints, generator loss against coverage correlates at Pearson
 **-0.771**, Spearman **-0.447**. I want to be exact about what that proves.
 Coverage hit 8 by step 500 and **never moved again**, so within this run the loss
-cannot be shown to mislead — there is no variation left to mislead about. The
+cannot be shown to mislead: there is no variation left to mislead about. The
 -0.771 comes almost entirely from the opening transient, and the notebook itself
 notes the correlation is undefined after the first fifth.
 
 The evidence that the loss is untrustworthy is the collapsed-run comparison at
-the top of this page, not this panel — two runs with similar losses and opposite
+the top of this page, not this panel, two runs with similar losses and opposite
 coverage. One run whose coverage never varied is not evidence either way.
 
 ## Stabilisers, measured across seeds
@@ -117,19 +117,19 @@ stabilisers cost when unnecessary, not what they buy when they are needed.
 ![Fashion-MNIST samples](figures/fig-05-fashion-mnist-samples.png)
 
 552k generator parameters, 534k discriminator, 60 epochs in 77 seconds. Final
-losses: generator 1.294, discriminator 1.151 — numbers that say nothing about
+losses: generator 1.294, discriminator 1.151, numbers that say nothing about
 what came out.
 
 | | Edge energy | Per-pixel spread |
 |---|---|---|
 | Real images | 0.0866 | 0.2762 |
-| Real, 3x3 box blur | 0.0528 | — |
+| Real, 3x3 box blur | 0.0528 | |
 | GAN samples | **0.1087** | 0.2341 |
 
 The blurred row is the comparison against the
 [variational autoencoder](../02-variational-autoencoders/), which averages when
 unsure. The GAN was never asked to minimise a per-pixel distance, so it has no
-reason to blur — but note that it overshoots. At 0.1087 the samples are 26%
+reason to blur, but note that it overshoots. At 0.1087 the samples are 26%
 sharper than the real data, which is high-frequency noise rather than fidelity.
 The per-pixel spread of 0.2341 against the real 0.2762 is the collapse check, and
 it passes: a GAN settled on one garment would read near zero here.

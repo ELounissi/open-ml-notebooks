@@ -17,7 +17,7 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 ## The idea
 
 A single decision tree grown to full depth memorises its training data. Trees
-have **low bias and enormous variance** — change a few rows and you get a visibly
+have **low bias and enormous variance**: change a few rows and you get a visibly
 different tree.
 
 A random forest turns that weakness into the mechanism: grow hundreds of
@@ -34,7 +34,7 @@ For $B$ predictors each with variance $\sigma^2$ and pairwise correlation $\rho$
 
 $$\operatorname{Var}(\bar{f}) = \rho\sigma^2 + \frac{1 - \rho}{B}\sigma^2$$
 
-The second term vanishes as you add trees — which is why more trees never hurt.
+The second term vanishes as you add trees, which is why more trees never hurt.
 The first does not shrink at all; it is floored by how correlated the trees are.
 That single fact explains the entire design: bootstrapping and feature
 subsampling exist to push $\rho$ down.
@@ -48,7 +48,7 @@ Most of the gain arrives in the first 25 trees. Going from 25 to 400 buys
 
 ![Two importance measures](figures/fig-02-importance.png)
 
-The default **impurity decrease** measure is free and biased — it inflates
+The default **impurity decrease** measure is free and biased: it inflates
 continuous and high-cardinality features, because they offer more places to
 split. **Permutation importance** shuffles a column and measures the damage.
 Slower, much harder to fool. Where they disagree, believe the second.
@@ -69,7 +69,7 @@ forest gains a thousandth of a point of accuracy over logistic regression and
 *loses* on balanced accuracy.
 
 The single tree is the informative row. At 0.894 it sits three points below both,
-so the ensemble is doing exactly what it promises — recovering the variance a lone
+so the ensemble is doing exactly what it promises, recovering the variance a lone
 tree throws away. It just has nothing left over.
 
 **Feature subsampling bought nothing either.** Plain bagging over all 16 features
@@ -77,14 +77,14 @@ matched the `sqrt` version, because with only 16 mostly-informative columns,
 restricting each split to four costs about as much signal as the decorrelation
 gains.
 
-**Why:** bean features are geometric measurements of one object — area, perimeter,
+**Why:** bean features are geometric measurements of one object: area, perimeter,
 axis lengths, equivalent diameter. Smooth, heavily correlated, and the varieties
 differ mostly in size and elongation. That is close to the ideal case for a linear
 boundary. There is very little non-linear structure for a forest to find.
 
 ![Boundaries compared](figures/fig-04-boundaries.png)
 
-The forest's boundary does bend, and it is visibly rougher — a staircase of
+The forest's boundary does bend, and it is visibly rougher, a staircase of
 axis-aligned splits. It barely helps, because the seam between these varieties is
 genuinely close to straight.
 

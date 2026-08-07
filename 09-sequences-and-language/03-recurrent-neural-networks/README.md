@@ -29,7 +29,7 @@ near the gain $g$:
 
 At gain 0.6 the number did not get small. It reached float zero, and the notebook
 prints a `divide by zero encountered in log` warning when it tries to fit a slope
-through it. At gain 1.6 the same product ran the other way, to 3.806e+03 — one
+through it. At gain 1.6 the same product ran the other way, to 3.806e+03: one
 scalar moved by 1.0 separates those outcomes.
 
 ## The recurrence
@@ -61,7 +61,7 @@ $$\frac{\partial h_T}{\partial h_1} = \prod_{t=2}^{T} \operatorname{diag}\big(\t
 A product of $T-1$ matrices, mostly the same matrix, and products of matrices
 behave like powers of a number. Both panels are on a log scale, so a straight line
 is an exponential whose slope is the per-step factor above. Where that factor is
-gentler than the gain — 1.060 from a gain of 1.6 — saturation is the reason: once
+gentler than the gain (1.060 from a gain of 1.6), saturation is the reason: once
 the state is large, $\tanh'$ is small and damps every term.
 
 ```
@@ -72,7 +72,7 @@ cosine between the two        : 1.000000
 
 Clipping is a 14,000x rescale with the direction untouched to six decimal places,
 which is what makes it safe on every step whether or not it bites. It does nothing
-for the vanishing half — you cannot rescale a gradient back into existence. That
+for the vanishing half: you cannot rescale a gradient back into existence. That
 needs the [LSTM](../04-lstm/).
 
 ## Forecasting bicycle hire
@@ -82,7 +82,7 @@ needs the [LSTM](../04-lstm/).
 17,379 hourly counts from Washington DC become 17,355 windows of 24 hours. Train
 on the first **13,884**, test on the last **3,471**, split by time and never at
 random: neighbouring windows share 23 of their 24 values. Scaling statistics come
-from the training hours only — mean 174.72, sd 166.92, on a series running 1 to
+from the training hours only: mean 174.72, sd 166.92, on a series running 1 to
 977 with a mean of 189.5.
 
 | Model | Parameters | Test RMSE (hires) |

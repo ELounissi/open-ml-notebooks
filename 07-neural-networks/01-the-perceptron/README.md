@@ -21,7 +21,7 @@ book. Weighted sum, hard threshold:
 
 $$\hat{y} = \begin{cases} 1 & \text{if } w \cdot x + b > 0 \\ 0 & \text{otherwise} \end{cases}$$
 
-What made it famous is the learning rule — one line, no calculus:
+What made it famous is the learning rule, one line, no calculus:
 
 $$w \leftarrow w + \eta\,(y - \hat{y})\,x$$
 
@@ -31,7 +31,7 @@ when it was 0? Push them **away**. Got it right? Change nothing.
 ![Convergence](figures/fig-01-convergence.png)
 
 **Rosenblatt's convergence theorem**: if a straight line separates the classes,
-the perceptron finds one in finite steps. If none exists, it cycles forever — with
+the perceptron finds one in finite steps. If none exists, it cycles forever, with
 no warning that it is doing so.
 
 ## The XOR problem
@@ -76,7 +76,7 @@ have output. Solving that is [backpropagation](../02-mlp-and-backpropagation/).
 
 | | |
 |---|---|
-| **Use it when** | Almost never in production — it is here because everything else descends from it |
+| **Use it when** | Almost never in production: it is here because everything else descends from it |
 | **Guarantee** | Converges in finite steps **if** linearly separable. Otherwise cycles forever, silently |
 | **Versus logistic regression** | Same weighted sum. The perceptron thresholds hard and gives no probabilities |
 | **Watch out** | It stops at the *first* separating line, which may sit right against the data. An [SVM](../../03-classification/05-support-vector-machines/) picks the best one |

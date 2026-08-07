@@ -27,7 +27,7 @@ total squared Euclidean distance:
 | The other thirteen together | **0.0007%** |
 
 `Area` and `ConvexArea` are near-duplicates, so a nearest-neighbour search on the
-raw table is a search on bean size alone — the widest column's standard deviation
+raw table is a search on bean size alone: the widest column's standard deviation
 is **49,968,404x** the narrowest's. After `StandardScaler` the shares run from
 **6.4743%** down to **5.8836%**, against an equal split of 6.2500%.
 
@@ -79,7 +79,7 @@ as large.
 
 Bike Sharing hands you categories already converted to integers, with no warning
 that they are labels. Mean hourly hires by season code: spring **111.1**, summer
-**208.3**, fall **236.0**, winter **198.9** — real, and not monotone. Given the
+**208.3**, fall **236.0**, winter **198.9**. Real, and not monotone. Given the
 raw code a model has one coefficient, so it fits a straight ramp through four
 points that are not on a line. There are exactly 24 ways to number four seasons,
 none more correct than another, so I fitted all of them.
@@ -136,7 +136,7 @@ that never saw it. The out-of-fold column never leaves the baseline, 0.2891 to
 
 | | |
 |---|---|
-| **Scale for** | k-NN, SVM, PCA, k-means, neural nets, any penalised linear model — anything using a distance or a gradient. Not trees: their change was 0.0000, not small |
+| **Scale for** | k-NN, SVM, PCA, k-means, neural nets, any penalised linear model. Anything using a distance or a gradient. Not trees: their change was 0.0000, not small |
 | **Which one** | `StandardScaler`, or `RobustScaler` on a long tail. The four differed by 0.0083 and beat no scaling by 0.2747, and no affine scaler removes an outlier |
 | **Always** | Fit the scaler inside a `Pipeline` so it never sees the validation fold |
 | **Categories** | One-hot by default. Ordinal only when the order is real *and* the spacing means something |

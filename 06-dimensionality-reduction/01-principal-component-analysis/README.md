@@ -18,7 +18,7 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 
 Dry Bean has sixteen measurements per bean, but not sixteen independent facts.
 `Area`, `Perimeter`, `ConvexArea` and `EquivDiameter` all essentially say *how big
-is it* — several pairs correlate above **0.99**.
+is it*: several pairs correlate above **0.99**.
 
 PCA finds new axes that are combinations of the old ones, ordered so the first
 captures as much variation as possible. It is a rotation, chosen so variance
@@ -43,17 +43,17 @@ the variance along it. The from-scratch version agrees with scikit-learn to
 
 ![Projection](figures/fig-02-projection.png)
 
-PCA is **unsupervised** — it never saw the varieties. It only looked for
+PCA is **unsupervised**: it never saw the varieties. It only looked for
 directions of large variance, and the varieties came out largely separated along
 them.
 
 ![Loadings](figures/fig-03-loadings.png)
 
 Reading the weights names them. **PC1 loads heavily and in the same direction on
-`Area`, `Perimeter`, `ConvexArea`, `EquivDiameter` and the axis lengths — it is
+`Area`, `Perimeter`, `ConvexArea`, `EquivDiameter` and the axis lengths: it is
 measuring how big the bean is**, which is why it carries so much variance: those
 six columns were always saying the same thing. **PC2 separates elongation from
-bulk — it is measuring shape.**
+bulk: it is measuring shape.**
 
 Naming components is not always possible, and forcing it is a good way to fool
 yourself. When it works it is a real insight.
@@ -70,7 +70,7 @@ yourself. When it works it is a real insight.
 **PCA never beat using every column.** Both curves climb toward the baseline and
 flatten onto it; neither rises above it.
 
-I expected Breast Cancer to show a clear gain — thirty correlated columns against
+I expected Breast Cancer to show a clear gain: thirty correlated columns against
 only 569 rows is exactly the crowded regime where dropping dimensions is supposed
 to pay. It did not. The best score came from keeping all thirty components, which
 is just a rotation and no reduction at all.
@@ -88,7 +88,7 @@ trick, and material presenting it as one is overselling it.
 | **Use it when** | Columns are correlated; you want a 2-D picture; you need to speed up a downstream model |
 | **Avoid it when** | You need to explain individual features; the structure is non-linear (try [t-SNE](../03-t-sne/) or [UMAP](../04-umap/)); the informative direction has low variance |
 | **Scaling needed** | Yes, whenever units differ. Otherwise the largest-unit column becomes PC1 |
-| **Main dials** | `n_components` — an integer, or a variance fraction like `0.95` |
+| **Main dials** | `n_components`, an integer, or a variance fraction like `0.95` |
 | **Watch out** | Fit PCA **inside** the pipeline. Fitting on all data before splitting leaks test information |
 
 ---

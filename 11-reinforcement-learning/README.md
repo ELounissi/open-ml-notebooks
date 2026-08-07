@@ -1,4 +1,4 @@
-# Part 11 — Reinforcement learning
+# Part 11: Reinforcement learning
 
 Learning from reward instead of from answers.
 

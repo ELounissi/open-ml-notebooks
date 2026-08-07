@@ -1,4 +1,4 @@
-# Part 7 — Neural networks
+# Part 7: Neural networks
 
 From one neuron to a working training loop, with the maths visible throughout.
 

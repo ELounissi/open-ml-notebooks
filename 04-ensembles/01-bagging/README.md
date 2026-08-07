@@ -41,12 +41,12 @@ rows become the out-of-bag validation set.
 | Linear models | 0.0099 |
 
 The left panel is 25 overfitted step functions each chasing its own sample. Their
-average tracks the real curve closely — error drops from **0.1037** for a typical
+average tracks the real curve closely: error drops from **0.1037** for a typical
 tree to **0.0475** for the average. Nothing was pruned or regularised; the wobble
 simply cancelled.
 
 The right panel is the control most explanations skip. **Bagged linear models are
-pointless** — a straight line barely changes between samples, so there is no
+pointless**: a straight line barely changes between samples, so there is no
 variance to average away.
 
 ## What it helps, measured
@@ -89,11 +89,11 @@ They agree within 0.0016, and the out-of-bag version is **3.8× faster**.
 
 | | |
 |---|---|
-| **Use it when** | Your base model is unstable — deep trees, small-k k-NN, anything that swings when the data shifts |
+| **Use it when** | Your base model is unstable: deep trees, small-k k-NN, anything that swings when the data shifts |
 | **Do not bother when** | The base model is already stable |
 | **What it fixes** | Variance. Bias is left exactly where it was |
 | **Estimators** | More never hurts accuracy. Twenty gets most of it |
-| **Free extra** | `oob_score=True` — validation for one fit instead of five |
+| **Free extra** | `oob_score=True`, validation for one fit instead of five |
 
 ---
 

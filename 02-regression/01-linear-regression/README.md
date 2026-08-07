@@ -29,35 +29,35 @@ $$w = (X^\top X)^{-1} X^\top y$$
 
 ## What the notebook covers
 
-**1. The idea** — one feature first, so you can see the line before you see the algebra.
+**1. The idea**: one feature first, so you can see the line before you see the algebra.
 
 ![One feature, one line](figures/fig-01-the-line.png)
 
 Two things visible here come back later: the flat band along the top is a price
 cap baked into the data, and the vertical spread shows why one feature is never enough.
 
-**2. The maths** — the loss, the derivative, the normal equation, and the two
+**2. The maths**: the loss, the derivative, the normal equation, and the two
 things that break it (cost grows as $O(n^3)$ in features, and correlated columns
 make the matrix uninvertible).
 
-**3. From scratch** — a 30-line NumPy implementation, agreeing with scikit-learn to
+**3. From scratch**: a 30-line NumPy implementation, agreeing with scikit-learn to
 **2.4 × 10⁻¹³**. It uses `lstsq` rather than inverting $X^\top X$, and the notebook
 explains why that difference matters for numerical stability.
 
-**4. In practice** — scaling inside a `Pipeline` so the scaler never sees the test
+**4. In practice**: scaling inside a `Pipeline` so the scaler never sees the test
 fold, five-fold cross-validation, and reading the coefficients.
 
 ![Location outweighs income](figures/fig-02-coefficients.png)
 
 This one surprised me. I expected income to carry the largest weight; latitude
 (−0.90) and longitude (−0.87) both outrank it (0.83). The model is spending
-weight to say "the south-west coast is expensive" using two straight lines — a
+weight to say "the south-west coast is expensive" using two straight lines, a
 clumsy way to draw a coastline, and a preview of why trees do better here.
 
 ![Residual diagnostics](figures/fig-03-residuals.png)
 
 The orange stripe is 992 districts capped at $500,000, whose true values no longer
-exist — not a modelling failure.
+exist, not a modelling failure.
 
 The right panel is the real finding, and it needed binning to see. A raw residual
 scatter looked like a formless smear. Averaging the error within each tenth of the
@@ -67,7 +67,7 @@ is +0.06, which looks unbiased and is not: it is a large positive bias at the
 bottom cancelling a large negative one at the top. A summary number hid it; the
 chart did not.
 
-**5. When it wins, when it loses** — the same code on Bike Sharing, where R
+**5. When it wins, when it loses**: the same code on Bike Sharing, where R
 squared falls from 0.60 to 0.39.
 
 ![A straight line cannot see two commutes](figures/fig-04-where-it-loses.png)
@@ -77,7 +77,7 @@ through the hour column can say "demand rises through the day" or "demand falls"
 It cannot say "up, down, up, down". No amount of fitting fixes that, because the
 shape is not available to the model.
 
-One-hot encoding the hour column — **changing nothing about the model** — takes it
+One-hot encoding the hour column, **changing nothing about the model**, takes it
 from 0.39 to 0.68, better than the same method managed on California Housing.
 That is the most reliable lesson in applied machine learning: the features are
 usually where the win is.
@@ -88,7 +88,7 @@ usually where the win is.
 |---|---|---|
 | Predict the mean (baseline) | RMSE 1.154 | R² 0.000 |
 | Linear regression | RMSE 0.726 (**37% better**) | R² 0.388 |
-| Linear regression, hours encoded | — | R² **0.684** |
+| Linear regression, hours encoded | | R² **0.684** |
 
 R² on California Housing is 0.604, with folds spanning 0.594 to 0.618.
 
@@ -100,7 +100,7 @@ R² on California Housing is 0.604, with folds spanning 0.594 to 0.618.
 | **Avoid it when** | The pattern bends or cycles; features are strongly correlated; outliers are common |
 | **Assumes** | Errors independent, constant variance, roughly normal. Predictions survive violations; confidence intervals do not |
 | **Scaling** | Not needed for correctness, needed to interpret coefficients |
-| **Cost** | About $O(n \cdot m^2)$ for $m$ features — instant below a few hundred columns |
+| **Cost** | About $O(n \cdot m^2)$ for $m$ features, instant below a few hundred columns |
 | **Hyperparameters** | None, which is part of the appeal |
 | **Next** | [Ridge](../04-ridge-regression/) if features correlate, [Lasso](../05-lasso-regression/) for feature selection |
 

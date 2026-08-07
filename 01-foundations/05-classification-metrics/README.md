@@ -25,7 +25,7 @@ One array of out-of-fold scores, one model, evaluated twice: on all 10,000 rows 
 | 50% positives, 20 draws | **0.9699** ± 0.0045 | **0.9728** ± 0.0046 | 0.5000 |
 
 ROC-AUC did not move at all. PR-AUC moved by 0.4020. Same predictions, same
-ranking — only how many negatives were in the room changed. Report ROC-AUC on a
+ranking; only how many negatives were in the room changed. Report ROC-AUC on a
 rare-positive problem and you report a number blind to what makes it hard.
 
 ## Accuracy on a 1% problem
@@ -42,7 +42,7 @@ The grey model has no parameters and never looks at a feature. Accuracy pays it
 The other three columns separate the two immediately, because they ignore the pile
 of true negatives that accuracy is mostly counting.
 
-Precision is *undefined* when a model flags nothing — the printed 0.0000 is
+Precision is *undefined* when a model flags nothing: the printed 0.0000 is
 scikit-learn's `zero_division=0` convention, not a measurement.
 
 ## The confusion matrix is the only primitive
@@ -71,7 +71,7 @@ Rates hide counts, and on-call works in counts.
 | threshold 0.50 | 64 | 0.7344 | 0.47 | 0.5732 |
 
 The best-F1 threshold is **0.1662**, giving precision 0.7051, recall 0.5500 and
-F1 **0.6180** — 0.0448 above what the default 0.5 delivers, from changing one
+F1 **0.6180**, 0.0448 above what the default 0.5 delivers, from changing one
 number and retraining nothing. So "this model has precision 0.73" is an incomplete
 sentence. The complete one names a threshold.
 
@@ -87,7 +87,7 @@ against 0.5000 balanced.
 
 ROC-AUC has a reading with no curve in it. Enumerating all **990,000**
 positive-negative pairs gives **0.969935**, matching scikit-learn exactly: it is
-the probability a random positive outranks a random negative. Report both — ROC-AUC
+the probability a random positive outranks a random negative. Report both: ROC-AUC
 to compare rankings, PR-AUC to judge whether the ranking is any use at the rate
 your positives actually occur.
 

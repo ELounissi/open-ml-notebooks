@@ -31,7 +31,7 @@ by hand,     dy/dx = 2(3) + 5 = 11
 ```
 
 `requires_grad=True` records what happens to the tensor. `.backward()` replays the
-recording in reverse. Everything else is that idea at scale — the previous
+recording in reverse. Everything else is that idea at scale, the previous
 notebook's derivation, automated for any architecture you write.
 
 ## The training loop you will reuse
@@ -47,7 +47,7 @@ optimiser.step()               # 4. update the weights
 
 ![Training](figures/fig-01-training.png)
 
-Final held-out accuracy **0.9318** from 1,543 parameters — the same curve the
+Final held-out accuracy **0.9318** from 1,543 parameters, the same curve the
 NumPy version produced, because it is the same maths.
 
 ## The three mistakes everyone makes once
@@ -73,7 +73,7 @@ appear, evaluating in training mode gives quietly wrong numbers.
 | 3 | 9,863 | 0.9277 |
 | 4 | 14,023 | 0.9324 |
 
-Adding layers is now a one-character change, and on this dataset it buys nothing —
+Adding layers is now a one-character change, and on this dataset it buys nothing:
 the four results span 0.005, which is noise. Depth pays when the data has
 hierarchical structure: edges into shapes into objects, characters into words into
 meaning. Sixteen geometric measurements of a bean do not.
@@ -89,7 +89,7 @@ as worth trying.**
 | **Never** | Softmax before `CrossEntropyLoss`; forget `zero_grad()` |
 | **Always** | `model.train()` / `model.eval()`, and `torch.no_grad()` for evaluation |
 | **Devices** | Model and data must be on the same device |
-| **Reproducibility** | `torch.manual_seed` is necessary and not sufficient — GPU reductions are non-deterministic unless you ask otherwise |
+| **Reproducibility** | `torch.manual_seed` is necessary and not sufficient: GPU reductions are non-deterministic unless you ask otherwise |
 
 ---
 

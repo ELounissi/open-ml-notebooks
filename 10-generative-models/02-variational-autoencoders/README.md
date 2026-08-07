@@ -39,12 +39,12 @@ Nothing in the reconstruction loss says where codes should land, so the encoder
 scatters them and leaves gaps the decoder has never been trained on. On binary
 cross-entropy summed over 784 pixels it goes from **335.4 nats** in the first
 epoch to **227.2** in the last, and reconstructs fine. Then I invent codes the
-most generous way available — a Gaussian fitted to the model's own codes, so they
+most generous way available, a Gaussian fitted to the model's own codes, so they
 sit in the middle of the occupied region at the right scale. Distance to the
 nearest real image goes from **3.980** for held-out clothes to **4.605** for those
 inventions, pixel spread from **0.2739** to **0.1929**. Row four of the figure is
 worse than row three, and a midpoint between two real codes is not even invented
-space — it is the line between two places the encoder used.
+space; it is the line between two places the encoder used.
 
 ## The reparameterisation trick, as a gradient-path check
 
@@ -86,7 +86,7 @@ Five models in 53 seconds. Real images: 3.980 and 0.2739 on the last two columns
 | 4.0 | 254.730 | 5.457 | 0.831 | **4** | 0.227 | 3.123 | 0.209 |
 | 16.0 | 287.705 | 2.380 | 0.909 | **2** | 0.200 | 3.113 | 0.188 |
 
-At beta = 0 the blobs shrink to points — mean sigma **0.008** — which is the plain
+At beta = 0 the blobs shrink to points (mean sigma **0.008**), which is the plain
 autoencoder with extra steps. Collapse starts between beta = 1 and beta = 4, where
 active dimensions fall from 12 to 4, and by beta = 16 only **2 of 16** carry
 anything. It is not total: reconstruction spread at beta = 16 is **0.200** against
@@ -107,7 +107,7 @@ Two dimensions, the only size you can look at directly.
 
 The plain model's codes sit at four and a half times the width of the standard
 normal you would sample from, which is the failure in one number. The class signal
-given up for fixing it is **0.0036 of accuracy** — close to free at this size.
+given up for fixing it is **0.0036 of accuracy**, close to free at this size.
 
 ## Sampling and interpolating
 

@@ -16,7 +16,7 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 
 ## The idea
 
-[PCA](../01-principal-component-analysis/) is linear — it can only unfold structure
+[PCA](../01-principal-component-analysis/) is linear: it can only unfold structure
 that was already flat. t-SNE takes a different goal: it does not preserve the data,
 it preserves **who is near whom**.
 
@@ -26,7 +26,7 @@ The t-SNE picture is obviously prettier, and prettier is exactly the danger.
 
 One mechanism matters: in two dimensions t-SNE uses a **Student-t** distribution
 with heavy tails rather than a Gaussian. Without it everything collapses into one
-blob. The heavy tail pushes distant points apart — **and that push is what creates
+blob. The heavy tail pushes distant points apart, **and that push is what creates
 the gaps you see.**
 
 ## Perplexity changes everything
@@ -80,7 +80,7 @@ does PCA  have a .transform method? True
 
 ![Seeds](figures/fig-04-seeds.png)
 
-t-SNE cannot embed a new point without refitting everything — the embedding is an
+t-SNE cannot embed a new point without refitting everything: the embedding is an
 optimisation over one fixed set of points, not a function. So putting it before a
 classifier is not merely awkward, it is **leakage**: embedding your test set means
 refitting on train and test together.
@@ -94,8 +94,8 @@ need a picture for a human.
 |---|---|
 | **Use it when** | You want to *look* at high-dimensional data |
 | **Never** | As a preprocessing step. No `transform`, and faking one leaks |
-| **Main dials** | `perplexity` (5–50, try several), `init="pca"` for stability |
-| **Cost** | Slow. Subsample above ~10,000 points — 3,000 beans took 12 s |
+| **Main dials** | `perplexity` (5 to 50, try several), `init="pca"` for stability |
+| **Cost** | Slow. Subsample above ~10,000 points, 3,000 beans took 12 s |
 | **Read from it** | Which points are neighbours. Nothing else |
 | **Do not read** | Cluster sizes, between-cluster distances, or empty space |
 

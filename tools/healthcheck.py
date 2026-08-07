@@ -16,6 +16,9 @@ What it checks, and why each one has bitten this repo at least once:
     has figures       a chapter with no figure is a chapter nobody will read
     author block      every notebook carries the attribution
     prose rules       the word and construction lists from STYLE.md
+    dashes            an em dash is the loudest signature a machine leaves on
+                      prose; 892 had accumulated before anything counted them,
+                      and a colon, a comma or a full stop says the same thing
     README present    the project page is what a search engine lands on
     image links       a README pointing at a figure that does not exist
 
@@ -47,6 +50,14 @@ BANNED_PATTERNS = [
     (r"\bstands as\b", "copula avoidance: stands as"),
 ]
 
+# From STYLE.md. Prose gets a colon, a comma, a semicolon or a full stop; a
+# range gets the word "to". Code cells are not checked, because a dash inside a
+# chart title or a string literal is code and changing it means re-running.
+BANNED_CHARACTERS = [
+    ("—", "em dash"),
+    ("–", "en dash"),
+]
+
 SKIP = ("_scratch", ".ipynb_checkpoints")
 
 
@@ -57,6 +68,13 @@ def markdown_of(notebook: dict) -> str:
     )
 
 
+def check_punctuation(text: str, where: str, problems: list[str]) -> None:
+    marks = [f"{name} x{text.count(char)}"
+             for char, name in BANNED_CHARACTERS if char in text]
+    if marks:
+        problems.append(f"{where}: banned punctuation -> {', '.join(marks)}")
+
+
 def check_prose(text: str, where: str, problems: list[str]) -> None:
     lowered = text.lower()
     hits = [word for word in BANNED_WORDS if word in lowered]
@@ -65,11 +83,13 @@ def check_prose(text: str, where: str, problems: list[str]) -> None:
     for pattern, name in BANNED_PATTERNS:
         if re.search(pattern, lowered):
             problems.append(f"{where}: banned construction -> {name}")
+    check_punctuation(text, where, problems)
 
 
 def main() -> int:
     problems: list[str] = []
     notebooks = figures = readmes = 0
+    seen: set[pathlib.Path] = set()
 
     for path in sorted(ROOT.rglob("notebook.ipynb")):
         if any(part in str(path) for part in SKIP):
@@ -105,6 +125,7 @@ def main() -> int:
             problems.append(f"{where}: no README.md")
         else:
             readmes += 1
+            seen.add(readme)
             text = readme.read_text(encoding="utf-8")
             if "Elyes Lounissi" not in text:
                 problems.append(f"{where}/README.md: missing author attribution")
@@ -117,8 +138,25 @@ def main() -> int:
         if folder.is_dir():
             figures += len(list(folder.glob("*.png")))
 
+    # The chapter pages, the curriculum and the style guide are prose too, and
+    # they are where the em dashes were thickest.
+    pages = 0
+    for page in sorted(ROOT.rglob("*.md")):
+        if page in seen or any(part in str(page) for part in SKIP):
+            continue
+        pages += 1
+        where = page.relative_to(ROOT).as_posix()
+        text = page.read_text(encoding="utf-8")
+        # STYLE.md is where the banned words are written down, so only its
+        # punctuation can be checked against itself.
+        if where == "STYLE.md":
+            check_punctuation(text, where, problems)
+        else:
+            check_prose(text, where, problems)
+
     print(f"notebooks : {notebooks}")
     print(f"READMEs   : {readmes}")
+    print(f"other .md : {pages}")
     print(f"figures   : {figures}")
     print(f"problems  : {len(problems)}")
     for problem in problems:

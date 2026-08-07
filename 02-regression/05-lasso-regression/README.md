@@ -21,7 +21,7 @@ $$J_{\text{ridge}} = \|Xw - y\|^2 + \alpha \sum_i w_i^2 \qquad J_{\text{lasso}} 
 **Lasso sets weights to exactly zero. Ridge never does.**
 
 The reason is the derivative. Near zero the square's gradient is $2w$, which
-vanishes as $w$ does — the push toward zero weakens exactly when it is needed to
+vanishes as $w$ does: the push toward zero weakens exactly when it is needed to
 finish, so the weight glides in without arriving. The absolute value's gradient is
 $\pm\alpha$, constant all the way down. It keeps pushing until the weight hits zero.
 
@@ -29,7 +29,7 @@ $\pm\alpha$, constant all the way down. It keeps pushing until the weight hits z
 
 Geometrically: Ridge's budget region is a **circle**, Lasso's a **diamond** with
 corners on the axes. A curve touching a circle almost never touches at exactly the
-top. A curve touching a diamond very often touches at a corner — and a corner is a
+top. A curve touching a diamond very often touches at a corner, and a corner is a
 point where one coordinate is exactly zero.
 
 ![Paths](figures/fig-02-paths.png)
@@ -39,19 +39,19 @@ Ridge's lines glide toward zero and none arrive. Lasso's hit zero one by one:
 | alpha | Features kept |
 |---|---|
 | 0.001 | all 8 |
-| 0.05 | 4 — MedInc, HouseAge, Latitude, Longitude |
-| 0.3 | 1 — MedInc |
+| 0.05 | 4: MedInc, HouseAge, Latitude, Longitude |
+| 0.3 | 1: MedInc |
 
 ## The result that matters: LassoCV is not a feature selector
 
 ![Feature selection](figures/fig-03-feature-selection.png)
 
 I added **30 pure noise columns** to California Housing and let `LassoCV` choose
-alpha. It kept every real feature — and **17 of the 30 noise columns**. More than
+alpha. It kept every real feature, and **17 of the 30 noise columns**. More than
 half the garbage survived a method sold as automatic feature selection.
 
 The reason is a mismatch of objectives nobody mentions. Cross-validation chose
-alpha to **minimise prediction error**, landing on 0.0032 — tiny. At that setting
+alpha to **minimise prediction error**, landing on 0.0032, tiny. At that setting
 the penalty barely bites, so useless columns get small non-zero weights instead of
 exact zeros. Those small weights cost almost nothing in error, which is precisely
 why cross-validation is indifferent to them.
@@ -66,7 +66,7 @@ why cross-validation is indifferent to them.
 Raising alpha cleans the list out, and prediction error barely moves until real
 features start going too. **Selecting features and predicting well are different
 goals, and `LassoCV` optimises the second.** If you want a defensible shortlist,
-choose alpha yourself — around 0.01 here buys a nearly clean list for 0.0024 RMSE.
+choose alpha yourself: around 0.01 here buys a nearly clean list for 0.0024 RMSE.
 
 ## Where Lasso struggles
 
@@ -91,7 +91,7 @@ use [Elastic Net](../06-elastic-net/).
 | **Use it when** | Many features, most probably useless; you want a smaller model |
 | **Prefer Ridge when** | Features are correlated and you want stable coefficients |
 | **Scaling needed** | Yes, always. The penalty is unit-blind |
-| **No closed form** | The absolute value is not differentiable at zero, so it is solved by coordinate descent — hence `max_iter` |
+| **No closed form** | The absolute value is not differentiable at zero, so it is solved by coordinate descent, hence `max_iter` |
 | **Watch out** | Among correlated features it picks one nearly at random |
 | **Watch out more** | `LassoCV` tunes for prediction, not sparsity. It kept 17 of 30 noise columns here |
 

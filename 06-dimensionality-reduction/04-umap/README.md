@@ -1,6 +1,6 @@
 # UMAP
 
-### Faster than t-SNE, and it keeps more of the shape — but check that yourself
+### Faster than t-SNE, and it keeps more of the shape, but check that yourself
 
 **[Open the notebook](notebook.ipynb)** · Part 6, Dimensionality reduction ·
 Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
@@ -29,7 +29,7 @@ So every number on this page came from **`Isomap`**, with `SpectralEmbedding`
 alongside it in one figure. Isomap builds a neighbour graph, measures geodesic
 distances along it, then runs classical MDS on those distances, and it has a
 `transform` the way UMAP does. What is missing is `min_dist`, which has no
-scikit-learn equivalent, and the stochastic layout — Isomap is deterministic. That
+scikit-learn equivalent, and the stochastic layout: Isomap is deterministic. That
 distinction is not a footnote here. It changes one of the conclusions.
 
 ## The rigged test came out the wrong way, and that is the lesson
@@ -50,7 +50,7 @@ to wreck.
 
 That is the objective talking, not luck. Isomap is scored on distances, so radii and
 gaps are exactly what it works hardest to keep. UMAP and t-SNE never look at a
-distance again once the neighbour graph exists — they match neighbour relationships,
+distance again once the neighbour graph exists: they match neighbour relationships,
 and no neighbour relationship changes when you stretch a cluster or slide it across
 the page. **The "cluster size means nothing" warning is a warning about UMAP and
 t-SNE, and a table of Isomap numbers is not the thing that demonstrates it.** Before
@@ -65,7 +65,7 @@ was minimising.
 t-SNE **15.4 s**, Isomap **2.7 s**.
 
 Read the label on the third panel before you read it as a speed claim. Isomap has its
-own cost profile — neighbour graph, shortest paths, eigendecomposition — and it is not
+own cost profile (neighbour graph, shortest paths, eigendecomposition), and it is not
 evidence about UMAP either way. The UMAP speed argument is about scale anyway: t-SNE's
 all-pairs normalisation is what hurts at tens of thousands of rows, not at 3,000.
 
@@ -92,7 +92,7 @@ panel you picked. **Try three settings of `n_neighbors` before you believe any.*
 ![Global structure](figures/fig-03-global-structure.png)
 
 Every pair among 1,000 beans, scored two ways. Spearman rather than Pearson, because
-no method here promises to preserve distances on a linear scale — only their ordering.
+no method here promises to preserve distances on a linear scale, only their ordering.
 
 | Method | Global (distance rank correlation) | Local (trustworthiness, k=15) |
 |---|---|---|
@@ -104,7 +104,7 @@ The whole trade sits in six numbers. t-SNE wins the local column by 0.0430 and l
 the global column by 0.1008. The neighbour-graph method lands within **0.0025** of
 PCA on global structure while giving up 0.0430 locally.
 
-Two caveats worth more than the table. This is one dataset at one setting —
+Two caveats worth more than the table. This is one dataset at one setting:
 `n_neighbors=15` against `perplexity=30` is one point on two different curves. And a
 strong global score means different things for different methods: for Isomap it is the
 objective, not a discovery.
@@ -131,7 +131,7 @@ Being allowed in a pipeline is not the same as earning a place in one.
 
 Squeezing 30 features into 2 costs **0.0211** accuracy, and the neighbour-graph
 reduction finishes **0.0017 behind plain PCA** while taking several times as long. The
-reducer was refit inside every fold, on that fold's training rows only — a loop you
+reducer was refit inside every fold, on that fold's training rows only, a loop you
 can only write because it has a `transform`.
 
 ## What is still true about UMAP
@@ -151,7 +151,7 @@ them because its loss is defined on distances. Do not carry that result across.
 | **Also use it when** | You need a non-linear reduction inside a model. It has a `transform`, so this is legal |
 | **Do not use it when** | You need distances. PCA scored 0.9524 on global structure in 0.0 s |
 | **Scaling** | Required. It is distance-based |
-| **Main dials** | `n_neighbors` (local versus global — try 5 / 15 / 50), `min_dist` (packing only, 0.0 to 0.99), `random_state` always |
+| **Main dials** | `n_neighbors` (local versus global, try 5 / 15 / 50), `min_dist` (packing only, 0.0 to 0.99), `random_state` always |
 | **Install** | `pip install umap-learn`. Not in scikit-learn. `Isomap` is the nearest thing that ships with it |
 | **If you ran the fallback** | The numbers came from Isomap, which minimises error on distances and therefore does keep sizes and gaps. That result does not transfer to UMAP |
 | **Before quoting the global claim** | Run the rank-correlation test on your own data, at the settings you plan to use |

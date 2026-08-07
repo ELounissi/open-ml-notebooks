@@ -37,7 +37,7 @@ Four autoencoders, identical apart from code width, trained in **37 seconds** on
 | 64 | 12× | 0.01593 | 0.01607 |
 
 Train and test agree to within 0.0003 everywhere, so nothing overfits. The surprise is the middle
-rows: **going from 8 numbers to 32 bought nothing**, test error identical to five decimals — from 8
+rows: **going from 8 numbers to 32 bought nothing**, test error identical to five decimals: from 8
 onward the model is the limit, not the bottleneck. Squared error buys silhouette and brightness
 first and texture last, which is why narrow codes come out blurred rather than wrong.
 
@@ -45,7 +45,7 @@ first and texture last, which is why narrow codes come out blurred rather than w
 
 ![Autoencoder versus PCA](figures/fig-02-autoencoder-vs-pca.png)
 
-Strip the activations out and the autoencoder solves PCA's problem by gradient descent — 50,992
+Strip the activations out and the autoencoder solves PCA's problem by gradient descent, 50,992
 parameters against 476,720 for the non-linear version at code 32.
 
 | Code size | PCA | Linear AE | Non-linear AE | Non-linear advantage |
@@ -57,7 +57,7 @@ parameters against 476,720 for the non-linear version at code 32.
 
 PCA keeps improving as $k$ grows while the autoencoder flatlines, so the crossover between 8 and 32
 is the autoencoder running out of training rather than PCA finding curvature. The linear autoencoder
-sat *above* PCA at every size — by 0.00010 at code 2, widening to 0.00099 at code 64 — and never
+sat *above* PCA at every size (by 0.00010 at code 2, widening to 0.00099 at code 64) and never
 below, the only direction theory allows. That gap is optimisation, not modelling. I checked the
 subspace claim directly too: orthonormalise the linear encoder's rows, then measure how much of
 PCA's top-$k$ basis falls inside that span, where 1 means the same subspace in other coordinates.
@@ -114,7 +114,7 @@ better features; here it bought a better denoiser and a code 0.0178 worse for cl
 ![Anomaly score distributions](figures/fig-05-anomaly-scores.png)
 
 Drop one class from training, train on the other nine, score all ten. With bag withheld and 10,786
-training images, mean error ran **0.01637** on the nine seen classes against **0.04047** on bag —
+training images, mean error ran **0.01637** on the nine seen classes against **0.04047** on bag,
 **ROC AUC 0.9420**, catching 62.1% of bags at the 95th-percentile threshold. One class is one data
 point, so here is the full sweep, ten models in 19 seconds.
 
@@ -135,7 +135,7 @@ shirt fine without ever having been shown one.
 | | |
 |---|---|
 | **Use it when** | You need compression, denoising or an outlier score, and have plenty of unlabelled examples of normal |
-| **Avoid it when** | You want to sample new images — the code space has holes. That is what [10-02](../02-variational-autoencoders/) fixes |
+| **Avoid it when** | You want to sample new images: the code space has holes. That is what [10-02](../02-variational-autoencoders/) fixes |
 | **The bottleneck** | Narrower than the input, always. Equal width lets the network learn the identity |
 | **Versus PCA** | Curvature pays at tiny codes and stops paying as the code widens. Here the crossover fell between 8 and 32 |
 | **Convergence** | Check the subspace, not the loss. 0.001 from PCA's error was still only 0.63 of PCA's span |

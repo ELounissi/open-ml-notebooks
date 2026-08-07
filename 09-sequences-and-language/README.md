@@ -1,4 +1,4 @@
-# Part 9 — Sequences and language
+# Part 9: Sequences and language
 
 Order matters. Text, time series, and the architectures built for both.
 

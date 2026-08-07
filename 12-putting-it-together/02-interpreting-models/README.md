@@ -17,7 +17,7 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 ## Copying a column made it look unimportant, twice
 
 I added one column: `MedInc` plus a whisper of noise, correlation **0.99995** with
-the original. The model's score did not move — test R² went 0.7794 to 0.7789. Its
+the original. The model's score did not move: test R² went 0.7794 to 0.7789. Its
 measured importance collapsed.
 
 | Measurement | Drop in test R² when shuffled |
@@ -37,7 +37,7 @@ about them together.
 
 Top and bottom bars are the same quantity measured two ways, and they match. The
 orange bars are the lie. You do not need a near-perfect twin: real feature tables
-are full of weaker correlations that deflate both partners — a total and an average
+are full of weaker correlations that deflate both partners: a total and an average
 of the same thing, a raw value and its log, this month and last month. One quirk to
 carry through the rest: the target runs 0.15 to 5.00 and **4.8% of rows sit exactly
 on the 5.0 cap**, so every curve below flattens at the top for a reason unrelated to
@@ -56,7 +56,7 @@ Three planted columns containing nothing, differing only in distinct values:
 ![Impurity against permutation](figures/fig-01-impurity-vs-permutation.png)
 
 Three columns of pure noise received MDI scores spanning **6.9×**, ordered exactly
-by cardinality. The normal draw scored **0.0214 against `Population`'s 0.0276** — a
+by cardinality. The normal draw scored **0.0214 against `Population`'s 0.0276**, a
 noise column collecting 77% of the credit of a real feature. Permutation importance
 on held-out rows put all three at roughly zero, slightly negative, which is noise
 around zero rather than a signal.
@@ -66,7 +66,7 @@ ranks 9, 10 and 11 of 11, so they did **not** outrank the real features. The bia
 shows in their internal ordering and in how close `junk_normal` got to `Population`,
 not in a headline inversion. The forest scored train R² **0.9672** against test R²
 **0.7674**, and that gap is why MDI misleads: it was computed on the set the model
-memorised. The figure's middle panel is the next trap — permutation importance on
+memorised. The figure's middle panel is the next trap: permutation importance on
 training rows inflates exactly the columns the model memorised. My hand-written
 grouped permutation matched scikit-learn on a group of one: `HouseAge` at **0.0588**
 against **0.0603**.
@@ -118,7 +118,7 @@ those neighbourhoods. LIME reports this number; most screenshots of LIME crop it
 
 Then the choices you made turn out to matter more than the model does. Across two
 random seeds the largest change in any contribution was **0.010**. Across kernel
-widths 0.6 and 12.0 it was **0.743** — `MedInc` moved from **0.155 to 0.897**, a
+widths 0.6 and 12.0 it was **0.743**: `MedInc` moved from **0.155 to 0.897**, a
 swing larger than every other attribution combined. The narrow kernel fit at R²
 0.139 on **3 effective samples**; the wide one at 0.642 on 4,992, by which point
 "local" means "everywhere". Nothing in the method sets the width.
@@ -129,7 +129,7 @@ $$\phi_i = \sum_{S \subseteq N \setminus \{i\}} \frac{|S|!\,(d - |S| - 1)!}{d!}
 \left[v(S \cup \{i\}) - v(S)\right]$$
 
 Baseline 1.8762, plus the eight attributions, gives **4.5656** against the forest's
-actual **4.5656** — a gap of **0.00e+00**. Local accuracy verified rather than
+actual **4.5656**, a gap of **0.00e+00**. Local accuracy verified rather than
 asserted. LIME has no such guarantee: its bars summed to 3.577 for that same
 prediction of 4.566.
 
@@ -145,7 +145,7 @@ prediction of 4.566.
 They agree on which feature dominates, disagree on amounts, and disagree on the sign
 of `Longitude`. The cost is the $2^d$ sum: 256 here, about a billion at thirty
 features, which is why `shap` ships TreeSHAP. The unsolved problem sits under all of
-it — permutation, partial dependence, LIME and Shapley all move one feature while
+it: permutation, partial dependence, LIME and Shapley all move one feature while
 holding the others still, and all four evaluate the model on rows that could not
 exist as the features get more correlated.
 

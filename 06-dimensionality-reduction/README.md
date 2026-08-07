@@ -1,4 +1,4 @@
-# Part 6 — Dimensionality reduction
+# Part 6: Dimensionality reduction
 
 Fewer columns, same information. Compression, visualisation, and feature selection.
 

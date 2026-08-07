@@ -28,7 +28,7 @@ at initialisation:
 | 9 (nearest the loss) | **3.033e-02** | 1.301e-03 | 0.043 |
 
 **Sigmoid: the last layer's gradient is 7,746,812.8× the first layer's. ReLU: 73.9×.**
-Five epochs of training barely help — sigmoid still sits at **1,351,474.6×**, ReLU at
+Five epochs of training barely help: sigmoid still sits at **1,351,474.6×**, ReLU at
 **16.2×**.
 
 The early layers of the sigmoid network build the features every later layer depends on,
@@ -45,7 +45,7 @@ Better to measure that than assert it, so I trained a deep stack with `nn.Identi
 between layers and multiplied the weight matrices out by hand. The stack has **3,943
 parameters** and scored **0.9218**; a single linear layer has **119** and scored
 **0.9198**. They predict the same class on **0.9697** of held-out rows. Collapsing the
-trained stack gives a (7, 16) matrix plus a (7,) bias — **119 numbers** — and the
+trained stack gives a (7, 16) matrix plus a (7,) bias (**119 numbers**), and the
 largest disagreement with the 3,943-parameter network is **3.43e-05**, float32 rounding.
 The collapsed matrix has **rank 7**, the most a 7 × 16 matrix can have.
 
@@ -69,8 +69,8 @@ straight line already gets most of the way, which is why the differences later a
 
 The sigmoid's derivative peaks at **0.2500** and nowhere higher, and backpropagation
 multiplies one derivative per layer, so nine layers of that is $0.25^9$ before anything
-else is accounted for. ReLU's derivative is a step — exactly one on the right, exactly
-zero on the left — so there is no shrinkage on the active side at all. GELU is the only
+else is accounted for. ReLU's derivative is a step (exactly one on the right, exactly
+zero on the left), so there is no shrinkage on the active side at all. GELU is the only
 one whose derivative exceeds 1, at **1.1289**. Note that tanh's flat share of the grid
 is the largest in the table at 0.5025, above sigmoid's 0.2363, and tanh still trains
 fine here: flat share says where the derivative is small, the peak value is what
@@ -81,7 +81,7 @@ compounds.
 ## Dying ReLU, and the fix that did not fix the run
 
 A ReLU unit whose pre-activation is negative for every row outputs zero for every row,
-and its gradient is exactly zero — not small, zero. On a single isolated unit ReLU gave
+and its gradient is exactly zero, not small, zero. On a single isolated unit ReLU gave
 **dL/dw = +0.0000, dL/db = +0.0000**; LeakyReLU (slope 0.01) gave **+0.0600** and
 **+0.0300**. Zero means the unit can never recover.
 
@@ -94,8 +94,8 @@ Inside a real network, both from identical weights, both at an oversized learnin
 
 ![Dead units](figures/fig-04-dead-units.png)
 
-Read that honestly. LeakyReLU did exactly what it promises — it ended with **zero**
-permanently off units against ReLU's 57% — and still finished at **0.0970** accuracy,
+Read that honestly. LeakyReLU did exactly what it promises (it ended with **zero**
+permanently off units against ReLU's 57%) and still finished at **0.0970** accuracy,
 worse than the ReLU network's 0.2607. Both runs were wrecked by the learning rate, and
 curing the dead units did not rescue the training, because the dead units were a symptom
 of the oversized step rather than the disease. So the reason to know this is diagnostic,
@@ -122,7 +122,7 @@ Same architecture, weights, learning rate, epochs and batch order. Only the acti
 the five that trained is **0.0041**, while sigmoid is **0.1722** behind and never
 reached 0.85 accuracy at all. ELU had the lowest loss (0.1876) and was the only one to
 clear 0.85 in a single epoch, and it still finished fifth on accuracy. tanh, a
-saturating function, beat ELU by 0.0009 — so "saturating" is not by itself the problem,
+saturating function, beat ELU by 0.0009, so "saturating" is not by itself the problem,
 a derivative capped at 0.25 is.
 
 Do not read the top five as a ranking: sixteen tabular features and four narrow layers

@@ -1,4 +1,4 @@
-# Part 12 — Putting it together
+# Part 12: Putting it together
 
 The comparison chapter, plus everything that happens after a model works.
 

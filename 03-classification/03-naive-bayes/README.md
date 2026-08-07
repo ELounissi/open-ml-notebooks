@@ -23,7 +23,7 @@ $$P(c \mid x) \propto P(c) \prod_{i} P(x_i \mid c)$$
 
 That product is the **naive** part: it assumes features are independent given the
 class. On Dry Bean, `Area` and `Perimeter` correlate at **0.9997**. The assumption
-is not approximately true — it is wrong.
+is not approximately true; it is wrong.
 
 ![The assumption](figures/fig-01-the-assumption.png)
 
@@ -44,7 +44,7 @@ Our from-scratch version and scikit-learn's disagreed badly on identical data:
 | `GaussianNB()`, default, **scaled** | 0.8951 |
 
 Not a bug in either. Both add a small constant to every variance to avoid dividing
-by zero — ours a flat `1e-9`, scikit-learn's **`1e-9 × the largest variance across
+by zero: ours a flat `1e-9`, scikit-learn's **`1e-9 × the largest variance across
 all features`**.
 
 On Dry Bean the largest variance is 8.87×10⁸ (`ConvexArea`), so the smoothing is
@@ -74,7 +74,7 @@ evidence already supported. The decision survives.
 
 ![Overconfidence](figures/fig-04-overconfidence.png)
 
-**Nine predictions in ten claim above 99% confidence, and 85% claim above 99.9%** —
+**Nine predictions in ten claim above 99% confidence, and 85% claim above 99.9%**,
 on a model that gets 89.5% right. A prediction stamped 99.9% should be wrong about
 one time in a thousand. This one is wrong about one time in ten.
 
@@ -91,7 +91,7 @@ four times over.
 | **Use it when** | You want a baseline in one line; the data is enormous or streaming; text with bag-of-words (the classic case) |
 | **Avoid it when** | You need probabilities you can act on |
 | **Variants** | `GaussianNB` continuous, `MultinomialNB` counts, `BernoulliNB` binary |
-| **Scaling needed** | Not by the maths — **but yes for `sklearn.GaussianNB`**. Unscaled it cost 13 points here |
+| **Scaling needed** | Not by the maths, **but yes for `sklearn.GaussianNB`**. Unscaled it cost 13 points here |
 | **Cost** | One pass over the data. Nothing iterates |
 | **Watch out** | Wildly overconfident when features correlate |
 

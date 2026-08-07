@@ -16,19 +16,19 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 
 ## Start here: the ensemble barely paid, and one version lost
 
-Stacking six models did beat the best single model — by **+0.0022** accuracy, for
+Stacking six models did beat the best single model, by **+0.0022** accuracy, for
 **14.7× the training time**, a gain of **0.4 standard errors**. It fixed **60 rows**
 the best member got wrong and **broke 54** it had right. Soft voting did not beat the
 best member at all.
 
 | | Accuracy | Time | Against the best member |
 |---|---|---|---|
-| Best single member (gradient boosting) | 0.9185 | 1.5 s | — |
+| Best single member (gradient boosting) | 0.9185 | 1.5 s | |
 | Soft vote | 0.9181 | 3.7 s | **-0.0004** at 2.5× time |
 | Stacking | **0.9207** | 21.5 s | **+0.0022** at 14.7× time |
 
 One standard error on a test accuracy at n = 2700 is **0.0053**, so the stacking gain
-is smaller than the noise. Stacking is not useless — but on a well-tuned gradient
+is smaller than the noise. Stacking is not useless, but on a well-tuned gradient
 booster with five look-alike friends this is how the numbers come out, and nobody
 prints the "broke 54" line on a leaderboard.
 
@@ -49,7 +49,7 @@ with the hard vote tied on **53**.
 
 Test row 69 shows why confidence is information. True class SIRA; hard voting said
 HOROZ 4-2 and was wrong, soft voting said SIRA and was right. Three of those four HOROZ
-votes were cast at **0.508**, **0.520** and **0.607** — barely leaning — against SIRA
+votes were cast at **0.508**, **0.520** and **0.607** (barely leaning) against SIRA
 votes of **0.667** and **0.998**. The confidence column is the caveat in the other
 direction: the decision tree reports **1.000** on every row it names, and a loud member
 drags a soft vote toward itself regardless of skill. Stacking can discount it.
@@ -105,7 +105,7 @@ the model, you build a worse one.
 
 Read the decision tree row across: **+0.36** honest, **+1.88** leaky, five times as
 much, because in-sample it scored 1.0000. That inverted weighting is what gets shipped.
-Per-class weights are also what voting cannot express — a vote gives every member the
+Per-class weights are also what voting cannot express: a vote gives every member the
 same say on every class forever, and can never subtract a member. `StackingClassifier`
 reproduced my hand-built version to **0.0000** difference.
 
@@ -114,8 +114,8 @@ reproduced my hand-built version to **0.0000** difference.
 ![Members against ensembles](figures/fig-03-members-vs-ensembles.png)
 
 On California Housing the pattern is starker. Boosting alone reached **R² 0.7898** and
-stacking reached **0.7897**, a hair behind. The plain average — the regression version
-of a vote — managed **0.7224**, worse than boosting alone, because it counted ridge
+stacking reached **0.7897**, a hair behind. The plain average, the regression version
+of a vote, managed **0.7224**, worse than boosting alone, because it counted ridge
 (0.5845) and k-NN (0.6296) equally. The meta-model's weights explain both: **ridge
 +0.02, k-NN +0.05, boosting +0.93**. It learned to be gradient boosting.
 
@@ -131,9 +131,9 @@ earns its cost when the members are genuinely different.
 | | |
 |---|---|
 | **Hard voting** | Counts labels. Tied on 53 of 2,700 rows here. Use only when a member cannot give probabilities |
-| **Soft voting** | Averages probabilities. Default choice, but an overconfident member dominates it — calibrate first |
+| **Soft voting** | Averages probabilities. Default choice, but an overconfident member dominates it. Calibrate first |
 | **Diversity** | Check pairwise error correlation first. Five k-NN variants sat at 0.888 and gained +0.0007 |
-| **Stacking** | A small meta-model — logistic or ridge — learns per-class weights and may weight a member negatively |
+| **Stacking** | A small meta-model, logistic or ridge, learns per-class weights and may weight a member negatively |
 | **The rule** | Meta-model features must be out-of-fold. The leak invented +0.0793 and cost -0.0078 |
 | **Cost** | $M(k+1)$ fits. Compare the gain to one standard error (0.0053 here) before believing it |
 

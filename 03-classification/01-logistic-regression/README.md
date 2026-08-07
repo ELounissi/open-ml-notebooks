@@ -24,7 +24,7 @@ $$\sigma(z) = \frac{1}{1 + e^{-z}} \qquad z = w \cdot x + b$$
 ![The sigmoid](figures/fig-01-sigmoid.png)
 
 Train it with **log loss** rather than squared error, and the gradient comes out
-as $X^\top(\hat{p} - y)/m$ — prediction minus truth, exactly the same shape as
+as $X^\top(\hat{p} - y)/m$, prediction minus truth, exactly the same shape as
 linear regression's.
 
 ## From scratch, and a result worth explaining
@@ -36,8 +36,8 @@ off reaches **1.000**.
 ![Training loss](figures/fig-02-training-loss.png)
 
 They disagree, and the reason is instructive. The dataset is **linearly
-separable**, so with no penalty the mathematically optimal weights are *infinite*
-— the loss keeps falling as weights grow and the sigmoid saturates. L-BFGS chases
+separable**, so with no penalty the mathematically optimal weights are *infinite*:
+the loss keeps falling as weights grow and the sigmoid saturates. L-BFGS chases
 that further than 2,000 steps of gradient descent do. Same model, same objective,
 different distance travelled toward a target at infinity.
 
@@ -56,7 +56,7 @@ worry about unbalanced classes.
 
 ![Confusion matrix](figures/fig-03-confusion.png)
 
-BOMBAY has only 522 examples — the rarest variety — and is recalled **perfectly**,
+BOMBAY has only 522 examples, the rarest variety, and is recalled **perfectly**,
 because Bombay beans are enormous and nothing else looks like them. The hardest
 variety is SIRA at 0.877 recall, and it is one of the most common.
 
@@ -65,7 +65,7 @@ variety is SIRA at 0.877 recall, and it is one of the most common.
 ## Where the straight line runs out
 
 Finding the genuinely confused pair takes care. The two varieties with the lowest
-recall are not automatically confused *with each other* — each may be losing beans
+recall are not automatically confused *with each other*; each may be losing beans
 to a different neighbour. Adding the confusion matrix to its own transpose and
 taking the largest off-diagonal entry finds the pair that actually trade beans in
 both directions: **DERMASON and SIRA**.
@@ -77,7 +77,7 @@ On two components those 6,182 beans separate at only **0.910**. Every point on t
 wrong side is an error the model cannot fix by adjusting weights, because the
 shape it needs is not a line.
 
-On this dataset, though, bending does not help much either — see
+On this dataset, though, bending does not help much either. See
 [random forests](../../04-ensembles/02-random-forest/), which tie at 0.924.
 
 ## Cheat sheet
@@ -86,7 +86,7 @@ On this dataset, though, bending does not help much either — see
 |---|---|
 | **Use it when** | You want a fast, calibrated, explainable baseline; classes are roughly linearly separable; you must defend the model to somebody |
 | **Avoid it when** | The boundary is curved; features interact strongly; far more columns than rows with no regularisation |
-| **Outputs** | Genuine probabilities, usually well calibrated out of the box — unusual and valuable |
+| **Outputs** | Genuine probabilities, usually well calibrated out of the box, unusual and valuable |
 | **Scaling needed** | Yes. The default L2 penalty punishes large weights, so unscaled features are penalised unfairly |
 | **Main dials** | `C` (inverse regularisation), `penalty`, `class_weight` |
 | **Watch out** | scikit-learn regularises by default. `LogisticRegression()` is not the textbook model; `C=1e6` is |

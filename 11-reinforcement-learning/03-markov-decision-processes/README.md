@@ -8,7 +8,7 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 | | |
 |---|---|
 | **What you will learn** | The MDP formalism written out as arrays you can print, the difference between evaluating a policy and improving one, and why policy iteration and value iteration trade places depending on the board |
-| **You should already know** | Linear algebra to the level of solving `Ax = b`. No RL background needed — this is the chapter the rest of Part 11 relies on |
+| **You should already know** | Linear algebra to the level of solving `Ax = b`. No RL background needed: this is the chapter the rest of Part 11 relies on |
 | **Environment** | A 4x12 cliff grid, built as an explicit `P` of shape (48, 4, 48) and `R` of shape (48, 4). Nothing is sampled, everything is solved |
 | **Runtime** | A few seconds |
 
@@ -69,7 +69,7 @@ every round and the number on screen is identical. Then it resolves in one step.
 The greedy step is repairing the policy from the goal backwards, and the start
 square cannot see any of that repair until the chain of improvements reaches it.
 Watching V(start) alone would have told you the algorithm was stuck. Watching the
-action-change count tells you it was working the whole time — and that count
+action-change count tells you it was working the whole time, and that count
 hitting zero is the termination proof, since a finite policy space plus strict
 improvement means it cannot cycle.
 
@@ -80,7 +80,7 @@ improvement means it cannot cycle.
 ![Contraction](figures/fig-02-contraction.png)
 
 The textbook rate says the error shrinks by gamma each sweep. On the episodic
-board it does not — value iteration converges **exactly in 15 sweeps**, gap
+board it does not: value iteration converges **exactly in 15 sweeps**, gap
 3.55e-15, because each sweep carries reward back one square and the longest
 route is 15 squares long. Termination beats contraction.
 
@@ -120,7 +120,7 @@ Gamma trades near rewards against far ones. It is not a risk dial.
 ## The best thing on this board
 
 Adding a 20% slip and re-solving, the slip-aware plan's first move from the start
-square is **left — into the wall**.
+square is **left, into the wall**.
 
 | Action pressed | P(over the cliff) | P(move up) |
 |---|---|---|
@@ -132,7 +132,7 @@ square is **left — into the wall**.
 Walking into a wall does nothing, which is why my first attempt at drawing this
 policy's route produced eighty steps that never left the starting square. Under
 slip it does something no other action can. The intended move is absorbed by the
-wall, and the two ways to slip off it are up and down — down is another wall, up
+wall, and the two ways to slip off it are up and down: down is another wall, up
 is free progress. Pressing into the wall is the only action with **no chance at
 all** of reaching the cliff.
 

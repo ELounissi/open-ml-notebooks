@@ -16,12 +16,12 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 
 ## The idea
 
-Least squares minimises error and nothing else. Ridge adds a second term — the
+Least squares minimises error and nothing else. Ridge adds a second term, the
 size of the weights themselves:
 
 $$J(w) = \underbrace{\|Xw - y\|^2}_{\text{fit the data}} + \underbrace{\alpha \|w\|^2}_{\text{stay small}}$$
 
-It has an exact solution, with $\alpha$ added down the diagonal — the "ridge" the
+It has an exact solution, with $\alpha$ added down the diagonal, the "ridge" the
 name refers to:
 
 $$w = (X^\top X + \alpha I)^{-1} X^\top y$$
@@ -33,7 +33,7 @@ $\alpha$ makes it invertible for **any** $\alpha > 0$.
 ## What I expected, and what happened
 
 I added a column equal to `MedInc` plus a whisper of noise (correlation
-**0.999986**) expecting the textbook pathology — one weight at +1000, its twin at
+**0.999986**) expecting the textbook pathology: one weight at +1000, its twin at
 −997.
 
 **It did not happen.** The two weights came out around −0.3 and +1.2. The textbook
@@ -51,7 +51,7 @@ when rows are few relative to columns.**
 | OLS, with the near-copy | 0.7263 |
 | Ridge, with the near-copy | 0.7263 |
 
-**No accuracy at all** — identical to four decimal places. But refit on 30
+**No accuracy at all**, identical to four decimal places. But refit on 30
 bootstrap samples:
 
 | | Spread of the `MedInc` weight |
@@ -78,7 +78,7 @@ exactly zero.
 ![Choosing alpha](figures/fig-03-choosing-alpha.png)
 
 Cross-validation picked **alpha ≈ 11.7**. Push it to 10⁵ and the model degrades to
-RMSE 1.02 — so much penalty it is nearly a constant.
+RMSE 1.02, so much penalty it is nearly a constant.
 
 ## The scaling argument, which surprised me
 
@@ -101,7 +101,7 @@ kept the most predictive feature almost unregularised while the penalty flattene
 everything else. It won **by accident**, because of a unit I chose arbitrarily.
 
 That is the problem, not a defence. **Without scaling, your choice of units decides
-which features the penalty protects.** Scaling does not promise a better score — it
+which features the penalty protects.** Scaling does not promise a better score; it
 promises the penalty responds to usefulness rather than to measurement units.
 
 ## Cheat sheet
@@ -110,7 +110,7 @@ promises the penalty responds to usefulness rather than to measurement units.
 |---|---|
 | **Use it when** | Features are correlated; many features relative to rows; you want interpretable, stable coefficients |
 | **Prefer Lasso when** | You want features actually removed |
-| **Scaling needed** | Yes — so the penalty tracks usefulness, not units |
+| **Scaling needed** | Yes, so the penalty tracks usefulness, not units |
 | **Main dial** | `alpha`. `RidgeCV` picks it efficiently |
 | **Free bonus** | Always has a unique solution, even with perfect collinearity |
 | **Watch out** | Choose `alpha` inside cross-validation, never by peeking at the test set |

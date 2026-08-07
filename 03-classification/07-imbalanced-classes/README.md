@@ -28,7 +28,7 @@ that changes is how the decision is made.
 | Plain model, cut at the base rate | 0.225 | 0.130 | 0.850 | **0.748** |
 | Plain model, tuned cut | **0.723** | 0.917 | 0.610 | **0.748** |
 
-Every resampler lands within 0.026 F1 of the plain model cut at its base rate — one
+Every resampler lands within 0.026 F1 of the plain model cut at its base rate, one
 line of arithmetic, no refitting. And a cut tuned on inner folds reaches **0.723**,
 three times the best resampler, on a model nobody rebalanced at all.
 
@@ -52,7 +52,7 @@ base rate as its floor, not one half, which is why the do-nothing model scores
 60 rows the false positive rate has an enormous denominator, so a model can drown
 you in false alarms and still post 0.963.
 
-## Imbalance is not the problem — imbalance plus overlap is
+## Imbalance is not the problem: imbalance plus overlap is
 
 Same rarity, same model, same 60 positives, different rare variety. SIRA overlaps
 DERMASON heavily: average precision 0.735, recall at 0.5 of 0.567. BOMBAY beans are
@@ -78,7 +78,7 @@ distinct, but every one is a convex combination of the same 60.
 
 Across 25 folds, F1 at a fixed 0.5 cut spans **0.5076** between best and worst
 method. Average precision spans **0.2518**, and most of that gap is undersampling
-alone — the only method that deletes real rows, so the only one that can genuinely
+alone, the only method that deletes real rows, so the only one that can genuinely
 damage the ranking.
 
 ## Why rebalancing is a threshold in disguise
@@ -95,7 +95,7 @@ The measured version: best resampler (SMOTE) **0.2313** F1, plain model at the b
 rate **0.2252**, plain model at a tuned cut **0.7227**.
 
 The tuned cut averages **0.3381** across folds (sd 0.0630, range 0.2616 to 0.5569).
-The base rate itself is 0.0166 — free, needs no data, and reproduces the resamplers
+The base rate itself is 0.0166: free, needs no data, and reproduces the resamplers
 almost exactly. Tuning is worth doing when you have positives to spare and wobbles
 a lot when you do not.
 

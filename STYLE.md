@@ -5,15 +5,15 @@ eighty-six blog posts.
 
 ## Every notebook has the same five parts
 
-1. **The idea** — what the method does, in plain language, with one picture. No
+1. **The idea**: what the method does, in plain language, with one picture. No
    equations yet.
-2. **The maths** — written out, only what you need to understand the method. No
+2. **The maths**: written out, only what you need to understand the method. No
    step is skipped with "it can be shown that".
-3. **From scratch** — a minimal NumPy implementation, checked against the library
+3. **From scratch**: a minimal NumPy implementation, checked against the library
    version so you can see that nothing is magic.
-4. **In practice** — the scikit-learn or PyTorch version, annotated line by line,
+4. **In practice**: the scikit-learn or PyTorch version, annotated line by line,
    with the mistakes that are easy to make called out where they happen.
-5. **When it wins, when it loses** — measured on the house datasets, with the
+5. **When it wins, when it loses**: measured on the house datasets, with the
    reason explained. This section is the point of the book.
 
 Every notebook opens with a table saying what you will learn, what you should
@@ -49,7 +49,7 @@ with a cheat sheet and a "what to remember" list.
 ## Numbers
 
 No number appears in prose unless the executed notebook printed it. When a result
-contradicts what I expected, the text says so — the linear regression notebook
+contradicts what I expected, the text says so: the linear regression notebook
 says plainly that I expected income to have the largest coefficient and it did
 not. Being wrong in public and correcting it is more useful to a reader than a
 tidy story.
@@ -85,7 +85,10 @@ it names are weak writing regardless of who produced them.
 - No emoji as bullets or dividers.
 - No bulleted lists shaped `- **Header**: sentence`. If items need headers they
   need a table or subsections.
-- Straight quotes, never curly. Em dashes rationed.
+- Straight quotes, never curly. No em dashes or en dashes anywhere in prose: a
+  colon, a comma, a full stop or a bracket always says it more plainly, and the
+  em dash is the most recognisable marker of machine-written text. Enforced by
+  `tools/healthcheck.py`.
 
 ## Datasets
 

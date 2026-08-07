@@ -28,7 +28,7 @@ of 300 trees. **AdaBoost barely moved and the forest fell apart.**
 | 30% | **0.9094** | **0.8413** |
 
 Accuracy lost from clean to 30% noise: **0.0054 for AdaBoost, 0.0751 for the
-forest** — fourteen times more. Test labels were clean throughout, and each row is
+forest**, fourteen times more. Test labels were clean throughout, and each row is
 the mean of three runs. The mechanism behind the warning is real and I measured it
 directly further down; it just did not reach the accuracy on this dataset.
 
@@ -80,7 +80,7 @@ each round pushes the weights until the previous stump is a coin flip on them.
 My 200 stumps scored **0.9208**, scikit-learn's scored **0.9137**, and the two
 agreed on **97.68%** of test rows. Training error went from 0.0823 after one round
 to 0.0666 after 200; test error finished at 0.0792. The gap comes from my quantile
-thresholds against sklearn's exhaustive weighted-Gini search — two different
+thresholds against sklearn's exhaustive weighted-Gini search: two different
 stumps at round one send the weights down paths that never reconverge.
 
 ## It is gradient boosting
@@ -97,7 +97,7 @@ the two ensemble scores $F$: **5.24e-14**. Same rounds, same answer.
 
 By the final round the heaviest training row sat at **31× the uniform weight**, the
 heaviest 1% of rows held **15.5%** of all the weight, and the lightest half held
-**0.76%**. Most rows sink out of the bottom of the chart — they are settled, and no
+**0.76%**. Most rows sink out of the bottom of the chart: they are settled, and no
 later stump is paid anything for getting them right.
 
 ## Boost something too strong and it collapses
@@ -126,7 +126,7 @@ last round those rows hold **35.7% of the total weight**, each flipped row carry
 on average **5× the weight of a clean one**.
 
 So most late stumps are indeed fitted to rows whose labels are wrong. What did not
-follow is the accuracy collapse — see the table at the top. The forest was the one
+follow is the accuracy collapse. See the table at the top. The forest was the one
 that gave ground, dropping 0.0751 against AdaBoost's 0.0054.
 
 One warning if you open the notebook: the left panel's title was written before the
@@ -136,7 +136,7 @@ weight on 36% of the mass is survivable when the clean signal is this separable,
 that the textbook failure needs harder noise, more rounds, or less headroom. The
 mitigations still apply: fewer rounds, a smaller `learning_rate`, or logistic loss,
 which grows linearly in the margin so a hopeless row plateaus instead of exploding.
-The weight vector doubles as a label-error detector — rows AdaBoost pushes to the
+The weight vector doubles as a label-error detector: rows AdaBoost pushes to the
 top of the ranking are worth reading by hand.
 
 ## Cheat sheet

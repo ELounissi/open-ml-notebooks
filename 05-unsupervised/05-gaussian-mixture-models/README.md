@@ -22,7 +22,7 @@ point belongs to exactly one. A Gaussian mixture relaxes both.
 $$p(x) = \sum_{i=1}^{k} \pi_i \, \mathcal{N}(x \mid \mu_i, \Sigma_i)$$
 
 Three things per component: how common it is, where it sits, and **what shape it
-has**. That covariance matrix is the whole upgrade — a cluster can be a stretched,
+has**. That covariance matrix is the whole upgrade: a cluster can be a stretched,
 tilted ellipse instead of a ball.
 
 **k-means is the special case** where every covariance is the identity and every
@@ -45,7 +45,7 @@ On stretched blobs where k-means slices across the grain:
 | Gaussian mixture, full covariance | **0.796** |
 
 The third panel is what k-means genuinely cannot do. **17.3% of points are
-assigned with under 80% confidence** — the model telling you where it does not
+assigned with under 80% confidence**, the model telling you where it does not
 know. k-means assigns every point with equal, unearned certainty.
 
 ## The covariance types
@@ -55,7 +55,7 @@ know. k-means assigns every point with equal, unearned certainty.
 **spherical** is k-means with soft assignment. **diag** allows axis-aligned
 ellipses. **tied** shares one shape across clusters. **full** lets every cluster
 tilt freely, and costs the most parameters. Step down from `full` when you have few
-points per cluster — that is how a mixture model overfits.
+points per cluster: that is how a mixture model overfits.
 
 ## Choosing k, and where BIC misleads
 
@@ -71,7 +71,7 @@ covariance, and that is worth being straight about because it is the usual outco
 
 BIC answers "how many Gaussians describe this density best", which is a different
 question from "how many varieties of bean are there". Seven real varieties, each
-slightly non-Gaussian, are described better by twelve Gaussians than by seven — so
+slightly non-Gaussian, are described better by twelve Gaussians than by seven, so
 BIC buys extra components to patch the shape mismatch.
 
 Use it to narrow the range, then look at the clusters. At the true k of 7:
@@ -86,7 +86,7 @@ Use it to narrow the range, then look at the clusters. At the true k of 7:
 | | |
 |---|---|
 | **Use it when** | Clusters are elliptical or differently shaped; you want probabilities not hard labels |
-| **Avoid it when** | Clusters are non-convex — crescents and rings need [DBSCAN](../04-dbscan-and-hdbscan/); very few points per cluster |
+| **Avoid it when** | Clusters are non-convex: crescents and rings need [DBSCAN](../04-dbscan-and-hdbscan/); very few points per cluster |
 | **Scaling needed** | Yes, as for k-means |
 | **Main dials** | `n_components`, `covariance_type`, `n_init` (EM finds local optima) |
 | **Choosing k** | BIC narrows the range. It does not answer your question for you |

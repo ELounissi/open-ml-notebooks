@@ -9,7 +9,7 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 |---|---|
 | **What you will learn** | How Lloyd's algorithm works, how to choose k with no answer key, and the failure modes k-means cannot see in itself |
 | **You should already know** | Nothing beyond NumPy. [PCA](../../06-dimensionality-reduction/01-principal-component-analysis/) helps for the plots |
-| **Dataset** | UCI Dry Bean (13,611 × 16) — labels hidden during clustering, then used to grade it |
+| **Dataset** | UCI Dry Bean (13,611 × 16), labels hidden during clustering, then used to grade it |
 | **Runtime** | About a minute on a laptop CPU |
 
 ---
@@ -29,7 +29,7 @@ from-scratch version took **69 iterations**.
 $$J = \sum_{i=1}^{k} \sum_{x \in C_i} \|x - \mu_i\|^2$$
 
 Two consequences fall straight out of that objective. **Squared distance means
-scaling matters.** And **minimising distance to a centre makes clusters round** —
+scaling matters.** And **minimising distance to a centre makes clusters round**:
 k-means cannot find a crescent, because a crescent has no centre its members are
 near.
 
@@ -46,7 +46,7 @@ There are genuinely **seven** varieties of bean in this dataset, and neither the
 elbow nor the silhouette points at seven. Silhouette confidently prefers three.
 
 This is the honest state of clustering: the diagnostics disagree with the truth
-and with each other. If you had no labels — the situation clustering is *for* —
+and with each other. If you had no labels, the situation clustering is *for*,
 you would probably have chosen wrong.
 
 ## How much did it recover?
@@ -65,17 +65,17 @@ cleanly onto one cluster; others get split across two.
 
 ![Failure modes](figures/fig-04-failure-modes.png)
 
-**Round blobs** — the case it was designed for. Nails it.
+**Round blobs**: the case it was designed for. Nails it.
 
-**Two crescents** — obvious to your eye, impossible for k-means, because neither
+**Two crescents**: obvious to your eye, impossible for k-means, because neither
 crescent has a centre its members are near. [DBSCAN](../04-dbscan-and-hdbscan/)
 handles this by defining clusters through density.
 
-**Stretched blobs** — real groups, elongated, and plain Euclidean distance slices
+**Stretched blobs**: real groups, elongated, and plain Euclidean distance slices
 them across the grain. [Gaussian mixtures](../05-gaussian-mixture-models/) fix
 this by giving each cluster its own shape.
 
-**No structure at all** — uniform random noise, and k-means confidently returns
+**No structure at all**: uniform random noise, and k-means confidently returns
 three neat wedges.
 
 That last panel is the one to remember: **the output of a clustering algorithm is

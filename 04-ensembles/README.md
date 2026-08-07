@@ -1,4 +1,4 @@
-# Part 4 — Ensembles
+# Part 4: Ensembles
 
 Many weak models beating one strong model, and the two different reasons why.
 

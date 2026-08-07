@@ -25,7 +25,7 @@ only difference between them is the loss they were fitted under.
 | Hourly median | 87.0070 | 129.0445 | 0.4938 | 1.1639 | -8.5223 |
 | Hourly MAPE-optimal | 118.1663 | 184.0993 | **-0.0302** | **0.6543** | **-106.4775** |
 
-The MAPE-optimal model wins on MAPE by a wide margin — 0.6543 against 1.3600 —
+The MAPE-optimal model wins on MAPE by a wide margin (0.6543 against 1.3600),
 and it is the worst model on the table by every other reading. Its R squared is
 below zero, meaning it is beaten by a flat line at the mean, and it sits an
 average of 106 bikes per hour under the truth.
@@ -40,7 +40,7 @@ metric on purpose.
 
 MAE charges a fixed price per unit of error. MSE charges a price that grows with
 the error, so the marginal cost of another unit is unbounded. RMSE ranks models
-exactly as MSE does — it just puts the number back into the target's units.
+exactly as MSE does; it just puts the number back into the target's units.
 
 ## Minimising MSE gives the mean, minimising MAE gives the median
 
@@ -59,7 +59,7 @@ they would land on top of each other. The bike counts have a skew of 1.277, so
 they separate, and that separation is the largest disagreement the choice of
 metric can cause.
 
-The pinball loss puts the same fact in a wider frame — minimising $L_q$ over a
+The pinball loss puts the same fact in a wider frame: minimising $L_q$ over a
 constant returns the $q$-th quantile. The sweep recovers them exactly: 9.0 at
 $q=0.1$, 40.0 at 0.25, 142.0 at 0.5, 281.0 at 0.75, and 452.0 against an
 empirical 451.2 at 0.9.
@@ -117,7 +117,7 @@ the one thing R squared measures.
 ![MAPE is asymmetric](figures/fig-05-mape-is-asymmetric.png)
 
 **The denominator.** With one true zero in four rows, scikit-learn does not
-raise — it substitutes machine epsilon and returns **1.126e+15**. The guarded
+raise; it substitutes machine epsilon and returns **1.126e+15**. The guarded
 version on the same rows, skipping that row, returns 0.083.
 
 No bike count in this dataset is zero, and MAPE still misbehaves: the bottom 5%
@@ -128,8 +128,8 @@ becomes.
 
 **The asymmetry.** Predicting zero is the worst under-prediction available and it
 costs 100%. There is no ceiling on the other side. The constant that minimises
-MAPE on the bike counts is **4.00** — against a mean of 189.46 and a median of
-142.00 — and it matches the 1/y-weighted median exactly.
+MAPE on the bike counts is **4.00** (against a mean of 189.46 and a median of
+142.00), and it matches the 1/y-weighted median exactly.
 
 ## Cheat sheet
 

@@ -7,9 +7,9 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 
 | | |
 |---|---|
-| **What you will learn** | Why exploring costs you money, what regret measures that reward does not, and four ways to trade the two off — greedy, epsilon-greedy, UCB1 and Thompson sampling — each written from scratch in NumPy |
+| **What you will learn** | Why exploring costs you money, what regret measures that reward does not, and four ways to trade the two off (greedy, epsilon-greedy, UCB1 and Thompson sampling), each written from scratch in NumPy |
 | **You should already know** | Python and NumPy. A rough idea of what a probability distribution is. No prior reinforcement learning needed |
-| **Datasets** | None. A Bernoulli bandit simulated from scratch — no gym, no RL library |
+| **Datasets** | None. A Bernoulli bandit simulated from scratch, no gym, no RL library |
 | **Runtime** | Under two minutes on a laptop CPU |
 
 ---
@@ -29,7 +29,7 @@ warning, and measured the share of sessions sitting on the best arm.
 0.10 with ten arms is exactly what pulling at random gives you. The two best
 strategies on the stationary benchmark were, 200 pulls after the world changed,
 **no better than chance**, both confidently defending an arm that had stopped being
-good. The fix is one line — a constant step size instead of 1/n — and the
+good. The fix is one line (a constant step size instead of 1/n), and the
 stationary benchmark had no way to tell you that you needed it.
 
 ## The setup and the four strategies
@@ -79,7 +79,7 @@ Greedy pulled **2.2 distinct arms per session out of 10**, where the other three
 all pulled 10.0. It settled on the best arm in **13%** of sessions and on a
 below-median arm in **39%**. Every estimate starts at 0 and Bernoulli rewards are
 never negative, so the first arm to pay once beats nine untouched arms forever. The
-trap is not that greedy chooses badly — its choice destroys the evidence that would
+trap is not that greedy chooses badly; its choice destroys the evidence that would
 have corrected it.
 
 ## Who is on the best arm
@@ -88,7 +88,7 @@ have corrected it.
 
 At the final pull: greedy **13%**, epsilon-greedy 0.1 **57%**, UCB1 **37%**,
 Thompson **70%**. Epsilon-greedy has a ceiling it cannot pass, 1 − ε(k−1)/k, which
-is 0.91 here — even a strategy that has solved the problem still throws ε of its
+is 0.91 here: even a strategy that has solved the problem still throws ε of its
 pulls away. UCB1 starts badly on purpose: its first 10 pulls are a forced round
 robin, and the √(log t / n) bonus keeps dragging it back to arms it has dismissed.
 It is buying information early, and on a longer horizon that trade pays.
@@ -105,7 +105,7 @@ It is buying information early, and on a longer horizon that trade pays.
 | 0.3 | 87.9 | **44.4** |
 
 Both ends fail, and they fail differently. At ε = 0 the mean is bad because the
-variance is enormous — 369.0 of spread. At ε = 0.3 the mean is bad and the spread
+variance is enormous, 369.0 of spread. At ε = 0.3 the mean is bad and the spread
 is the smallest on the table at 44.4, because every session reliably wastes the
 same fixed share of its pulls. One end gambles; the other pays a subscription.
 Where the curve bottoms out depends on the horizon, which is why decaying epsilon
@@ -130,7 +130,7 @@ The α = 0.1 version looked *worse* before the switch, at 0.50, and was the best
 after it, cutting second-half regret from 148.35 to **69.31**.
 
 1/n weights every reward an arm ever produced equally, so after 800 pulls a fresh
-reward moves the estimate by one part in 800 — and the arm the strategy trusts most
+reward moves the estimate by one part in 800, and the arm the strategy trusts most
 is the arm whose estimate is hardest to move, exactly backwards from what the
 situation needs. A constant α makes the estimate an exponentially weighted average
 with a memory of about 1/α pulls. It never fully converges, and on a fixed problem

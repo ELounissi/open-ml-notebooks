@@ -1,4 +1,4 @@
-# Part 1 — Foundations
+# Part 1: Foundations
 
 The vocabulary every other chapter uses. Start here if you are new to machine learning.
 

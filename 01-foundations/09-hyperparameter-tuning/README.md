@@ -28,7 +28,7 @@ measured both sides of the condition on the same budget of 36 evaluations over
 When both axes carry signal, the grid wins and random search loses nearly two
 repeats in three. The advantage was never about randomness. A grid pays for
 resolution in every dimension at once, and you almost never need it in every
-dimension — but when you do, the lattice is the right shape.
+dimension, but when you do, the lattice is the right shape.
 
 Even in the case random search wins, it wins on the average and not on the floor:
 the grid's worst repeat scored 0.3680, random's worst scored 0.3514.
@@ -42,7 +42,7 @@ A grid on a decision tree over four hyperparameters: **96 candidates, 288 fits,
 60.4 ms, and at that speed the exponent decides everything. Three values each
 over eight hyperparameters is 6,561 combinations and 0.33 hours. Five values each
 is 390,625 and **19.66 hours**. Ten values each over eight is a hundred million
-combinations and **5,033 hours** — on the fastest model in the book.
+combinations and **5,033 hours**, on the fastest model in the book.
 
 ## What the grid never learns
 
@@ -104,7 +104,7 @@ Applying halving to the section-2 tree grid instead:
 | Full grid | 14.2 s | 0.9000 |
 | Halving | 1.0 s | 0.8883 |
 
-**14.1x faster, and it picked a different model** — `max_depth=5,
+**14.1x faster, and it picked a different model**: `max_depth=5,
 min_samples_leaf=1` instead of `max_depth=8, min_samples_leaf=5`. Judging on a
 slice of the rows did lose the winner here. That is the trade, stated with a run
 that shows it happening rather than as a footnote.
@@ -131,7 +131,7 @@ The inflation is a property of the maximum. Nested cross-validation measures the
 procedure instead: the search reported **0.9805**, nested cross-validation said
 **0.9731**, a mean optimism of **+0.0074**.
 
-The search looked better in **9 of 10 trials** — strongly consistent, not
+The search looked better in **9 of 10 trials**: strongly consistent, not
 universal, and one trial is not enough to detect it. Ten nested trials cost
 10.7 s. The gap is small because twelve candidates on 569 rows is a narrow
 search; it scales with how much freedom the search had to chase noise.

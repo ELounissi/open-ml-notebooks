@@ -1,4 +1,4 @@
-# Part 10 — Generative models
+# Part 10: Generative models
 
 Models that produce data instead of labelling it.
 

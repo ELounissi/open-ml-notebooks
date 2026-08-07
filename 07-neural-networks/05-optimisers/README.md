@@ -1,6 +1,6 @@
 # Optimisers
 
-### SGD, Momentum, RMSProp, Adam — what each one actually fixes
+### SGD, Momentum, RMSProp, Adam: what each one actually fixes
 
 **[Open the notebook](notebook.ipynb)** · Part 7, Neural networks ·
 Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
@@ -18,7 +18,7 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 
 On a real network the adaptive optimisers were **faster, and they were not
 better.** Adam crossed 85% test accuracy in **3 epochs**, momentum needed **5**,
-plain SGD never reached it in 8 — yet the highest final accuracy belonged to **SGD
+plain SGD never reached it in 8, yet the highest final accuracy belonged to **SGD
 with momentum, 0.8745**, ahead of Adam's 0.8672. Two different claims, and only
 the speed one survived the measurement.
 
@@ -26,12 +26,12 @@ the speed one survived the measurement.
 
 Every optimiser after SGD fixes one of two named failures. **Ravines:** when the
 surface is far steeper in one direction than another, the gradient points across
-the valley rather than along it and the step bounces between the walls — the normal
+the valley rather than along it and the step bounces between the walls, the normal
 case, produced by correlated features or features on different scales. **One rate
 for every parameter:** a rate safe in the steepest direction is far too small for
 the flattest. Momentum averages past gradients, so reversing components cancel and
 consistent ones accumulate. RMSProp divides each step by the square root of that
-parameter's own running squared gradient — a per-parameter rate. Adam runs both,
+parameter's own running squared gradient, a per-parameter rate. Adam runs both,
 plus a bias correction for the cold start.
 
 ## Four rules on a 20:1 ravine
@@ -75,13 +75,13 @@ below** momentum, and the only one that never crossed the line.
 ## Faster, or better
 
 **Faster: yes.** Adam reached 0.85 in 3 epochs against 5 for the other two, in the
-shortest wall-clock time of the four, 110.5 s — 41.4 s less than momentum, despite
+shortest wall-clock time of the four, 110.5 s, 41.4 s less than momentum, despite
 being the more expensive update rule per step.
 
 **Better: no.** Momentum's final 0.8745 beats Adam's best-ever epoch of 0.8692 by
 **0.0053**, and momentum also reached the lowest training loss, 0.2956. What the
 adaptive methods bought here was time, not quality. One seed and 8 epochs, so I
-would not stake much on a 0.007 gap — which is the point. The accuracy difference
+would not stake much on a 0.007 gap, which is the point. The accuracy difference
 is inside the noise; the speed difference is not.
 
 ## What actually separates them
@@ -99,14 +99,14 @@ Each optimiser swept across its own sensible range, 3 epochs per rate.
 | much too large | 0.5 | **0.812** | 0.02 | 0.860 |
 | **spread** | | **0.223** | | **0.073** |
 
-**SGD's spread is 0.223 across its sweep. Adam's is 0.073 — three times tighter.**
+**SGD's spread is 0.223 across its sweep. Adam's is 0.073, three times tighter.**
 Adam's worst rate, off by 10× in the wrong direction, still scored 0.791, within
 0.006 of SGD's carefully chosen default and ahead of every SGD rate below 0.05.
 This is why Adam is the default in most codebases: not that it finds better minima,
 which the numbers above say it did not, but that a badly chosen rate costs you 7
 points instead of 22.
 
-Two wrinkles in my sweep. SGD never actually blew up — accuracy rose monotonically
+Two wrinkles in my sweep. SGD never actually blew up: accuracy rose monotonically
 to 0.812 at `lr=0.5`, the largest rate I tried, so the failure here was rates too
 small rather than too large, and a wider sweep would find the divergence point.
 And Adam peaked at `lr=0.005` (0.865), not at the `1e-3` default (0.854). Well-tuned

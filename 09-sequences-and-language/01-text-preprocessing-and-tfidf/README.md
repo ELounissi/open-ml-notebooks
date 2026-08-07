@@ -17,7 +17,7 @@ Made by [Elyes Lounissi](https://www.linkedin.com/in/elyes-lounissi/)
 ## One reweighting removed 42% of the errors
 
 Four setups, the same logistic regression on each, scored once on 1,095 held-out
-documents. No new information enters between rows two and three — the same
+documents. No new information enters between rows two and three: the same
 vocabulary, the same tokeniser, the same counts. Only the weighting changes.
 
 | Setup | Features | Density | Accuracy | Macro F1 | Seconds |
@@ -54,8 +54,8 @@ that yields `['the', 'rocket', 'engine', 'didn', 'fire', 'seconds', 'later',
 'mission', 'control', 'called', 'it']`. Punctuation goes, single-letter words go
 with it, and `didn't` splits into `didn` and a dropped `t`.
 
-The English stop list holds **318** words — somebody's judgement rather than your
-corpus's — and it deletes `system`, `front`, `back`, `call`, `fill`, `cry` and
+The English stop list holds **318** words (somebody's judgement rather than your
+corpus's), and it deletes `system`, `front`, `back`, `call`, `fill`, `cry` and
 `amount` along the way. Stemming is the other blunt instrument: my nine-line version
 maps `studied` to `stud` and leaves `ran` as `ran`, where a dictionary lemmatiser
 gets `ran` to `run` and `better` to `good`. Crude stemming cut the vocabulary from
@@ -67,7 +67,7 @@ gets `ran` to `run` and `better` to `good`. Crude stemming cut the vocabulary fr
 
 The count matrix is 1,651 documents × **22,610 terms**, holding 274,553 tokens at
 **0.4094% density**. Rank 1, `the`, appears 13,469 times; rank 100, `images`,
-appears 285. **10,309 terms appear exactly once — 46% of the vocabulary.**
+appears 285. **10,309 terms appear exactly once, 46% of the vocabulary.**
 
 **The top 20 terms hold 24.1% of every token in the corpus. The rarer half of the
 vocabulary holds 4.5%.** So the largest numbers in every row belong to words that
@@ -95,7 +95,7 @@ again matched at **0.00e+00**, and one hand-computed row of document 1415 (8,921
 tokens) matched to **3.33e-16**.
 
 Floating-point identical. The `+1` inside the log is smoothing; the `+1` outside
-stops a term in every document from getting weight exactly zero — with
+stops a term in every document from getting weight exactly zero: with
 $\mathrm{df} = n$ the log is 0 and the idf is 1, so `the` survives as its raw count.
 L2 normalisation is why the 9,109-word document does not beat a 12-word one. In that
 longest document, `jpeg` appeared 232 times with idf 5.191 and finished at
@@ -105,7 +105,7 @@ appearing 362 times.
 ![Count against TF-IDF](figures/fig-02-count-vs-tfidf.png)
 
 An honest note on that figure. Comparing the top 15 by raw count against the top 15
-by *summed* TF-IDF mass, **14 of 15 terms are the same** — only `are` and `was` swap
+by *summed* TF-IDF mass, **14 of 15 terms are the same**: only `are` and `was` swap
 places. Summing a column over every document rewards terms that appear in every
 document, so the aggregate view hides the reweighting the per-row numbers above make
 obvious. Judge TF-IDF one document at a time.
@@ -123,7 +123,7 @@ obvious. Judge TF-IDF one document at a time.
 
 `min_df=2` throws away **53% of the vocabulary and 5.5% of the text**. That is Zipf
 paying you back: a term seen once cannot generalise, it can only be memorised.
-`max_df=0.5` drops nine terms — `the, to, and, of, in, is, for, that, it` — and
+`max_df=0.5` drops nine terms (`the, to, and, of, in, is, for, that, it`), and
 **100% of them are already on sklearn's English stop list**, so the corpus
 rediscovers the stop list on its own. `max_features` is the memory ceiling: 1,000
 terms keep 67.7% of all tokens, 5,000 keep 88.2%, 20,000 keep 99.0%.
@@ -139,7 +139,7 @@ of 83. That is why every text vectoriser in scikit-learn returns a sparse matrix
 `the player hit the ball` and `the ball hit the player` have identical unigram
 vectors and different bigram vectors, and `not good` cannot exist as a unigram
 feature. With `min_df=3`, **12,264 bigrams** survive against 22,610 unfiltered
-unigrams — and the ones each class leans on hardest turn out to be `of the`,
+unigrams, and the ones each class leans on hardest turn out to be `of the`,
 `in the`, `on the` for all three, with the class-specific phrases (`this year`,
 `last year`, `the braves` for baseball) below them.
 
