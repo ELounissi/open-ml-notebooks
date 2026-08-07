@@ -1,29 +1,36 @@
 cff-version: 1.2.0
-title: "open-ml-notebooks: original, executed experiments across machine learning, deep learning, and reinforcement learning"
+title: "open-ml-notebooks: a book of 86 executed notebooks across machine learning, deep learning, and reinforcement learning"
 message: "If you use this work, please cite it as below."
 type: software
 authors:
   - family-names: Lounissi
     given-names: Elyes
     email: pilot.tun@gmail.com
-    orcid: ""
+    orcid: "https://orcid.org/0009-0001-1385-5070"
 repository-code: "https://github.com/ELounissi/open-ml-notebooks"
 url: "https://github.com/ELounissi/open-ml-notebooks"
 abstract: >-
-  A collection of self-contained Jupyter notebooks, each posing one falsifiable
-  question about a machine learning method and answering it on an openly
-  licensed dataset. Covers supervised, unsupervised, and self-supervised
-  learning, deep learning, generative models, graph learning, and reinforcement
-  learning. Every notebook ships executed, with figures that were read before
-  they were published.
+  A free book of 86 self-contained Jupyter notebooks covering machine learning,
+  deep learning, and reinforcement learning, one method per notebook. Each
+  chapter follows the same five parts: the idea in plain language, the maths, a
+  minimal implementation from scratch, the library version annotated, and a
+  measurement of where the method wins and where it loses. Every notebook ships
+  already executed, so the charts, the printed tables, and the numbers are
+  visible without running anything. Five open datasets are reused throughout, so
+  results are directly comparable across chapters, and no claim in the prose
+  appears unless the notebook printed it.
 keywords:
   - machine learning
   - deep learning
   - reinforcement learning
-  - self-supervised learning
+  - unsupervised learning
+  - neural networks
   - jupyter notebooks
   - open datasets
   - reproducible research
+  - machine learning tutorial
   - data science education
-license: MIT
-date-released: 2026-08-06
+license:
+  - MIT
+  - CC-BY-4.0
+date-released: 2026-08-07
