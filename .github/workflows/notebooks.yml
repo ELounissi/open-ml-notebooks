@@ -19,7 +19,9 @@ on:
 jobs:
   execute:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    # 86 notebooks, executed one after another. Several take minutes on their own,
+    # so the old 45 was a limit set when the book was half this size.
+    timeout-minutes: 150
 
     steps:
       - uses: actions/checkout@v4
@@ -33,7 +35,12 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           # CPU wheels only; the GPU build is not needed to prove a notebook runs.
-          pip install torch --index-url https://download.pytorch.org/whl/cpu
+          # Both torch and torchvision have to come from the CPU index, and at the
+          # pinned versions. Installing an unpinned torch here and then running
+          # requirements.txt afterwards pulled the 2.5 GB CUDA build straight back
+          # over the top of it, because the pin resolves against the default index.
+          pip install torch==2.11.0 torchvision==0.26.0 \
+            --index-url https://download.pytorch.org/whl/cpu
           pip install -r requirements.txt
 
       - name: Health check

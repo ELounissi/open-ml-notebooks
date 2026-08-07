@@ -7,7 +7,7 @@
 #   source .venv/bin/activate     (macOS / Linux)
 #   pip install -r requirements.txt
 
-# --- core numerics, used by every project ---
+# --- core numerics, used by nearly every chapter ---
 numpy==2.4.6
 scipy==1.17.1
 pandas==3.0.3
@@ -15,21 +15,28 @@ scikit-learn==1.8.0
 
 # --- figures ---
 matplotlib==3.10.9
-seaborn==0.13.2
-pillow==12.2.0
+pillow==12.2.0          # not imported directly; torchvision needs it, pinned so images decode identically
 
 # --- notebook execution ---
 jupyterlab==4.5.7
 ipykernel==7.2.0
 nbconvert==7.17.1
 
-# --- gradient boosting (part 02) ---
+# --- gradient boosting libraries, compared in 04-06 ---
+# That chapter imports all three through a helper that degrades gracefully, so it
+# still runs if one is missing. It then compares fewer libraries than it claims to.
 lightgbm==4.6.0
+xgboost==3.2.0
+catboost==1.2.10
 
-# --- graphs (part 07) ---
-networkx==3.6.1
+# --- statistics ---
+# 02-09 fits Poisson, Gamma and Tweedie GLMs; 09-09 fits ARIMA.
+statsmodels==0.14.6
 
-# --- deep learning (parts 04-06), CPU wheels by default ---
-# For CUDA, install from https://pytorch.org instead of this pin.
+# --- association rules, 05-07 ---
+mlxtend==0.25.0
+
+# --- deep learning, parts 7 to 11, CPU wheels by default ---
+# For CUDA, install torch from https://pytorch.org instead of this pin.
 torch==2.11.0
 torchvision==0.26.0

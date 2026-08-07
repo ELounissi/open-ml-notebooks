@@ -54,6 +54,32 @@ says plainly that I expected income to have the largest coefficient and it did
 not. Being wrong in public and correcting it is more useful to a reader than a
 tidy story.
 
+## Effect sizes
+
+No winner is declared on a difference that could be noise. Four models scoring
+0.9298, 0.9292, 0.9277 and 0.9324 are one result, not a ranking, and calling the
+third one weakest is decoration.
+
+So before any comparative claim, get a scale for the noise: a fold standard
+deviation, a spread across seeds, a bootstrap interval, a binomial standard error
+on the test size. Whichever the notebook can afford. Then:
+
+- If the gap sits inside that scale, say so and stop. "These three land within
+  0.004 of each other, which is less than the spread across folds, so this
+  problem does not tell them apart" is a useful sentence. It saves a reader from
+  agonising over a choice that does not matter.
+- If the gap is real, say why it is real. Tie it to something about the data or
+  the method. A number without a mechanism is trivia.
+
+A rough guide, not a law: on a few thousand test rows, accuracy differences under
+about 0.01 are usually not separable from noise.
+
+The same rule applies to results that contradict something well established.
+First suspect the experiment: the budget, the scaling, a cap binding, a single
+seed, a metric that does not measure what you think. If the experiment holds, the
+result is almost always conditional rather than universal. "Deeper did not help
+here" is true and useful; "depth does not help" is false. Name the condition.
+
 ## Prose
 
 I write in first person, plainly, and I do not pad. Most of the list below comes

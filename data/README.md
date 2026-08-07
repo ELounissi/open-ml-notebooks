@@ -61,7 +61,19 @@ train = datasets.fashion_mnist()       # torchvision dataset
 ```
 
 Each loader caches under `data/raw/<name>/` on first call, so every later run is
-offline and instant.
+offline and instant. The folder names are:
+
+| Dataset | Cache folder |
+|---|---|
+| California Housing | `data/raw/california-housing/` |
+| Breast Cancer Wisconsin | `data/raw/breast-cancer/` |
+| UCI Dry Bean | `data/raw/dry-bean/` |
+| UCI Bike Sharing | `data/raw/bike-sharing/` |
+| Fashion-MNIST | `data/raw/fashion-mnist/` |
+
+Those names are also what the workflow checks. It walks `data/raw/` and fails the
+build if it finds a folder this page does not mention, so a dataset cannot arrive
+in the repository without its licence and its source being written down first.
 
 ## Why these five
 
