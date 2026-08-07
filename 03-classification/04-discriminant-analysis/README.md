@@ -248,7 +248,7 @@ this sample size is a margin worth nothing except as a reminder that a correct
 assumption is not a guarantee of a win. With 3,000 rows per class, QDA can afford
 its extra parameters and there is nothing left for the shared assumption to buy.
 
-![Sample size](figures/fig-07-sample-size-crossover.png)
+![Sample size](figures/fig-07-sample-size.png)
 
 Then the sweep that shrinks the training set while keeping QDA's assumption
 correct. Across 450 attempted fits per model, **65 QDA fits were refused
