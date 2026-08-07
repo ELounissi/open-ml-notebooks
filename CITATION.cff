@@ -5,7 +5,7 @@ type: software
 authors:
   - family-names: Lounissi
     given-names: Elyes
-    email: pilot.tun@gmail.com
+    email: elyes.lounissi@ensi-uma.tn
     orcid: "https://orcid.org/0009-0001-1385-5070"
 repository-code: "https://github.com/ELounissi/open-ml-notebooks"
 url: "https://github.com/ELounissi/open-ml-notebooks"
